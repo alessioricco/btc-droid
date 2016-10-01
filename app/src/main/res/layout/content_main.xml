@@ -63,30 +63,33 @@
                         <TableRow android:layout_weight="0.25"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight=".25"
+                                android:layout_weight=".20"
                                 style="@style/BidPriceLabel"
                                 android:text="ASK:" />
+
                             <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_weight=".80"
                                 style="@style/BidPriceValue"
-                                android:text="@string/mock_price" />
+                                android:text="@string/mock_price"
+                                />
                         </TableRow>
 
                         <TableRow android:layout_weight="0.25">
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight=".25"
+                                android:layout_weight=".20"
                                 style="@style/BidPriceLabel"
                                 android:text="BID:" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-
+                                android:layout_weight=".80"
                                 style="@style/BidPriceValue"
                                 android:text="@string/mock_price_low" />
                         </TableRow>
@@ -95,12 +98,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight=".25"
+                                android:layout_weight=".20"
                                 style="@style/BidPriceLabel"
                                 android:text="HIGH:" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_weight=".80"
                                 style="@style/BidPriceValue"
                                 android:text="@string/mock_price" />
                         </TableRow>
@@ -109,12 +113,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight=".25"
+                                android:layout_weight=".20"
                                 style="@style/BidPriceLabel"
                                 android:text="LOW:" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_weight=".80"
                                 style="@style/BidPriceValue"
                                 android:text="@string/mock_price" />
                         </TableRow>
