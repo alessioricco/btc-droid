@@ -10,12 +10,138 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="@android:color/white"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/app_bar_main"
     tools:context="it.alessioricco.btc.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="content main" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- textual info -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".30">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!-- textual info left panel-->
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".60"
+                    android:layout_marginRight="@dimen/horizontal_margin">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/BTCMainPriceFont"
+                        android:text="@string/mock_price_low"
+                        android:gravity="right"
+                        android:freezesText="false" />
+
+                </RelativeLayout>
+
+                <!-- textual info right panel-->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".40">
+                    <!-- hi, low, bid, ask-->
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TableRow android:layout_weight="0.25"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".25"
+                                style="@style/BidPriceLabel"
+                                android:text="ASK:" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                style="@style/BidPriceValue"
+                                android:text="@string/mock_price" />
+                        </TableRow>
+
+                        <TableRow android:layout_weight="0.25">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".25"
+                                style="@style/BidPriceLabel"
+                                android:text="BID:" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+
+                                style="@style/BidPriceValue"
+                                android:text="@string/mock_price_low" />
+                        </TableRow>
+
+                        <TableRow android:layout_weight="0.25">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".25"
+                                style="@style/BidPriceLabel"
+                                android:text="HIGH:" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                style="@style/BidPriceValue"
+                                android:text="@string/mock_price" />
+                        </TableRow>
+
+                        <TableRow android:layout_weight="0.25">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".25"
+                                style="@style/BidPriceLabel"
+                                android:text="LOW:" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                style="@style/BidPriceValue"
+                                android:text="@string/mock_price" />
+                        </TableRow>
+
+                    </TableLayout>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <!-- graphic info -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.7">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="graphics" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+
+
 </RelativeLayout>

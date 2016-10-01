@@ -5,4 +5,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="mock_price">12345.67</string>
+    <string name="mock_price_low">1.23</string>
 </resources>
