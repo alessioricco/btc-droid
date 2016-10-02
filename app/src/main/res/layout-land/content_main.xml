@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:background="@color/mainBackground"
+    android:background="@android:color/white"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/app_bar_main"
     tools:context="it.alessioricco.btc.MainActivity">
@@ -18,10 +18,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_height="match_parent">
 
         <!-- textual info -->
         <RelativeLayout
@@ -98,7 +95,7 @@
                                 android:gravity="right" />
                         </TableRow>
                     </TableLayout>
-
+                    
                 </LinearLayout>
 
                 <!-- textual info right panel-->
@@ -186,7 +183,7 @@
                         </TableRow>
 
                     </TableLayout>
-
+                    
                 </LinearLayout>
 
             </LinearLayout>
@@ -206,6 +203,7 @@
 
         </RelativeLayout>
     </LinearLayout>
+
 
 
 </RelativeLayout>
