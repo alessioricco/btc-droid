@@ -24,8 +24,9 @@
     </style>
 
     <style name="BTCMainPriceFont" parent="@style/MainScreenFont">
-        <item name="android:textSize">52sp</item>
+        <item name="android:textSize">54sp</item>
         <item name="android:numeric">decimal</item>
+        <item name="android:maxLines">1</item>
     </style>
 
     <style name="BidPriceBase" parent="@style/MainScreenFont">

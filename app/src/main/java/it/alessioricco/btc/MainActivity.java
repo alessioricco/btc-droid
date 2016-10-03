@@ -1,7 +1,5 @@
 package it.alessioricco.btc;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,13 +26,10 @@ import it.alessioricco.btc.models.Market;
 import it.alessioricco.btc.models.Markets;
 import it.alessioricco.btc.services.MarketsService;
 import it.alessioricco.btc.utils.StringUtils;
-//import rx.android.app.AppObservable;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.Subscriber;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
@@ -46,8 +42,12 @@ final public class MainActivity extends AppCompatActivity
 
     @Inject MarketsService marketsService;
 
-    @InjectView(R.id.current)
-    TextView currentValue;
+    @InjectView(R.id.current) TextView currentValue;
+    @InjectView(R.id.ask) TextView askValue;
+    @InjectView(R.id.bid) TextView bidValue;
+    @InjectView(R.id.high) TextView highValue;
+    @InjectView(R.id.low) TextView lowValue;
+    @InjectView(R.id.volume) TextView volume;
 
     // Container for subscriptions (RxJava). They will be unsubscribed onDestroy.
     protected CompositeSubscription compositeSubscription = new CompositeSubscription();
@@ -175,6 +175,16 @@ final public class MainActivity extends AppCompatActivity
                 });
     }
 
+    private void showCurrentMarket(final Market m){
+        // given the received model, draw the UI
+        currentValue.setText(StringUtils.formatValue(m.getBid()));
+        askValue.setText(StringUtils.formatValue(m.getAsk()));
+        bidValue.setText(StringUtils.formatValue(m.getBid()));
+        highValue.setText(StringUtils.formatValue(m.getHigh()));
+        lowValue.setText(StringUtils.formatValue(m.getLow()));
+        volume.setText(StringUtils.formatValue(m.getVolume()));
+    }
+
     private void updateMarkets(final List<Market> markets) {
 
         if (markets == null) {
@@ -184,8 +194,8 @@ final public class MainActivity extends AppCompatActivity
         // for now we'll read just one
         for(Market m: markets) {
 
-            // given the received model, draw the UI
-            currentValue.setText(StringUtils.formatValue(m.getBid()));
+            showCurrentMarket(m);
+
             break;
         }
 
