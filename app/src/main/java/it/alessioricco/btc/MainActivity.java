@@ -1,8 +1,13 @@
 package it.alessioricco.btc;
 
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,10 +17,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.inject.Inject;
 
@@ -29,6 +47,7 @@ import it.alessioricco.btc.utils.StringUtils;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -40,19 +59,34 @@ import rx.subscriptions.CompositeSubscription;
 final public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    @Inject MarketsService marketsService;
+    @Inject
+    MarketsService marketsService;
 
-    @InjectView(R.id.current) TextView currentValue;
-    @InjectView(R.id.ask) TextView askValue;
-    @InjectView(R.id.bid) TextView bidValue;
-    @InjectView(R.id.high) TextView highValue;
-    @InjectView(R.id.low) TextView lowValue;
-    @InjectView(R.id.volume) TextView volume;
+    @InjectView(R.id.current)
+    TextView currentValue;
+    @InjectView(R.id.ask)
+    TextView askValue;
+    @InjectView(R.id.bid)
+    TextView bidValue;
+    @InjectView(R.id.high)
+    TextView highValue;
+    @InjectView(R.id.low)
+    TextView lowValue;
+    @InjectView(R.id.volume)
+    TextView volume;
+
+    @InjectView(R.id.currencies)
+    LinearLayout currenciesContainer;
 
     // Container for subscriptions (RxJava). They will be unsubscribed onDestroy.
     protected CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     private Markets markets;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
 
     @Override
@@ -73,7 +107,7 @@ final public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -87,6 +121,9 @@ final public class MainActivity extends AppCompatActivity
         //TODO: call the service
         //currentValue.setText(StringUtils.formatValue(123.98));
         //asyncUpdateMarkets();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -146,10 +183,10 @@ final public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void asyncUpdateMarkets() {
+    private Subscription asyncUpdateMarkets() {
         Observable<List<Market>> observable = marketsService.getMarkets();
 
-        observable
+        return observable
                 .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Market>>() {
@@ -162,7 +199,7 @@ final public class MainActivity extends AppCompatActivity
                     public void onError(Throwable e) {
                         // cast to retrofit.HttpException to get the response code
                         if (e instanceof HttpException) {
-                            HttpException response = (HttpException)e;
+                            HttpException response = (HttpException) e;
                             int code = response.code();
                             //TODO: add a toast
                         }
@@ -175,7 +212,7 @@ final public class MainActivity extends AppCompatActivity
                 });
     }
 
-    private void showCurrentMarket(final Market m){
+    private void showCurrentMarket(final Market m) {
         // given the received model, draw the UI
         currentValue.setText(StringUtils.formatValue(m.getBid()));
         askValue.setText(StringUtils.formatValue(m.getAsk()));
@@ -185,14 +222,68 @@ final public class MainActivity extends AppCompatActivity
         volume.setText(StringUtils.formatValue(m.getVolume()));
     }
 
+
     private void updateMarkets(final List<Market> markets) {
 
         if (markets == null) {
             return;
         }
+        if (markets.size() == 0) {
+            return;
+        }
+
+        // create the needed data structure (currency and markets)
+        //TODO: currencies must be an hashmap of list of symbols
+        final List<String> currencies = new ArrayList<String>();
+        final List<String> symbols = new ArrayList<String>();
+
+        for (Iterator<Market> iterator = markets.iterator(); iterator.hasNext(); ) {
+            final Market m = iterator.next();
+
+            final String currency = m.getCurrency();
+            if (!currencies.contains(currency)) {
+                currencies.add(currency);
+            }
+
+            final String symbol = m.getSymbol();
+            if (!symbols.contains(symbol)) {
+                symbols.add(symbol);
+            }
+            // apply a filter (no need for now)
+            if (false) {
+                iterator.remove();
+            }
+        }
+
+        Collections.sort(currencies, new Comparator<String>() {
+            public int compare(String left, String right) {
+                //TODO: sorting must be done giving priority to the most used currency
+                return left.compareTo(right);
+            }
+        });
+
+        // fill the currencies scrollView
+        this.currenciesContainer.removeAllViews();
+        for (String currency: currencies) {
+            //final TextView currencyTextView = new TextView(this);
+            final TextView currencyTextView = (TextView)getLayoutInflater().inflate(R.layout.currency_template, null);
+            currencyTextView.setText(currency + " "); //TODO: this is not acceptable, apply margins
+            currencyTextView.setOnClickListener(new View.OnClickListener()
+            {
+
+                @Override
+                public void onClick(View v)
+                {
+                    // TODO: Apply selection
+                    Log.e("Tag","clicked on "+currencyTextView.getText());
+                }
+            });
+            this.currenciesContainer.addView(currencyTextView);
+        }
+
 
         // for now we'll read just one
-        for(Market m: markets) {
+        for (Market m : markets) {
 
             showCurrentMarket(m);
 
@@ -200,18 +291,18 @@ final public class MainActivity extends AppCompatActivity
         }
 
 
+
+
     }
 
     /**
      * https://github.com/ReactiveX/RxJava/wiki/The-RxJava-Android-Module
      */
-    @Override public void onResume() {
+    @Override
+    public void onResume() {
         super.onResume();
 
-
-        asyncUpdateMarkets();
-
-        //compositeSubscription.add(sub);
+        compositeSubscription.add(asyncUpdateMarkets());
 
     }
 
@@ -222,4 +313,39 @@ final public class MainActivity extends AppCompatActivity
         compositeSubscription.unsubscribe();
     }
 
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Main Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
+    }
 }

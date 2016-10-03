@@ -71,4 +71,5 @@ dependencies {
     }
 
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
+    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
 }

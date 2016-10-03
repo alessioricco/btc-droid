@@ -53,7 +53,9 @@
 
                     <!-- volume -->
                     <TableLayout
-                        android:layout_width="match_parent"
+                        android:stretchColumns="1"
+                        android:shrinkColumns="1"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent">
 
                         <TableRow android:layout_weight="0.50"
@@ -109,89 +111,73 @@
                     android:layout_weight=".40">
                     <!-- hi, low, bid, ask-->
 
-                    <TableLayout
+                    <LinearLayout
+                        android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:stretchColumns="0"
-                        android:shrinkColumns="1"
                         >
 
-                        <TableRow android:layout_weight="0.25">
-
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.25">
                             <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight=".30"
-                                style="@style/BidPriceLabel"
+                                style="@style/BidPriceLabelBox"
+                                android:layout_toRightOf="@+id/ask"
                                 android:text="ASK:" />
 
                             <me.grantland.widget.AutofitTextView
                                 android:id="@+id/ask"
-                                android:layout_width="wrap_content"
-                                android:layout_weight=".70"
-                                android:layout_gravity="right"
-                                style="@style/BidPriceValue"
+                                style="@style/BidPriceValueBox"
                                 android:text="@string/mock_price_high"
                                 />
-                        </TableRow>
+                        </RelativeLayout>
 
-                        <TableRow android:layout_weight="0.25">
-
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.25">
                             <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight=".30"
-                                style="@style/BidPriceLabel"
+                                style="@style/BidPriceLabelBox"
+                                android:layout_toRightOf="@+id/bid"
                                 android:text="BID:"
                                 android:id="@+id/textView3" />
 
                             <me.grantland.widget.AutofitTextView
                                 android:id="@+id/bid"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight=".70"
-                                android:layout_gravity="right"
-                                style="@style/BidPriceValue"
+                                style="@style/BidPriceValueBox"
                                 android:text="@string/mock_price" />
-                        </TableRow>
+                        </RelativeLayout>
 
-                        <TableRow android:layout_weight="0.25">
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.25">
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight=".20"
-                                style="@style/BidPriceLabel"
-                                android:text="HIGH:" />
+                                android:layout_toRightOf="@+id/high"
+                                style="@style/BidPriceLabelBox"
+                                android:text="HI:" />
                             <me.grantland.widget.AutofitTextView
                                 android:id="@+id/high"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight=".80"
-                                android:layout_gravity="right"
-                                style="@style/BidPriceValue"
+                                style="@style/BidPriceValueBox"
                                 android:text="@string/mock_price_high" />
-                        </TableRow>
+                        </RelativeLayout>
 
-                        <TableRow android:layout_weight="0.25">
-
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.25">
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight=".20"
-                                style="@style/BidPriceLabel"
-                                android:text="LOW:" />
-
+                                android:layout_toRightOf="@+id/low"
+                                style="@style/BidPriceLabelBox"
+                                android:text="LO:" />
                             <me.grantland.widget.AutofitTextView
                                 android:id="@+id/low"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight=".80"
-                                android:layout_gravity="right"
-                                style="@style/BidPriceValue"
+                                style="@style/BidPriceValueBox"
                                 android:text="@string/mock_price" />
-                        </TableRow>
+                        </RelativeLayout>
 
-                    </TableLayout>
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -213,5 +199,25 @@
         </RelativeLayout>
     </LinearLayout>
 
+    <!-- Currency Selector -->
+    <HorizontalScrollView
+        android:id="@+id/hsv_currency"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:fillViewport="true"
+        android:measureAllChildren="false"
+        android:scrollbars="none" >
 
+        <LinearLayout
+            android:id="@+id/currencies"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
 </RelativeLayout>
