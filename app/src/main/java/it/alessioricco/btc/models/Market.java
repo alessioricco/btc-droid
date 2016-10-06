@@ -2,6 +2,7 @@ package it.alessioricco.btc.models;
 
 import java.io.Serializable;
 
+import it.alessioricco.btc.utils.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,4 +37,16 @@ public class Market implements Serializable {
     @Getter @Setter private Double avg;
     @Getter @Setter private String symbol;
     @Getter @Setter private Double low;
+
+    final public boolean isValid() {
+        return bid != null &&
+                ask != null &&
+                high != null &&
+                low != null &&
+                currency_volume != null &&
+                close != null &&
+                avg != null &&
+                ! StringUtils.isNullOrEmpty(symbol) &&
+                ! StringUtils.isNullOrEmpty(currency);
+    }
 }

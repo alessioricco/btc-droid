@@ -81,7 +81,11 @@ final public class MainActivity extends AppCompatActivity
     // Container for subscriptions (RxJava). They will be unsubscribed onDestroy.
     protected CompositeSubscription compositeSubscription = new CompositeSubscription();
 
-    private Markets markets;
+    private Markets markets = new Markets();
+
+    private String currentMarketSymbol = "";
+    private String currentMarketCurrency = "";
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -213,6 +217,8 @@ final public class MainActivity extends AppCompatActivity
     }
 
     private void showCurrentMarket(final Market m) {
+        if (m == null) return;
+
         // given the received model, draw the UI
         currentValue.setText(StringUtils.formatValue(m.getBid()));
         askValue.setText(StringUtils.formatValue(m.getAsk()));
@@ -222,50 +228,28 @@ final public class MainActivity extends AppCompatActivity
         volume.setText(StringUtils.formatValue(m.getVolume()));
     }
 
-
-    private void updateMarkets(final List<Market> markets) {
-
-        if (markets == null) {
-            return;
+    /**
+     * give the current symbol and the current currency
+     * display the market on the screen
+     */
+    private void onSelectedMarket() {
+        final Market selectedMarket = markets.getMarket(currentMarketCurrency, currentMarketSymbol);
+        if (selectedMarket != null) {
+            showCurrentMarket(selectedMarket);
         }
-        if (markets.size() == 0) {
-            return;
-        }
+    }
 
-        // create the needed data structure (currency and markets)
-        //TODO: currencies must be an hashmap of list of symbols
-        final List<String> currencies = new ArrayList<String>();
-        final List<String> symbols = new ArrayList<String>();
+    private void updateMarkets(final List<Market> newMarkets) {
 
-        for (Iterator<Market> iterator = markets.iterator(); iterator.hasNext(); ) {
-            final Market m = iterator.next();
+        this.markets.setMarkets(newMarkets);
 
-            final String currency = m.getCurrency();
-            if (!currencies.contains(currency)) {
-                currencies.add(currency);
-            }
-
-            final String symbol = m.getSymbol();
-            if (!symbols.contains(symbol)) {
-                symbols.add(symbol);
-            }
-            // apply a filter (no need for now)
-            if (false) {
-                iterator.remove();
-            }
-        }
-
-        Collections.sort(currencies, new Comparator<String>() {
-            public int compare(String left, String right) {
-                //TODO: sorting must be done giving priority to the most used currency
-                return left.compareTo(right);
-            }
-        });
+        //TODO: validate the markets structure
 
         // fill the currencies scrollView
         this.currenciesContainer.removeAllViews();
-        for (String currency: currencies) {
-            //final TextView currencyTextView = new TextView(this);
+
+        for (String currency: this.markets.getCurrencies()) {
+            final String currentCurrency = currency;
             final TextView currencyTextView = (TextView)getLayoutInflater().inflate(R.layout.currency_template, null);
             currencyTextView.setText(currency + " "); //TODO: this is not acceptable, apply margins
             currencyTextView.setOnClickListener(new View.OnClickListener()
@@ -276,22 +260,16 @@ final public class MainActivity extends AppCompatActivity
                 {
                     // TODO: Apply selection
                     Log.e("Tag","clicked on "+currencyTextView.getText());
+                    currentMarketCurrency = currentCurrency;
+                    onSelectedMarket();
                 }
             });
             this.currenciesContainer.addView(currencyTextView);
         }
 
-
-        // for now we'll read just one
-        for (Market m : markets) {
-
-            showCurrentMarket(m);
-
-            break;
-        }
-
-
-
+        this.currentMarketCurrency = "USD";
+        this.currentMarketSymbol = "";
+        onSelectedMarket();
 
     }
 
