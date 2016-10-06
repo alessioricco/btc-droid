@@ -1,24 +1,19 @@
 package it.alessioricco.btc;
 
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.widget.HorizontalScrollView;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -27,13 +22,7 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import javax.inject.Inject;
 
@@ -77,8 +66,11 @@ final public class MainActivity extends AppCompatActivity
 
     @InjectView(R.id.currencies)
     LinearLayout currenciesContainer;
+    @InjectView(R.id.symbols)
+    LinearLayout symbolsContainer;
 
     // Container for subscriptions (RxJava). They will be unsubscribed onDestroy.
+    //TODO: check, could be a dead code
     protected CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     private Markets markets = new Markets();
@@ -122,9 +114,6 @@ final public class MainActivity extends AppCompatActivity
         ObjectGraphSingleton.getInstance().inject(this);
         ButterKnife.inject(this);
 
-        //TODO: call the service
-        //currentValue.setText(StringUtils.formatValue(123.98));
-        //asyncUpdateMarkets();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -228,11 +217,41 @@ final public class MainActivity extends AppCompatActivity
         volume.setText(StringUtils.formatValue(m.getVolume()));
     }
 
+    private void onSelectedCurrency() {
+        final List<String> symbols = this.markets.getSymbols(currentMarketCurrency);
+
+        // fill the currencies scrollView
+        this.symbolsContainer.removeAllViews();
+        // in future we'll have to recover it from a cache of selected
+        currentMarketSymbol = "";
+
+        for (String symbol: symbols) {
+            final String currentSymbol = symbol;
+            final TextView systemTextView = (TextView)getLayoutInflater().inflate(R.layout.currency_template, null);
+            systemTextView.setText(symbol + " "); //TODO: this is not acceptable, apply margins
+            systemTextView.setOnClickListener(new View.OnClickListener()
+            {
+
+                @Override
+                public void onClick(View v)
+                {
+                    // TODO: Apply selection
+                    Log.e("Tag","clicked on "+systemTextView.getText());
+                    currentMarketSymbol = currentSymbol;
+                    onSelectedSymbol();
+                }
+            });
+            this.symbolsContainer.addView(systemTextView);
+        }
+
+        onSelectedSymbol();
+    }
+
     /**
      * give the current symbol and the current currency
      * display the market on the screen
      */
-    private void onSelectedMarket() {
+    private void onSelectedSymbol() {
         final Market selectedMarket = markets.getMarket(currentMarketCurrency, currentMarketSymbol);
         if (selectedMarket != null) {
             showCurrentMarket(selectedMarket);
@@ -247,6 +266,8 @@ final public class MainActivity extends AppCompatActivity
 
         // fill the currencies scrollView
         this.currenciesContainer.removeAllViews();
+        // in future we'll have to recover it from a cache of selected
+        currentMarketCurrency = "USD"; //TODO: must be a const
 
         for (String currency: this.markets.getCurrencies()) {
             final String currentCurrency = currency;
@@ -261,15 +282,13 @@ final public class MainActivity extends AppCompatActivity
                     // TODO: Apply selection
                     Log.e("Tag","clicked on "+currencyTextView.getText());
                     currentMarketCurrency = currentCurrency;
-                    onSelectedMarket();
+                    onSelectedCurrency();
                 }
             });
             this.currenciesContainer.addView(currencyTextView);
         }
 
-        this.currentMarketCurrency = "USD";
-        this.currentMarketSymbol = "";
-        onSelectedMarket();
+        onSelectedCurrency();
 
     }
 

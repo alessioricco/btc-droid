@@ -38,6 +38,10 @@ public class Market implements Serializable {
     @Getter @Setter private String symbol;
     @Getter @Setter private Double low;
 
+    /**
+     * check if the market is valid and still active
+     * @return
+     */
     final public boolean isValid() {
         return bid != null &&
                 ask != null &&

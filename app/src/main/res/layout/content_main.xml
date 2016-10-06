@@ -23,6 +23,29 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
+    <!-- Currency Selector -->
+    <HorizontalScrollView
+        android:id="@+id/hsv_symbols"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:fillViewport="true"
+        android:measureAllChildren="false"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:id="@+id/symbols"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <!-- list of market symbols -->
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+
+
         <!-- textual info -->
         <RelativeLayout
             android:layout_width="match_parent"
@@ -215,7 +238,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
-
+            <!-- list of currencies -->
 
         </LinearLayout>
 

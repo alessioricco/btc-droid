@@ -27,8 +27,8 @@ import lombok.Setter;
  */
 public class Markets implements Serializable {
 
-    // hashtable of hashtable (currency->(symbol->market))
-    final private @Getter @Setter Map<String, Map<String,Market>> currencies = new HashMap<String, Map<String,Market>>();
+    // (currency->(symbol->market))
+    final private Map<String, Map<String,Market>> currencies = new HashMap<String, Map<String,Market>>();
 
     /**
      * return the sorted list of available currencies
@@ -51,7 +51,12 @@ public class Markets implements Serializable {
      * @return
      */
     public List<String> getSymbols(final String currency) {
-        return new ArrayList<String>(currencies.get(currency).keySet());
+        Map<String,Market> symbols = currencies.get(currency);
+
+        if (symbols == null) {
+            return null; //TODO it should not happens
+        }
+        return new ArrayList<String>(symbols.keySet());
     }
 
     /**
@@ -60,11 +65,11 @@ public class Markets implements Serializable {
      * @param symbol
      * @return the given market or null if the market is not found
      */
-    public Market getMarket(final String currency, String symbol) {
+    public Market getMarket(String currency, String symbol) {
 
-        if (StringUtils.isNullOrEmpty(currency)) {
-            return null;
-        }
+//        if (StringUtils.isNullOrEmpty(currency)) {
+//            currency = "USD"; //TODO: must be a const
+//        }
 
         if (StringUtils.isNullOrEmpty(symbol)) {
             List<String> symbols = getSymbols(currency);
