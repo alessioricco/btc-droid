@@ -1,21 +1,16 @@
 package it.alessioricco.btc.models;
 
-import android.support.v4.util.Pair;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import it.alessioricco.btc.utils.BitcoinChartsUtils;
 import it.alessioricco.btc.utils.StringUtils;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Created by alessioricco on 01/10/2016.
@@ -54,7 +49,7 @@ public class Markets implements Serializable {
         Map<String,Market> symbols = currencies.get(currency);
 
         if (symbols == null) {
-            return null; //TODO it should not happens
+            return null; //TODO it should not happen
         }
         return new ArrayList<String>(symbols.keySet());
     }
@@ -67,9 +62,9 @@ public class Markets implements Serializable {
      */
     public Market getMarket(String currency, String symbol) {
 
-//        if (StringUtils.isNullOrEmpty(currency)) {
-//            currency = "USD"; //TODO: must be a const
-//        }
+        if (StringUtils.isNullOrEmpty(currency)) {
+            return null; //TODO it should not happen
+        }
 
         if (StringUtils.isNullOrEmpty(symbol)) {
             List<String> symbols = getSymbols(currency);
@@ -95,9 +90,7 @@ public class Markets implements Serializable {
 
         currencies.clear();
 
-        // create the needed data structure (currency and markets)
-        //TODO: currencies must be an hashmap of list of symbols
-
+        // creating the needed data structure (currency and markets)
         for (Iterator<Market> iterator = markets.iterator(); iterator.hasNext(); ) {
             final Market m = iterator.next();
 
@@ -114,7 +107,7 @@ public class Markets implements Serializable {
             if (availableMarketsOnGivenCurrency == null) {
                 availableMarketsOnGivenCurrency = new HashMap<String,Market>();
             }
-            final String symbol = m.getSymbol();
+            final String symbol = BitcoinChartsUtils.normalizeSymbolName(m.getSymbol());
             availableMarketsOnGivenCurrency.put(symbol, m);
             currencies.put(currency, availableMarketsOnGivenCurrency);
 

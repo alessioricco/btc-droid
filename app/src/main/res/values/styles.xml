@@ -58,11 +58,22 @@
         <item name="android:layout_alignParentRight">true</item>
     </style>
 
-    <style name="CurrencyItem" parent="@style/BidPriceLabel">
+    <!-- Items in the horizontal scroll bar -->
+    <style name="HorizontalScrollItem" parent="@style/BidPriceLabel">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:layout_marginRight">16dp</item>
         <item name="android:layout_alignParentLeft">true</item>
+    </style>
+
+    <!-- Currency Items in the horizontal scroll bar -->
+    <style name="UnselectedCurrencyItem" parent="@style/HorizontalScrollItem">
+
+    </style>
+
+    <!-- Symbol Items in the horizontal scroll bar -->
+    <style name="UnselectedSymbolItem" parent="@style/HorizontalScrollItem">
+
     </style>
 </resources>
