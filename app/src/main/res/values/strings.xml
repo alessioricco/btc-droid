@@ -9,4 +9,6 @@
     <string name="mock_price_high">1234567.89</string>
     <string name="mock_price">12345.67</string>
     <string name="mock_price_low">1.23</string>
+
+    <string name="string_space">"%1$s "</string>
 </resources>

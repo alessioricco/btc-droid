@@ -1,8 +1,10 @@
 package it.alessioricco.btc.models;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import it.alessioricco.btc.utils.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,18 +17,36 @@ import lombok.Setter;
  * TODO: probably we need just two members (currentMarketSymbol,currentMarketCurrency)
  */
 
-public class CurrentSelection {
+public class CurrentSelection implements Serializable {
 
-    private @Getter @Setter String currentMarketSymbol = "";
-    private @Getter @Setter String currentMarketCurrency = "";
+    private String currentMarketSymbol = "";
+    private String currentMarketCurrency = "";
 
     private Map<String,String> lastSelectedSymbol = new HashMap<String, String>();
 
-    public String getLastSelectedSymbol(final String currency) {
-        return "";
+    public String getCurrentMarketCurrency() {
+        if (StringUtils.isNullOrEmpty(currentMarketCurrency)) {
+            currentMarketCurrency = "USD";
+        }
+        return currentMarketCurrency;
     }
 
-    public void setLastSelectedSymbol(final String currency, final String symbol) {
+    public void setCurrentMarketCurrency(final String currency) {
+        currentMarketCurrency = currency;
+        currentMarketSymbol = "";
+    }
 
+    public void setCurrentMarketSymbol(final String symbol) {
+        if (StringUtils.isNullOrEmpty(symbol)) return;
+
+        currentMarketSymbol = symbol;
+        lastSelectedSymbol.put(currentMarketCurrency, currentMarketSymbol);
+    }
+
+    public String getCurrentMarketSymbol() {
+        if (StringUtils.isNullOrEmpty(currentMarketSymbol)) {
+            currentMarketSymbol = lastSelectedSymbol.get(currentMarketCurrency);
+        }
+        return currentMarketSymbol;
     }
 }

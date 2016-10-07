@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
+import it.alessioricco.btc.models.CurrentSelection;
 import it.alessioricco.btc.models.Market;
 import it.alessioricco.btc.models.Markets;
 import it.alessioricco.btc.services.MarketsService;
@@ -75,9 +76,10 @@ final public class MainActivity extends AppCompatActivity
 
     private Markets markets = new Markets();
 
-    private String currentMarketSymbol = "";
-    private String currentMarketCurrency = "";
+//    private String currentMarketSymbol = "";
+//    private String currentMarketCurrency = "";
 
+    private CurrentSelection currentSelection = new CurrentSelection();
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -218,17 +220,17 @@ final public class MainActivity extends AppCompatActivity
     }
 
     private void onSelectedCurrency() {
-        final List<String> symbols = this.markets.getSymbols(currentMarketCurrency);
+        final List<String> symbols = this.markets.getSymbols(currentSelection.getCurrentMarketCurrency());
 
         // fill the currencies scrollView
         this.symbolsContainer.removeAllViews();
         // in future we'll have to recover it from a cache of selected
-        currentMarketSymbol = "";
+        //currentMarketSymbol = "";
 
         for (String symbol: symbols) {
             final String currentSymbol = symbol;
             final TextView systemTextView = (TextView)getLayoutInflater().inflate(R.layout.currency_template, null);
-            systemTextView.setText(symbol + " "); //TODO: this is not acceptable, apply margins
+            systemTextView.setText(getString(R.string.string_space, symbol));
             systemTextView.setOnClickListener(new View.OnClickListener()
             {
 
@@ -237,7 +239,7 @@ final public class MainActivity extends AppCompatActivity
                 {
                     // TODO: Apply selection
                     Log.e("Tag","clicked on "+systemTextView.getText());
-                    currentMarketSymbol = currentSymbol;
+                    currentSelection.setCurrentMarketSymbol(currentSymbol);
                     onSelectedSymbol();
                 }
             });
@@ -252,7 +254,7 @@ final public class MainActivity extends AppCompatActivity
      * display the market on the screen
      */
     private void onSelectedSymbol() {
-        final Market selectedMarket = markets.getMarket(currentMarketCurrency, currentMarketSymbol);
+        final Market selectedMarket = markets.getMarket(currentSelection.getCurrentMarketCurrency(), currentSelection.getCurrentMarketSymbol());
         if (selectedMarket != null) {
             showCurrentMarket(selectedMarket);
         }
@@ -266,22 +268,19 @@ final public class MainActivity extends AppCompatActivity
 
         // fill the currencies scrollView
         this.currenciesContainer.removeAllViews();
-        // in future we'll have to recover it from a cache of selected
-        currentMarketCurrency = "USD"; //TODO: must be a const
 
         for (String currency: this.markets.getCurrencies()) {
             final String currentCurrency = currency;
             final TextView currencyTextView = (TextView)getLayoutInflater().inflate(R.layout.currency_template, null);
-            currencyTextView.setText(currency + " "); //TODO: this is not acceptable, apply margins
+            currencyTextView.setText(getString(R.string.string_space, currency));
             currencyTextView.setOnClickListener(new View.OnClickListener()
             {
 
                 @Override
                 public void onClick(View v)
                 {
-                    // TODO: Apply selection
                     Log.e("Tag","clicked on "+currencyTextView.getText());
-                    currentMarketCurrency = currentCurrency;
+                    currentSelection.setCurrentMarketCurrency(currentCurrency);
                     onSelectedCurrency();
                 }
             });

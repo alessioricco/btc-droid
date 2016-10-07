@@ -9,4 +9,10 @@
     <color name="mainBackground">#FFFFFF</color>
     <color name="mainValueColor">#000000</color>
     <color name="mainLabelColor">#0000FF</color>
+
+    <!-- Horizontal list -->
+    <color name="UnselectedCurrencyItem">#0000FF</color>
+    <color name="UnselectedSymbolItem">#0000FF</color>
+    <color name="SelectedCurrencyItem">#FF0000</color>
+    <color name="SelectedSymbolItem">#FF0000</color>
 </resources>
