@@ -4,15 +4,15 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-
     <!-- Custom Colors -->
-    <color name="mainBackground">#FFFFFF</color>
-    <color name="mainValueColor">#000000</color>
-    <color name="mainLabelColor">#0000FF</color>
+    <color name="mainBackground">#000000</color>
+    <color name="mainValueColor">#FFFFFF</color>
+    <color name="mainLabelColor">#999999</color>
 
     <!-- Horizontal list -->
-    <color name="UnselectedCurrencyItem">#0000FF</color>
-    <color name="UnselectedSymbolItem">#0000FF</color>
-    <color name="SelectedCurrencyItem">#FF0000</color>
-    <color name="SelectedSymbolItem">#FF0000</color>
+    <color name="UnselectedCurrencyItem">@color/mainLabelColor</color>
+    <color name="UnselectedSymbolItem">@color/mainLabelColor</color>
+    <color name="SelectedCurrencyItem">#ffffff</color>
+    <color name="SelectedSymbolItem">#ffffff</color>
+
 </resources>

@@ -19,7 +19,7 @@
     <style name="MainScreenFont" parent="@android:style/TextAppearance.DeviceDefault.Medium">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">#000000</item>
+        <item name="android:textColor">@color/mainValueColor</item>
         <item name="android:typeface">normal</item>
     </style>
 
@@ -35,13 +35,12 @@
         <item name="android:maxLines">1</item>
     </style>
 
-
     <style name="BidPriceLabel" parent="@style/BidPriceBase">
-        <item name="android:textColor">#0000ff</item>
+        <item name="android:textColor">@color/mainLabelColor</item>
     </style>
 
     <style name="BidPriceValue" parent="@style/BidPriceBase">
-        <item name="android:textColor">#000000</item>
+        <item name="android:textColor">@color/mainValueColor</item>
         <item name="android:numeric">decimal</item>
     </style>
 
@@ -59,12 +58,18 @@
     </style>
 
     <!-- Items in the horizontal scroll bar -->
-    <style name="HorizontalScrollItem" parent="@style/BidPriceLabel">
+
+    <style name="HorizontalScrollItemFont" parent="@style/BidPriceBase">
+        <item name="android:textColor">@color/UnselectedSymbolItem</item>
+    </style>
+
+    <style name="HorizontalScrollItem" parent="@style/HorizontalScrollItemFont">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:layout_marginRight">16dp</item>
         <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <!-- Currency Items in the horizontal scroll bar -->

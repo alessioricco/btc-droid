@@ -30,11 +30,11 @@ public final class BtcTickerApp extends Application {
         }
 
 
-/*        // Load custom fonts
+        // Load custom fonts
         CalligraphyConfig.initDefault(
-                new CalligraphyConfig.Builder().setDefaultFontPath("nofont.ttf")
+                new CalligraphyConfig.Builder().setDefaultFontPath("fonts/Lato-Black.ttf")
                         .setFontAttrId(R.attr.fontPath)
-                        .build());*/
+                        .build());
     }
 
     final private List<Object> getModules() {

@@ -58,7 +58,14 @@ public class Markets implements Serializable {
         if (symbols == null) {
             return null; //TODO it should not happen
         }
-        return new ArrayList<String>(symbols.keySet());
+        List<String> a = new ArrayList<String>(symbols.keySet());
+        Collections.sort(a, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareTo(o2);
+            }
+        });
+        return a;
     }
 
     /**
