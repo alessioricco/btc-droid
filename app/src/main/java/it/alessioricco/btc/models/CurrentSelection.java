@@ -45,8 +45,10 @@ public class CurrentSelection implements Serializable {
 
     public String getCurrentMarketSymbol() {
         if (StringUtils.isNullOrEmpty(currentMarketSymbol)) {
-            currentMarketSymbol = lastSelectedSymbol.get(currentMarketCurrency);
+            // get the last selected one
+            currentMarketSymbol = lastSelectedSymbol.get(getCurrentMarketCurrency());
         }
+
         return currentMarketSymbol;
     }
 }

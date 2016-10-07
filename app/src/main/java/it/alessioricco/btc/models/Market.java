@@ -1,6 +1,7 @@
 package it.alessioricco.btc.models;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import it.alessioricco.btc.utils.StringUtils;
 import lombok.Getter;
@@ -38,6 +39,21 @@ public class Market implements Serializable {
     @Getter @Setter private String symbol;
     @Getter @Setter private Double low;
 
+    public Date getDate() {
+        final long dv = Long.valueOf(latest_trade)*1000;// its need to be in milisecond
+        return new java.util.Date(dv);
+    }
+
+    private boolean tooOld() {
+        long week = 7L*26L*60L*60L*1000L;
+        Date lastWeek = new java.util.Date((new java.util.Date()).getTime() - week);
+        return getDate().before(lastWeek);
+    }
+
+    private boolean marketToFilter() {
+        return (symbol.toUpperCase()).startsWith("LOCALBTC");
+    }
+
     /**
      * check if the market is valid and still active
      * @return
@@ -50,6 +66,8 @@ public class Market implements Serializable {
                 currency_volume != null &&
                 close != null &&
                 avg != null &&
+                ! tooOld() &&
+                ! marketToFilter() &&
                 ! StringUtils.isNullOrEmpty(symbol) &&
                 ! StringUtils.isNullOrEmpty(currency);
     }

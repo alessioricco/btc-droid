@@ -1,10 +1,12 @@
 package it.alessioricco.btc;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -22,6 +24,8 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -33,6 +37,7 @@ import it.alessioricco.btc.models.CurrentSelection;
 import it.alessioricco.btc.models.Market;
 import it.alessioricco.btc.models.Markets;
 import it.alessioricco.btc.services.MarketsService;
+import it.alessioricco.btc.utils.BitcoinChartsUtils;
 import it.alessioricco.btc.utils.StringUtils;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
@@ -178,6 +183,10 @@ final public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * read the markets from a JSON web service (bitcoincharts.com)
+     * @return
+     */
     private Subscription asyncUpdateMarkets() {
         Observable<List<Market>> observable = marketsService.getMarkets();
 
@@ -207,6 +216,10 @@ final public class MainActivity extends AppCompatActivity
                 });
     }
 
+    /**
+     * render the current market values on screen
+     * @param m
+     */
     private void showCurrentMarket(final Market m) {
         if (m == null) return;
 
@@ -217,27 +230,58 @@ final public class MainActivity extends AppCompatActivity
         highValue.setText(StringUtils.formatValue(m.getHigh()));
         lowValue.setText(StringUtils.formatValue(m.getLow()));
         volume.setText(StringUtils.formatValue(m.getVolume()));
+
+
+
+        //String vv = new SimpleDateFormat("MM dd, yyyy hh:mma").format(df);
     }
 
+    /**
+     * change the style to an horizontal scrollbar with list of symbols or currencies
+     * @param layout
+     * @param value
+     */
+    private void applySelectionToContainer(final LinearLayout layout, final String value){
+        final Context context = getApplicationContext();
+        final String valueToSearch = getString(R.string.string_space, value.toUpperCase());
+        for (int i=0; i<layout.getChildCount(); i++) {
+            View v = layout.getChildAt(i);
+            if ( v instanceof TextView ) {
+                final TextView t = (TextView) v;
+                final String text = t.getText().toString();
+                //TODO use an inline conditional
+                int color;
+                if (text.equals(valueToSearch)) {
+                     color = ContextCompat.getColor(context, R.color.SelectedCurrencyItem);
+                } else {
+                    color = ContextCompat.getColor(context, R.color.UnselectedCurrencyItem);
+                }
+                t.setTextColor(color);
+            }
+        }
+    }
+
+    /**
+     * called everytime a currency is selected on screen
+     */
     private void onSelectedCurrency() {
-        final List<String> symbols = this.markets.getSymbols(currentSelection.getCurrentMarketCurrency());
+        final String currency = currentSelection.getCurrentMarketCurrency();
+        final List<String> symbols = this.markets.getSymbols(currency);
 
         // fill the currencies scrollView
         this.symbolsContainer.removeAllViews();
-        // in future we'll have to recover it from a cache of selected
-        //currentMarketSymbol = "";
 
         for (String symbol: symbols) {
             final String currentSymbol = symbol;
             final TextView systemTextView = (TextView)getLayoutInflater().inflate(R.layout.currency_template, null);
             systemTextView.setText(getString(R.string.string_space, symbol));
+            systemTextView.setTag(symbol);
             systemTextView.setOnClickListener(new View.OnClickListener()
             {
 
                 @Override
                 public void onClick(View v)
                 {
-                    // TODO: Apply selection
                     Log.e("Tag","clicked on "+systemTextView.getText());
                     currentSelection.setCurrentMarketSymbol(currentSymbol);
                     onSelectedSymbol();
@@ -254,12 +298,28 @@ final public class MainActivity extends AppCompatActivity
      * display the market on the screen
      */
     private void onSelectedSymbol() {
-        final Market selectedMarket = markets.getMarket(currentSelection.getCurrentMarketCurrency(), currentSelection.getCurrentMarketSymbol());
+        String symbol = currentSelection.getCurrentMarketSymbol();
+        final String currency = currentSelection.getCurrentMarketCurrency();
+        final Market selectedMarket = markets.getMarket(currency, symbol);
         if (selectedMarket != null) {
+
+            if (symbol == null && ! StringUtils.isNullOrEmpty( selectedMarket.getSymbol())) {
+                currentSelection.setCurrentMarketSymbol(BitcoinChartsUtils.normalizeSymbolName(selectedMarket.getSymbol()));
+                symbol = currentSelection.getCurrentMarketSymbol();
+            }
+
             showCurrentMarket(selectedMarket);
+            applySelectionToContainer(this.currenciesContainer, currency);
+            applySelectionToContainer(this.symbolsContainer, symbol);
         }
+
+
     }
 
+    /**
+     * called everytime the list of market tickers should be updated
+     * @param newMarkets
+     */
     private void updateMarkets(final List<Market> newMarkets) {
 
         this.markets.setMarkets(newMarkets);
@@ -273,6 +333,7 @@ final public class MainActivity extends AppCompatActivity
             final String currentCurrency = currency;
             final TextView currencyTextView = (TextView)getLayoutInflater().inflate(R.layout.currency_template, null);
             currencyTextView.setText(getString(R.string.string_space, currency));
+            currencyTextView.setTag(currency);
             currencyTextView.setOnClickListener(new View.OnClickListener()
             {
 
