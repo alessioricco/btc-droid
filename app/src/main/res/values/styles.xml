@@ -45,16 +45,15 @@
     </style>
 
     <style name="BidPriceLabelBox" parent="@style/BidPriceLabel">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_marginRight">16dp</item>
-        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">right</item>
     </style>
 
     <style name="BidPriceValueBox" parent="@style/BidPriceValue">
         <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
         <item name="android:gravity">right</item>
-        <item name="android:layout_marginLeft">16dp</item>
-        <item name="android:layout_alignParentRight">true</item>
     </style>
 
     <!-- Items in the horizontal scroll bar -->

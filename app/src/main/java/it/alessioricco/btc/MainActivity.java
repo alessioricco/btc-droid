@@ -343,7 +343,7 @@ final public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * change the style to an horizontal scrollbar with list of symbols or currencies
+     * change the style to an horizontal scrollbar with list of list_of_symbols_main or currencies
      * @param layout
      * @param value
      */

@@ -12,7 +12,7 @@ import lombok.Setter;
  * Created by alessioricco on 06/10/2016.
  *
  * it keeps the current selected items and a map
- * of the last selected symbols per each currency
+ * of the last selected list_of_symbols_main per each currency
  *
  * TODO: probably we need just two members (currentMarketSymbol,currentMarketCurrency)
  */
