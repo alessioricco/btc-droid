@@ -6,9 +6,11 @@ import android.support.v4.util.Pair;
 import javax.inject.Inject;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import it.alessioricco.btc.api.APIFactory;
 import it.alessioricco.btc.api.BitcoinChartsAPI;
@@ -24,6 +26,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import rx.Observable;
 import rx.Subscriber;
+import st.lowlevel.storo.Storo;
 
 /**
  * Created by alessioricco on 01/10/2016.
@@ -36,7 +39,8 @@ import rx.Subscriber;
 public final class MarketsService {
 
     @Inject
-    Retrofit restAdapter;
+    RestAdapterFactory restAdapterFactory;
+    //Retrofit restAdapter;
 
     public MarketsService() {
 
@@ -52,7 +56,7 @@ public final class MarketsService {
 
         // Perform the request to the server
         // TODO: the restadapter object should be defined inside the APIFactory class
-        final BitcoinChartsAPI api = APIFactory.createBitcoinChartsAPI(restAdapter);
+        final BitcoinChartsAPI api = APIFactory.createBitcoinChartsAPI(restAdapterFactory.getJSONRestAdapter());
 
         return api.getMarkets();
     }
@@ -79,21 +83,47 @@ public final class MarketsService {
             @Override
             public void call(final Subscriber<? super List<HistoricalValue>> subscriber) {
                 try {
-                    //TODO this must be injected!!!!
-                    final RestAdapterFactory factory = new RestAdapterFactory();
 
-                    final BitcoinChartsAPI api = APIFactory.createBitcoinChartsAPI(factory.getRawRestAdapter());
+                    String cachedResult = null;
+                    final Boolean expired = Storo.hasExpired(symbol).execute();
+                    if (expired != null) {
 
+                        if (expired) {
+                            Storo.delete(symbol);
+                            // we need a new object
+                        } else {
+                            // we retrieve the object
+                            // todo: make it async
+                            cachedResult = Storo.get(symbol, String.class).execute();
+                        }
+
+                    }
+
+                    if (cachedResult != null) {
+                        final List<HistoricalValue> resultAsList = transformCSVToHistoricalValues(cachedResult);
+                        subscriber.onNext(resultAsList);    // Pass on the data to subscriber
+                        subscriber.onCompleted();     // Signal about the completion subscriber
+                        return;
+                    }
+
+                    final BitcoinChartsAPI api = APIFactory.createBitcoinChartsAPI(restAdapterFactory.getRawRestAdapter());
                     final long start = ((new Date()).getTime() - 1000*60*60)/1000; //1h
-                    //TODO caching the result is MANDATORY
-                    final Call<String> call = api.getHistory("btceUSD", start);
+
+                    final Call<String> call = api.getHistory(symbol, start);
                     call.enqueue(new Callback<String>(){
 
                         @Override
                         public void onResponse(Call<String> call, Response<String> response) {
 
-                            final List<HistoricalValue> resultAsList = transformCSVToHistoricalValues(response.body());
-                            if (resultAsList != null) {
+                            String body = response.body();
+
+                            //TODO: make it async
+                            Storo.put(symbol, body).setExpiry(5, TimeUnit.MINUTES).execute();
+
+                            if (StringUtils.isNullOrEmpty(body)) {
+                                subscriber.onNext(null);
+                            } else {
+                                final List<HistoricalValue> resultAsList = transformCSVToHistoricalValues(body);
                                 subscriber.onNext(resultAsList);    // Pass on the data to subscriber
                             }
                             subscriber.onCompleted();     // Signal about the completion subscriber

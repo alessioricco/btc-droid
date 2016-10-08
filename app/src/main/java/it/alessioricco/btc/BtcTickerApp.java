@@ -8,6 +8,7 @@ import java.util.List;
 import dagger.ObjectGraph;
 import it.alessioricco.btc.injection.AppModule;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
+import st.lowlevel.storo.StoroBuilder;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**
@@ -29,12 +30,15 @@ public final class BtcTickerApp extends Application {
             objectGraph.inject(this);
         }
 
-
         // Load custom fonts
         CalligraphyConfig.initDefault(
                 new CalligraphyConfig.Builder().setDefaultFontPath("fonts/Lato-Black.ttf")
                         .setFontAttrId(R.attr.fontPath)
                         .build());
+        // caching
+        StoroBuilder.configure(10*1024)  // maximum size to allocate in bytes
+                .setDefaultCacheDirectory(this)
+                .initialize();
     }
 
     final private List<Object> getModules() {

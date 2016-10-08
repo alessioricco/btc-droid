@@ -1,5 +1,7 @@
 package it.alessioricco.btc.injection;
 
+import android.content.Context;
+
 import com.squareup.okhttp.OkHttpClient;
 
 import javax.inject.Singleton;
@@ -12,6 +14,8 @@ import it.alessioricco.btc.api.HttpClientFactory;
 import it.alessioricco.btc.api.RestAdapterFactory;
 import it.alessioricco.btc.services.MarketsService;
 import retrofit2.Retrofit;
+import st.lowlevel.storo.Storo;
+import st.lowlevel.storo.StoroBuilder;
 
 
 /**
@@ -30,6 +34,7 @@ import retrofit2.Retrofit;
                 MainActivity.class
         },
         library = true)
+
 public class AppModule {
 
     private BtcTickerApp app; // App: constructor
@@ -69,10 +74,10 @@ public class AppModule {
     /**
      * RestAdapter factory
      * used to build a restadapter for the default ticker service endpoint
-     * @return a well formed RestAdapter object
+     * @return a well formed RestAdapterFactory object
      */
-    @Provides @Singleton public Retrofit provideRestAdapter() {
-        return new RestAdapterFactory().getJSONRestAdapter();
+    @Provides @Singleton public RestAdapterFactory provideRestAdapter() {
+        return new RestAdapterFactory();
     }
 
     @Provides @Singleton public OkHttpClient providesOkHttpClient() {

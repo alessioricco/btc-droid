@@ -234,42 +234,10 @@ final public class MainActivity extends AppCompatActivity
                 });
     }
 
-    private void drawChart(List<HistoricalValue> history) {
-        List<PointValue> values = new ArrayList<PointValue>();
-        //TODO improve chart with better sizes and labels
-        int step = history.size()/20;
-        for(int i = 0; i< history.size(); i+=step ){
-            final float value = history.get(i).getValue().floatValue();
-            values.add(new PointValue(i, value));
-        }
-        Line line = new Line(values).setColor(Color.WHITE).setCubic(true);
-        List<Line> lines = new ArrayList<Line>();
-        lines.add(line);
-        LineChartData data = new LineChartData();
-        data.setLines(lines);
-
-        chart.setLineChartData(data);
-    }
-
-    /**
-     * render the current market values on screen
-     * @param m
-     */
-    private void showCurrentMarket(final Market m) {
-        if (m == null) return;
-
-        // given the received model, draw the UI
-        currentValue.setText(StringUtils.formatValue(m.getBid()));
-        askValue.setText(StringUtils.formatValue(m.getAsk()));
-        bidValue.setText(StringUtils.formatValue(m.getBid()));
-        highValue.setText(StringUtils.formatValue(m.getHigh()));
-        lowValue.setText(StringUtils.formatValue(m.getLow()));
-        volume.setText(StringUtils.formatValue(m.getVolume()));
-
+    private void getHistoricalData(final String symbol){
         try {
-            String symbol = m.getSymbol();
-            Observable<List<HistoricalValue>> observable = this.marketsService.getHistory(symbol);
-            Subscription history = observable
+            final Observable<List<HistoricalValue>> observable = this.marketsService.getHistory(symbol);
+            final Subscription history = observable
                     .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<List<HistoricalValue>>() {
@@ -290,13 +258,58 @@ final public class MainActivity extends AppCompatActivity
 
                         @Override
                         public void onNext(List<HistoricalValue> history) {
-                            drawChart(history);
+                            if (history != null) {
+                                drawChart(history);
+                            }
                         }
                     });
             compositeSubscription.add(history);
         } catch (IOException e) {
             Log.e("IOError",e.getLocalizedMessage());
         }
+    }
+
+    private void drawChart(List<HistoricalValue> history) {
+
+        if (history == null || history.size() < 2) {
+            return;
+        }
+
+        List<PointValue> values = new ArrayList<PointValue>();
+        //TODO improve chart with better sizes and labels
+        int step = (history.size() < 20) ? 1 : history.size()/20;
+
+        for(int i = 0; i< history.size(); i+=step ){
+            final float value = history.get(i).getValue().floatValue();
+            values.add(new PointValue(i, value));
+        }
+
+        Line line = new Line(values).setColor(Color.WHITE).setCubic(true);
+        List<Line> lines = new ArrayList<Line>();
+        lines.add(line);
+        LineChartData data = new LineChartData();
+        data.setLines(lines);
+
+        chart.setLineChartData(data);
+        chart.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * render the current market values on screen
+     * @param m
+     */
+    private void showCurrentMarket(final Market m) {
+        if (m == null) return;
+
+        // given the received model, draw the UI
+        currentValue.setText(StringUtils.formatValue(m.getBid()));
+        askValue.setText(StringUtils.formatValue(m.getAsk()));
+        bidValue.setText(StringUtils.formatValue(m.getBid()));
+        highValue.setText(StringUtils.formatValue(m.getHigh()));
+        lowValue.setText(StringUtils.formatValue(m.getLow()));
+        volume.setText(StringUtils.formatValue(m.getVolume()));
+
+        getHistoricalData(m.getSymbol());
 
     }
 
@@ -362,6 +375,8 @@ final public class MainActivity extends AppCompatActivity
      * display the market on the screen
      */
     private void onSelectedSymbol() {
+        chart.setVisibility(View.INVISIBLE);
+
         String symbol = currentSelection.getCurrentMarketSymbol();
         final String currency = currentSelection.getCurrentMarketCurrency();
         final Market selectedMarket = markets.getMarket(currency, symbol);
