@@ -30,9 +30,23 @@ public final class RestAdapterFactory {
         final String url = "http://api.bitcoincharts.com";
 
         RxJavaCallAdapterFactory rxAdapter = RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
-        return new Retrofit.Builder().baseUrl(url)
+        return new Retrofit.Builder()
+                .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(rxAdapter)
+                .build();
+
+    }
+
+    public Retrofit getRawRestAdapter() {
+
+        //TODO: make it a resource
+        final String url = "http://api.bitcoincharts.com";
+
+        RxJavaCallAdapterFactory rxAdapter = RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
+        return new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(new ToStringConverterFactory())
                 .build();
 
     }

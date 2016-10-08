@@ -1,12 +1,14 @@
 package it.alessioricco.btc;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -24,7 +26,9 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,11 +38,16 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.models.CurrentSelection;
+import it.alessioricco.btc.models.HistoricalValue;
 import it.alessioricco.btc.models.Market;
 import it.alessioricco.btc.models.Markets;
 import it.alessioricco.btc.services.MarketsService;
 import it.alessioricco.btc.utils.BitcoinChartsUtils;
 import it.alessioricco.btc.utils.StringUtils;
+import lecho.lib.hellocharts.model.Line;
+import lecho.lib.hellocharts.model.LineChartData;
+import lecho.lib.hellocharts.model.PointValue;
+import lecho.lib.hellocharts.view.LineChartView;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.Subscriber;
@@ -75,6 +84,9 @@ final public class MainActivity extends AppCompatActivity
     LinearLayout currenciesContainer;
     @InjectView(R.id.symbols)
     LinearLayout symbolsContainer;
+
+    @InjectView(R.id.chart)
+    lecho.lib.hellocharts.view.LineChartView chart;
 
     // Container for subscriptions (RxJava). They will be unsubscribed onDestroy.
     //TODO: check, could be a dead code
@@ -222,6 +234,23 @@ final public class MainActivity extends AppCompatActivity
                 });
     }
 
+    private void drawChart(List<HistoricalValue> history) {
+        List<PointValue> values = new ArrayList<PointValue>();
+        //TODO improve chart with better sizes and labels
+        int step = history.size()/20;
+        for(int i = 0; i< history.size(); i+=step ){
+            final float value = history.get(i).getValue().floatValue();
+            values.add(new PointValue(i, value));
+        }
+        Line line = new Line(values).setColor(Color.WHITE).setCubic(true);
+        List<Line> lines = new ArrayList<Line>();
+        lines.add(line);
+        LineChartData data = new LineChartData();
+        data.setLines(lines);
+
+        chart.setLineChartData(data);
+    }
+
     /**
      * render the current market values on screen
      * @param m
@@ -237,9 +266,38 @@ final public class MainActivity extends AppCompatActivity
         lowValue.setText(StringUtils.formatValue(m.getLow()));
         volume.setText(StringUtils.formatValue(m.getVolume()));
 
+        try {
+            String symbol = m.getSymbol();
+            Observable<List<HistoricalValue>> observable = this.marketsService.getHistory(symbol);
+            Subscription history = observable
+                    .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<List<HistoricalValue>>() {
+                        @Override
+                        public void onCompleted() {
 
+                        }
 
-        //String vv = new SimpleDateFormat("MM dd, yyyy hh:mma").format(df);
+                        @Override
+                        public void onError(Throwable e) {
+                            // cast to retrofit.HttpException to get the response code
+                            if (e instanceof HttpException) {
+                                HttpException response = (HttpException) e;
+                                int code = response.code();
+                                //TODO: add a toast
+                            }
+                        }
+
+                        @Override
+                        public void onNext(List<HistoricalValue> history) {
+                            drawChart(history);
+                        }
+                    });
+            compositeSubscription.add(history);
+        } catch (IOException e) {
+            Log.e("IOError",e.getLocalizedMessage());
+        }
+
     }
 
     /**
