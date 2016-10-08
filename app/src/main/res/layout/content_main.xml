@@ -113,10 +113,10 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight=".50"
                                 style="@style/BidPriceLabel"
-                                android:text="XYZ:" />
+                                android:text="AVG:" />
 
                             <me.grantland.widget.AutofitTextView
-                                android:id="@+id/xyz"
+                                android:id="@+id/avg"
                                 android:layout_width="wrap_content"
                                 android:layout_weight=".50"
                                 style="@style/BidPriceValue"

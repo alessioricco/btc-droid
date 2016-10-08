@@ -45,7 +45,7 @@ public class Market implements Serializable {
     }
 
     private boolean tooOld() {
-        long week = 7L*26L*60L*60L*1000L;
+        long week = 2L*24L*60L*60L*1000L;
         Date lastWeek = new java.util.Date((new java.util.Date()).getTime() - week);
         return getDate().before(lastWeek);
     }
@@ -66,6 +66,8 @@ public class Market implements Serializable {
                 currency_volume != null &&
                 close != null &&
                 avg != null &&
+                currency_volume != null &&
+                currency_volume > 1 &&
                 ! tooOld() &&
                 ! marketToFilter() &&
                 ! StringUtils.isNullOrEmpty(symbol) &&

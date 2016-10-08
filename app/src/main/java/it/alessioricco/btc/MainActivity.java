@@ -8,7 +8,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -27,10 +26,9 @@ import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -48,12 +46,12 @@ import it.alessioricco.btc.utils.StringUtils;
 import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
-import lecho.lib.hellocharts.view.LineChartView;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -65,9 +63,10 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 final public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    // Container for subscriptions (RxJava). They will be unsubscribed onDestroy.
+    protected CompositeSubscription compositeSubscription = new CompositeSubscription();
     @Inject
     MarketsService marketsService;
-
     @InjectView(R.id.current)
     TextView currentValue;
     @InjectView(R.id.ask)
@@ -80,23 +79,15 @@ final public class MainActivity extends AppCompatActivity
     TextView lowValue;
     @InjectView(R.id.volume)
     TextView volume;
-
+    @InjectView(R.id.avg)
+    TextView avgValue;
     @InjectView(R.id.currencies)
     LinearLayout currenciesContainer;
     @InjectView(R.id.symbols)
     LinearLayout symbolsContainer;
-
     @InjectView(R.id.chart)
     lecho.lib.hellocharts.view.LineChartView chart;
-
-    // Container for subscriptions (RxJava). They will be unsubscribed onDestroy.
-    //TODO: check, could be a dead code
-    protected CompositeSubscription compositeSubscription = new CompositeSubscription();
-
     private Markets markets = new Markets();
-
-//    private String currentMarketSymbol = "";
-//    private String currentMarketCurrency = "";
 
     private CurrentSelection currentSelection = new CurrentSelection();
     /**
@@ -134,6 +125,8 @@ final public class MainActivity extends AppCompatActivity
         //begin of the custom code
         ObjectGraphSingleton.getInstance().inject(this);
         ButterKnife.inject(this);
+
+
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -203,10 +196,33 @@ final public class MainActivity extends AppCompatActivity
     }
 
     /**
+     * start the timer for updating the charts
+     */
+    void updateMarketsTimer() {
+        long delay = 5;
+        Observable<Long> observable = Observable.interval(delay, TimeUnit.MINUTES, Schedulers.io());
+
+        Subscription subscription =  observable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        asyncUpdateMarkets();
+                    }
+                });
+
+        if (!compositeSubscription.isUnsubscribed()) {
+            compositeSubscription.add(subscription);
+        }
+    }
+
+    /**
      * read the markets from a JSON web service (bitcoincharts.com)
      * @return
      */
     private Subscription asyncUpdateMarkets() {
+        //todo show the spinner
         Observable<List<Market>> observable = marketsService.getMarkets();
 
         return observable
@@ -215,7 +231,7 @@ final public class MainActivity extends AppCompatActivity
                 .subscribe(new Subscriber<List<Market>>() {
                     @Override
                     public void onCompleted() {
-
+                        // todo hide the spinner
                     }
 
                     @Override
@@ -270,13 +286,17 @@ final public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * display the chart with the given history
+     * @param marketHistory
+     */
     private void drawChart(MarketHistory marketHistory) {
 
         if (marketHistory == null) {
             return;
         }
 
-        List<HistoricalValue> history = marketHistory.getHistory();
+        final List<HistoricalValue> history = marketHistory.getHistory();
 
         if (history == null || history.size() < 2) {
             return;
@@ -284,17 +304,17 @@ final public class MainActivity extends AppCompatActivity
 
         List<PointValue> values = new ArrayList<PointValue>();
         //TODO improve chart with better sizes and labels
-        int step = (history.size() < 20) ? 1 : history.size()/20;
+        final int step = (history.size() < 20) ? 1 : history.size()/20;
 
         for(int i = 0; i< history.size(); i+=step ){
             final float value = history.get(i).getValue().floatValue();
             values.add(new PointValue(i, value));
         }
 
-        Line line = new Line(values).setColor(Color.WHITE).setCubic(true);
+        final Line line = new Line(values).setColor(Color.WHITE).setCubic(true);
         List<Line> lines = new ArrayList<Line>();
         lines.add(line);
-        LineChartData data = new LineChartData();
+        final LineChartData data = new LineChartData();
         data.setLines(lines);
 
         chart.setLineChartData(data);
@@ -315,7 +335,9 @@ final public class MainActivity extends AppCompatActivity
         highValue.setText(StringUtils.formatValue(m.getHigh()));
         lowValue.setText(StringUtils.formatValue(m.getLow()));
         volume.setText(StringUtils.formatValue(m.getVolume()));
+        avgValue.setText(StringUtils.formatValue(m.getAvg()));
 
+        // retrieve history and display on screen
         getHistoricalData(m.getSymbol());
 
     }
@@ -329,17 +351,12 @@ final public class MainActivity extends AppCompatActivity
         final Context context = getApplicationContext();
         final String valueToSearch = getString(R.string.string_space, value.toUpperCase());
         for (int i=0; i<layout.getChildCount(); i++) {
-            View v = layout.getChildAt(i);
+            final View v = layout.getChildAt(i);
             if ( v instanceof TextView ) {
                 final TextView t = (TextView) v;
                 final String text = t.getText().toString();
-                //TODO use an inline conditional
-                int color;
-                if (text.equals(valueToSearch)) {
-                     color = ContextCompat.getColor(context, R.color.SelectedCurrencyItem);
-                } else {
-                    color = ContextCompat.getColor(context, R.color.UnselectedCurrencyItem);
-                }
+                final int resource = text.equals(valueToSearch) ? R.color.SelectedCurrencyItem : R.color.UnselectedCurrencyItem;
+                final int color = ContextCompat.getColor(context, resource);
                 t.setTextColor(color);
             }
         }
@@ -438,6 +455,7 @@ final public class MainActivity extends AppCompatActivity
 
     }
 
+
     /**
      * https://github.com/ReactiveX/RxJava/wiki/The-RxJava-Android-Module
      */
@@ -446,6 +464,7 @@ final public class MainActivity extends AppCompatActivity
         super.onResume();
 
         compositeSubscription.add(asyncUpdateMarkets());
+        updateMarketsTimer();
 
     }
 
