@@ -40,6 +40,7 @@ import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.models.CurrentSelection;
 import it.alessioricco.btc.models.HistoricalValue;
 import it.alessioricco.btc.models.Market;
+import it.alessioricco.btc.models.MarketHistory;
 import it.alessioricco.btc.models.Markets;
 import it.alessioricco.btc.services.MarketsService;
 import it.alessioricco.btc.utils.BitcoinChartsUtils;
@@ -236,11 +237,11 @@ final public class MainActivity extends AppCompatActivity
 
     private void getHistoricalData(final String symbol){
         try {
-            final Observable<List<HistoricalValue>> observable = this.marketsService.getHistory(symbol);
+            final Observable<MarketHistory> observable = this.marketsService.getHistory(symbol);
             final Subscription history = observable
                     .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<List<HistoricalValue>>() {
+                    .subscribe(new Subscriber<MarketHistory>() {
                         @Override
                         public void onCompleted() {
 
@@ -257,7 +258,7 @@ final public class MainActivity extends AppCompatActivity
                         }
 
                         @Override
-                        public void onNext(List<HistoricalValue> history) {
+                        public void onNext(MarketHistory history) {
                             if (history != null) {
                                 drawChart(history);
                             }
@@ -269,7 +270,13 @@ final public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void drawChart(List<HistoricalValue> history) {
+    private void drawChart(MarketHistory marketHistory) {
+
+        if (marketHistory == null) {
+            return;
+        }
+
+        List<HistoricalValue> history = marketHistory.getHistory();
 
         if (history == null || history.size() < 2) {
             return;

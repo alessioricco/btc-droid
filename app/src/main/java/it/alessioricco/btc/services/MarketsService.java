@@ -1,16 +1,12 @@
 package it.alessioricco.btc.services;
 
-import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.util.Pair;
-
-import javax.inject.Inject;
-
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
 
 import it.alessioricco.btc.api.APIFactory;
 import it.alessioricco.btc.api.BitcoinChartsAPI;
@@ -18,12 +14,11 @@ import it.alessioricco.btc.api.RestAdapterFactory;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.models.HistoricalValue;
 import it.alessioricco.btc.models.Market;
+import it.alessioricco.btc.models.MarketHistory;
 import it.alessioricco.btc.utils.StringUtils;
-import lecho.lib.hellocharts.model.PointValue;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 import rx.Observable;
 import rx.Subscriber;
 import st.lowlevel.storo.Storo;
@@ -61,7 +56,7 @@ public final class MarketsService {
         return api.getMarkets();
     }
 
-    private List<HistoricalValue> transformCSVToHistoricalValues(final String resultAsString) {
+    private MarketHistory transformCSVToHistoricalValues(final String resultAsString) {
         if (StringUtils.isNullOrEmpty(resultAsString)) {
             return null;
         }
@@ -74,17 +69,27 @@ public final class MarketsService {
             value.setValue(Double.parseDouble(columns[1]));
             resultAsList.add(value);
         }
-        return resultAsList;
+
+        final MarketHistory history = new MarketHistory();
+        history.setHistory(resultAsList);
+
+        return history;
     }
 
-    public Observable<List<HistoricalValue>> getHistory(final String symbol) throws IOException {
+    /**
+     * retrieve the history of the last hour
+     * @param symbol
+     * @return
+     * @throws IOException
+     */
+    public Observable<MarketHistory> getHistory(final String symbol) throws IOException {
 
-        Observable o = Observable.create(new Observable.OnSubscribe<List<HistoricalValue>>() {
+        Observable o = Observable.create(new Observable.OnSubscribe<MarketHistory>() {
             @Override
-            public void call(final Subscriber<? super List<HistoricalValue>> subscriber) {
+            public void call(final Subscriber<? super MarketHistory> subscriber) {
                 try {
 
-                    String cachedResult = null;
+                    // caching
                     final Boolean expired = Storo.hasExpired(symbol).execute();
                     if (expired != null) {
 
@@ -94,18 +99,21 @@ public final class MarketsService {
                         } else {
                             // we retrieve the object
                             // todo: make it async
-                            cachedResult = Storo.get(symbol, String.class).execute();
+                            Storo.get(symbol, String.class)
+                                    .async(new st.lowlevel.storo.model.Callback<String>() {
+                                        @Override
+                                        public void onResult(String cachedResult) {
+                                            final MarketHistory history = transformCSVToHistoricalValues(cachedResult);
+                                            subscriber.onNext(history);    // Pass on the data to subscriber
+                                            subscriber.onCompleted();     // Signal about the completion subscriber
+                                            return;
+                                        }
+                                    });
+                            return;
                         }
-
                     }
 
-                    if (cachedResult != null) {
-                        final List<HistoricalValue> resultAsList = transformCSVToHistoricalValues(cachedResult);
-                        subscriber.onNext(resultAsList);    // Pass on the data to subscriber
-                        subscriber.onCompleted();     // Signal about the completion subscriber
-                        return;
-                    }
-
+                    // rest call
                     final BitcoinChartsAPI api = APIFactory.createBitcoinChartsAPI(restAdapterFactory.getRawRestAdapter());
                     final long start = ((new Date()).getTime() - 1000*60*60)/1000; //1h
 
@@ -115,18 +123,22 @@ public final class MarketsService {
                         @Override
                         public void onResponse(Call<String> call, Response<String> response) {
 
-                            String body = response.body();
-
-                            //TODO: make it async
-                            Storo.put(symbol, body).setExpiry(5, TimeUnit.MINUTES).execute();
+                            final String body = response.body();
 
                             if (StringUtils.isNullOrEmpty(body)) {
                                 subscriber.onNext(null);
-                            } else {
-                                final List<HistoricalValue> resultAsList = transformCSVToHistoricalValues(body);
-                                subscriber.onNext(resultAsList);    // Pass on the data to subscriber
+                                subscriber.onCompleted();
+                                return;
                             }
-                            subscriber.onCompleted();     // Signal about the completion subscriber
+
+                            Storo.put(symbol, body)
+                                    .setExpiry(5, TimeUnit.MINUTES)
+                                    .execute();
+
+                            final MarketHistory history = transformCSVToHistoricalValues(body);
+                            subscriber.onNext(history);
+                            subscriber.onCompleted();
+
                         }
 
                         @Override
@@ -134,9 +146,6 @@ public final class MarketsService {
                             //todo add a toast
                         }
                     });
-
-
-
 
                 } catch (Exception e) {
                     subscriber.onError(e);        // Signal about the error to subscriber

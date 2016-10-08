@@ -36,7 +36,7 @@ public final class BtcTickerApp extends Application {
                         .setFontAttrId(R.attr.fontPath)
                         .build());
         // caching
-        StoroBuilder.configure(10*1024)  // maximum size to allocate in bytes
+        StoroBuilder.configure(100*1024)  // maximum size to allocate in bytes
                 .setDefaultCacheDirectory(this)
                 .initialize();
     }
