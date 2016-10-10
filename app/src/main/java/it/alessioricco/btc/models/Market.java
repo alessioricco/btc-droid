@@ -7,6 +7,8 @@ import it.alessioricco.btc.utils.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 
+import static java.lang.Math.abs;
+
 /**
  * Created by alessioricco on 02/10/2016.
  *
@@ -40,7 +42,7 @@ public class Market implements Serializable {
     @Getter @Setter private Double low;
 
     public Date getDate() {
-        final long dv = Long.valueOf(latest_trade)*1000;// its need to be in milisecond
+        final long dv = Long.valueOf(latest_trade)*1000;
         return new java.util.Date(dv);
     }
 

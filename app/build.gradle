@@ -83,4 +83,8 @@ dependencies {
     compile('com.github.lowlevel-studios:storo:1.0.3') {
         transitive = true
     }
+
+    //pretty time
+    // https://mvnrepository.com/artifact/com.ocpsoft/ocpsoft-pretty-time
+    compile group: 'com.ocpsoft', name: 'ocpsoft-pretty-time', version: '1.0.6'
 }

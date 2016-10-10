@@ -27,7 +27,7 @@
         <include layout="@layout/list_of_symbols_main"/>
 
         <!-- textual info -->
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".50">
@@ -37,14 +37,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/latest_trade"
+                    style="@style/LatestTrade"
+                    android:text="time"
+                    />
                 <me.grantland.widget.AutofitTextView
                     android:id="@+id/current"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/BTCMainPriceFont"
                     android:text="@string/mock_price_high"
-                    android:gravity="right|center_vertical"
+                    android:gravity="end|center_vertical"
                     android:freezesText="false" />
+                </RelativeLayout>
 
                 <!-- first row -->
                 <LinearLayout
@@ -72,6 +81,21 @@
                                  />
                         </LinearLayout>
 
+                    <!-- HI -->
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33">
+                        <TextView
+                            style="@style/BidPriceLabelBox"
+                            android:text="@string/main_hi" />
+                        <me.grantland.widget.AutofitTextView
+                            android:id="@+id/high"
+                            style="@style/BidPriceValueBox"
+                            android:text="@string/mock_price_high" />
+                    </LinearLayout>
+
                     <!-- ASK -->
                     <LinearLayout
                         android:orientation="vertical"
@@ -88,23 +112,6 @@
                             style="@style/BidPriceValueBox"
                             android:text="@string/mock_price"
                             />
-                    </LinearLayout>
-
-                    <!-- BID -->
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.33">
-                        <TextView
-                            style="@style/BidPriceLabelBox"
-                            android:text="@string/main_bid"
-                            />
-
-                        <me.grantland.widget.AutofitTextView
-                            android:id="@+id/bid"
-                            style="@style/BidPriceValueBox"
-                            android:text="@string/mock_price" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -134,21 +141,6 @@
                              />
                     </LinearLayout>
 
-                    <!-- HI -->
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.33">
-                        <TextView
-                            style="@style/BidPriceLabelBox"
-                            android:text="@string/main_hi" />
-                        <me.grantland.widget.AutofitTextView
-                            android:id="@+id/high"
-                            style="@style/BidPriceValueBox"
-                            android:text="@string/mock_price_high" />
-                    </LinearLayout>
-
                     <!-- LO -->
                     <LinearLayout
                         android:orientation="vertical"
@@ -164,19 +156,36 @@
                             android:text="@string/mock_price" />
                     </LinearLayout>
 
+                    <!-- BID -->
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33">
+                        <TextView
+                            style="@style/BidPriceLabelBox"
+                            android:text="@string/main_bid"
+                            />
+
+                        <me.grantland.widget.AutofitTextView
+                            android:id="@+id/bid"
+                            style="@style/BidPriceValueBox"
+                            android:text="@string/mock_price" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
 
             </LinearLayout>
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <!-- graphic info -->
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5">
+            android:layout_weight="0.4">
 
             <lecho.lib.hellocharts.view.LineChartView
                 android:id="@+id/chart"
@@ -184,7 +193,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <!-- Currency Selector -->
         <include layout="@layout/list_of_currencies_main"/>

@@ -1,7 +1,6 @@
 package it.alessioricco.btc;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -24,8 +23,11 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.ocpsoft.pretty.time.Duration;
+import com.ocpsoft.pretty.time.PrettyTime;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -46,20 +48,11 @@ import it.alessioricco.btc.services.MarketsService;
 import it.alessioricco.btc.utils.BitcoinChartsUtils;
 import it.alessioricco.btc.utils.Environment;
 import it.alessioricco.btc.utils.StringUtils;
-import lecho.lib.hellocharts.formatter.AxisValueFormatter;
 import lecho.lib.hellocharts.formatter.SimpleAxisValueFormatter;
-import lecho.lib.hellocharts.formatter.SimpleLineChartValueFormatter;
 import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.AxisValue;
-import lecho.lib.hellocharts.model.Column;
-import lecho.lib.hellocharts.model.ColumnChartData;
-import lecho.lib.hellocharts.model.ComboLineColumnChartData;
 import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
-import lecho.lib.hellocharts.model.SubcolumnValue;
-import lecho.lib.hellocharts.util.ChartUtils;
-import lecho.lib.hellocharts.view.LineChartView;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.Subscriber;
@@ -101,6 +94,9 @@ final public class MainActivity extends AppCompatActivity
     LinearLayout symbolsContainer;
     @InjectView(R.id.chart)
     lecho.lib.hellocharts.view.LineChartView chart;
+    @InjectView(R.id.latest_trade)
+    TextView latestTrade;
+
     private Markets markets = new Markets();
 
     private CurrentSelection currentSelection = new CurrentSelection();
@@ -327,8 +323,15 @@ final public class MainActivity extends AppCompatActivity
         for(int i = 0; i< history.size(); i+=step ){
             final HistoricalValue historicalValue = history.get(i);
             float value = historicalValue.getValue().floatValue();
+
+            // no need of big numbers for charts
+            if (value > 1000000) {
+                value = value / 1000;
+            }
+
             if (value < minValue) minValue = value;
             if (value > maxValue) maxValue = value;
+
             //TODO: add labels to X axis
             values.add(new PointValue(i, value));
         }
@@ -366,13 +369,16 @@ final public class MainActivity extends AppCompatActivity
         if (m == null) return;
 
         // given the received model, draw the UI
-        currentValue.setText(StringUtils.formatValue(m.getBid()));
+        currentValue.setText(StringUtils.formatValue(m.getClose()));
         askValue.setText(StringUtils.formatValue(m.getAsk()));
         bidValue.setText(StringUtils.formatValue(m.getBid()));
         highValue.setText(StringUtils.formatValue(m.getHigh()));
         lowValue.setText(StringUtils.formatValue(m.getLow()));
         volume.setText(StringUtils.formatValue(m.getVolume()));
         avgValue.setText(StringUtils.formatValue(m.getAvg()));
+
+        // show a clock near the text
+        latestTrade.setText((new PrettyTime()).format(m.getDate()));
 
         // retrieve history and display on screen
         getHistoricalData(m.getSymbol());
