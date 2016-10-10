@@ -15,4 +15,7 @@
     <color name="SelectedCurrencyItem">#ffffff</color>
     <color name="SelectedSymbolItem">#ffffff</color>
 
+    <!-- chart -->
+    <color name="line">#FFFFFF</color>
+    <color name="axis">#999999</color>
 </resources>
