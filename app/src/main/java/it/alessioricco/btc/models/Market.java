@@ -51,7 +51,11 @@ public class Market implements Serializable {
     }
 
     private boolean marketToFilter() {
-        return (symbol.toUpperCase()).startsWith("LOCALBTC");
+
+        final String uSymbol = symbol.toUpperCase();
+
+        return uSymbol.startsWith("LOCALBTC") ||
+                uSymbol.startsWith("BITCUREX");
     }
 
     /**

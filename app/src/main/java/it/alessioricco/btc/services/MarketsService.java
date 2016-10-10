@@ -67,6 +67,7 @@ public final class MarketsService {
             HistoricalValue value = new HistoricalValue();
             value.setDate(new Date(1000 * Long.parseLong(columns[0])));
             value.setValue(Double.parseDouble(columns[1]));
+            value.setAmount(Double.parseDouble(columns[2]));
             resultAsList.add(value);
         }
 
