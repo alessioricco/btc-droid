@@ -18,4 +18,8 @@ public class StringUtils {
     public static final String formatValue(double value) {
         return String.format("%.2f", value);
     }
+
+    public static final String formatPercentValue(double value) {
+        return String.format("%+.2f%%", value);
+    }
 }

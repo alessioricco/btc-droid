@@ -52,6 +52,16 @@ public class Market implements Serializable {
         return getDate().before(lastWeek);
     }
 
+    public Double percent() {
+        //TODO: add a method nearzero abs()<epsilon
+        if (avg == 0d) return 0d;
+        return 100*((delta())/avg);
+    }
+
+    public Double delta() {
+        return (close-avg);
+    }
+
     private boolean marketToFilter() {
 
         final String uSymbol = symbol.toUpperCase();

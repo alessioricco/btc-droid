@@ -1,6 +1,7 @@
 package it.alessioricco.btc;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -251,6 +252,7 @@ final public class MainActivity extends AppCompatActivity
                             HttpException response = (HttpException) e;
                             int code = response.code();
                             //TODO: add a toast
+                            //TODO: retry if it doesn't works
                         }
                     }
 
@@ -286,6 +288,7 @@ final public class MainActivity extends AppCompatActivity
                         @Override
                         public void onNext(MarketHistory history) {
                             if (history != null) {
+                                //TODO: double check on the currency/action to avoid wasting time on old selections
                                 drawChart(history);
                             }
                         }
@@ -324,7 +327,8 @@ final public class MainActivity extends AppCompatActivity
             final HistoricalValue historicalValue = history.get(i);
             float value = historicalValue.getValue().floatValue();
 
-            // no need of big numbers for charts
+            // if the currency has values with 6 digits
+            // we can use less digits to improve the ui
             if (value > 1000000) {
                 value = value / 1000;
             }
@@ -375,8 +379,16 @@ final public class MainActivity extends AppCompatActivity
         highValue.setText(StringUtils.formatValue(m.getHigh()));
         lowValue.setText(StringUtils.formatValue(m.getLow()));
         volume.setText(StringUtils.formatValue(m.getVolume()));
-        avgValue.setText(StringUtils.formatValue(m.getAvg()));
 
+        Double percent = m.percent();
+        avgValue.setText(StringUtils.formatPercentValue(percent));
+        int color = Color.RED;
+        if (percent > 0) {
+           color = Color.GREEN;
+        } else if (percent == 0) {
+            color = Color.WHITE;
+        }
+        avgValue.setTextColor(color);
         // show a clock near the text
         latestTrade.setText((new PrettyTime()).format(m.getDate()));
 
