@@ -13,9 +13,8 @@ import it.alessioricco.btc.R;
 
 public class ProgressDialogHelper {
 
-
-        // http://stackoverflow.com/questions/7687784/how-to-disable-enable-all-children-on-linearlayout-in-android
     private static void enableDisableView(View view, boolean enabled) {
+        // http://stackoverflow.com/questions/7687784/how-to-disable-enable-all-children-on-linearlayout-in-android
             view.setEnabled(enabled);
 
             if ( view instanceof ViewGroup ) {
@@ -28,6 +27,7 @@ public class ProgressDialogHelper {
         }
 
     private static ViewGroup getMainView(final Activity activity) {
+        // http://stackoverflow.com/questions/7776768/android-what-is-android-r-id-content-used-for
         return (ViewGroup) activity.getWindow().getDecorView().findViewById(android.R.id.content);
     }
 
@@ -40,7 +40,6 @@ public class ProgressDialogHelper {
         if (inflater != null) {
             inflater.inflate(R.layout.progress_fullscreen, viewGroup);
             final View progressBackground = viewGroup.findViewById(R.id.progress_fullscreen);
-            //progressBackground.setVisibility(View.VISIBLE);
         }
 
     }

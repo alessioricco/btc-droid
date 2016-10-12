@@ -178,7 +178,16 @@
 
             </LinearLayout>
 
+
+
         </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/chart_progress"
+            android:layout_width="match_parent"
+            android:layout_height="4sp"
+            android:indeterminate="true"
+            style="@android:style/Widget.ProgressBar.Horizontal" />
 
         <!-- graphic info -->
 
@@ -187,6 +196,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.4">
+
+
 
             <lecho.lib.hellocharts.view.LineChartView
                 android:id="@+id/chart"

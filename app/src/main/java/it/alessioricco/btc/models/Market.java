@@ -67,6 +67,7 @@ public class Market implements Serializable {
         final String uSymbol = symbol.toUpperCase();
 
         return uSymbol.startsWith("LOCALBTC") ||
+                uSymbol.startsWith("BITBAY") ||
                 uSymbol.startsWith("BITCUREX");
     }
 

@@ -1,6 +1,5 @@
 package it.alessioricco.btc;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
@@ -19,20 +18,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.ocpsoft.pretty.time.Duration;
 import com.ocpsoft.pretty.time.PrettyTime;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -64,6 +60,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
+import st.lowlevel.storo.Storo;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
@@ -99,6 +96,8 @@ final public class MainActivity extends AppCompatActivity
     lecho.lib.hellocharts.view.LineChartView chart;
     @InjectView(R.id.latest_trade)
     TextView latestTrade;
+    @InjectView(R.id.chart_progress)
+    ProgressBar progressBar;
 
     private Markets markets = new Markets();
 
@@ -230,14 +229,33 @@ final public class MainActivity extends AppCompatActivity
         }
     }
 
+    boolean firstTimeProgress = true;
+    void startProgress() {
+        if (firstTimeProgress) {
+            ProgressDialogHelper.start(this);
+        } else {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    void endProgress() {
+        if (firstTimeProgress) {
+            ProgressDialogHelper.end(this);
+            firstTimeProgress = false;
+        } else {
+            progressBar.setVisibility(View.INVISIBLE);
+        }
+    }
+
     /**
      * read the markets from a JSON web service (bitcoincharts.com)
      * @return
      */
     private Subscription asyncUpdateMarkets() {
-        //todo show the spinner
-        final Activity currentActivity = this;
-        ProgressDialogHelper.start(currentActivity);
+
+        //todo the progress must me show only the first time, then we should use another thing
+        startProgress();
         final Observable<List<Market>> observable = marketsService.getMarkets();
 
         return observable
@@ -247,7 +265,7 @@ final public class MainActivity extends AppCompatActivity
                     @Override
                     public void onCompleted() {
                         // todo hide the spinner
-                        ProgressDialogHelper.end(currentActivity);
+                        endProgress();
                     }
 
                     @Override
@@ -256,7 +274,6 @@ final public class MainActivity extends AppCompatActivity
                         if (e instanceof HttpException) {
                             HttpException response = (HttpException) e;
                             int code = response.code();
-                            ProgressDialogHelper.end(currentActivity);
                             //TODO: add a toast
                             //TODO: retry if it doesn't works
                         }
@@ -271,6 +288,18 @@ final public class MainActivity extends AppCompatActivity
 
     private void getHistoricalData(final String symbol){
         try {
+
+            //TODO: chart must be a fragment
+            chart.setVisibility(View.GONE);
+
+            // if data are cached we don't need of a progress bar
+            final Boolean expired = Storo.hasExpired(symbol).execute();
+            final boolean isCached = expired != null && expired == false;
+            if (!isCached) {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+
+            //TODO would be great to know if data came from cache or not (and apply a progress)
             final Observable<MarketHistory> observable = this.marketsService.getHistory(symbol);
             final Subscription history = observable
                     .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
@@ -293,9 +322,14 @@ final public class MainActivity extends AppCompatActivity
 
                         @Override
                         public void onNext(MarketHistory history) {
+                            // if history is null we keep the chart invisible
                             if (history != null) {
                                 //TODO: double check on the currency/action to avoid wasting time on old selections
                                 drawChart(history);
+                                chart.setVisibility(View.VISIBLE);
+                                if (!isCached) {
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                }
                             }
                         }
                     });
@@ -390,7 +424,7 @@ final public class MainActivity extends AppCompatActivity
         avgValue.setText(StringUtils.formatPercentValue(percent));
         int color = Color.RED;
         if (percent > 0) {
-           color = Color.GREEN;
+            color = Color.GREEN;
         } else if (percent == 0) {
             color = Color.WHITE;
         }

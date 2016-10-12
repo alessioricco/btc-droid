@@ -12,6 +12,11 @@ import lombok.Setter;
 
 public class MarketHistory  implements Serializable {
 
+    //TODO: manage those fields
+    private @Getter @Setter boolean isCached = false;
+    private @Getter @Setter String symbol;
+    private @Getter @Setter String currency;
+
     private @Getter @Setter
     List<HistoricalValue> history;
 
