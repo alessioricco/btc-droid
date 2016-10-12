@@ -1,5 +1,6 @@
 package it.alessioricco.btc;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
@@ -48,6 +49,7 @@ import it.alessioricco.btc.models.Markets;
 import it.alessioricco.btc.services.MarketsService;
 import it.alessioricco.btc.utils.BitcoinChartsUtils;
 import it.alessioricco.btc.utils.Environment;
+import it.alessioricco.btc.utils.ProgressDialogHelper;
 import it.alessioricco.btc.utils.StringUtils;
 import lecho.lib.hellocharts.formatter.SimpleAxisValueFormatter;
 import lecho.lib.hellocharts.model.Axis;
@@ -234,7 +236,9 @@ final public class MainActivity extends AppCompatActivity
      */
     private Subscription asyncUpdateMarkets() {
         //todo show the spinner
-        Observable<List<Market>> observable = marketsService.getMarkets();
+        final Activity currentActivity = this;
+        ProgressDialogHelper.start(currentActivity);
+        final Observable<List<Market>> observable = marketsService.getMarkets();
 
         return observable
                 .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
@@ -243,6 +247,7 @@ final public class MainActivity extends AppCompatActivity
                     @Override
                     public void onCompleted() {
                         // todo hide the spinner
+                        ProgressDialogHelper.end(currentActivity);
                     }
 
                     @Override
@@ -251,6 +256,7 @@ final public class MainActivity extends AppCompatActivity
                         if (e instanceof HttpException) {
                             HttpException response = (HttpException) e;
                             int code = response.code();
+                            ProgressDialogHelper.end(currentActivity);
                             //TODO: add a toast
                             //TODO: retry if it doesn't works
                         }
@@ -389,7 +395,8 @@ final public class MainActivity extends AppCompatActivity
             color = Color.WHITE;
         }
         avgValue.setTextColor(color);
-        // show a clock near the text
+
+        //TODO show a clock near the text
         latestTrade.setText((new PrettyTime()).format(m.getDate()));
 
         // retrieve history and display on screen
