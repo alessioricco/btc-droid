@@ -299,7 +299,6 @@ final public class MainActivity extends AppCompatActivity
                 progressBar.setVisibility(View.VISIBLE);
             }
 
-            //TODO would be great to know if data came from cache or not (and apply a progress)
             final Observable<MarketHistory> observable = this.marketsService.getHistory(symbol);
             final Subscription history = observable
                     .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
