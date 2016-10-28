@@ -17,4 +17,7 @@
     <string name="main_avg">AVG</string>
     <string name="main_hi">HIGH</string>
     <string name="main_lo">LOW</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

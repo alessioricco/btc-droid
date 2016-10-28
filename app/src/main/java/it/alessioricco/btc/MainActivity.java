@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -21,6 +22,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.AxisValueFormatter;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -28,7 +33,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.ocpsoft.pretty.time.PrettyTime;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -36,6 +43,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import it.alessioricco.btc.fragments.Chart;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.models.CurrentSelection;
 import it.alessioricco.btc.models.HistoricalValue;
@@ -47,11 +55,20 @@ import it.alessioricco.btc.utils.BitcoinChartsUtils;
 import it.alessioricco.btc.utils.Environment;
 import it.alessioricco.btc.utils.ProgressDialogHelper;
 import it.alessioricco.btc.utils.StringUtils;
-import lecho.lib.hellocharts.formatter.SimpleAxisValueFormatter;
-import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.Line;
-import lecho.lib.hellocharts.model.LineChartData;
-import lecho.lib.hellocharts.model.PointValue;
+//import it.alessioricco.btc.charts.IAxisValueFormatter;
+//import lecho.lib.hellocharts.formatter.SimpleAxisValueFormatter;
+//import lecho.lib.hellocharts.model.Axis;
+//import lecho.lib.hellocharts.model.Line;
+//import lecho.lib.hellocharts.model.LineChartData;
+//import lecho.lib.hellocharts.model.PointValue;
+
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.utils.ColorTemplate;
+
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.Subscriber;
@@ -63,12 +80,15 @@ import rx.subscriptions.CompositeSubscription;
 import st.lowlevel.storo.Storo;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
+import static android.R.attr.max;
+import static android.R.attr.y;
+
 /**
  * main activity of the app
  * TODO: detach the content_main and make it as a fragment
  */
 final public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, Chart.OnFragmentInteractionListener {
 
     // Container for subscriptions (RxJava). They will be unsubscribed onDestroy.
     protected CompositeSubscription compositeSubscription = new CompositeSubscription();
@@ -92,8 +112,10 @@ final public class MainActivity extends AppCompatActivity
     LinearLayout currenciesContainer;
     @InjectView(R.id.symbols)
     LinearLayout symbolsContainer;
-    @InjectView(R.id.chart)
-    lecho.lib.hellocharts.view.LineChartView chart;
+    @InjectView(R.id.chart_fragment_container)
+    LinearLayout chartFragmentContainer;
+
+
     @InjectView(R.id.latest_trade)
     TextView latestTrade;
     @InjectView(R.id.chart_progress)
@@ -137,7 +159,6 @@ final public class MainActivity extends AppCompatActivity
         //begin of the custom code
         ObjectGraphSingleton.getInstance().inject(this);
         ButterKnife.inject(this);
-
 
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -214,7 +235,7 @@ final public class MainActivity extends AppCompatActivity
         long delay = 5;
         Observable<Long> observable = Observable.interval(delay, TimeUnit.MINUTES, Schedulers.io());
 
-        Subscription subscription =  observable
+        Subscription subscription = observable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<Long>() {
@@ -230,6 +251,7 @@ final public class MainActivity extends AppCompatActivity
     }
 
     boolean firstTimeProgress = true;
+
     void startProgress() {
         if (firstTimeProgress) {
             ProgressDialogHelper.start(this);
@@ -250,6 +272,7 @@ final public class MainActivity extends AppCompatActivity
 
     /**
      * read the markets from a JSON web service (bitcoincharts.com)
+     *
      * @return
      */
     private Subscription asyncUpdateMarkets() {
@@ -286,11 +309,11 @@ final public class MainActivity extends AppCompatActivity
                 });
     }
 
-    private void getHistoricalData(final String symbol){
+    private void getHistoricalData(final String symbol) {
         try {
 
             //TODO: chart must be a fragment
-            chart.setVisibility(View.GONE);
+            chartFragmentContainer.setVisibility(View.GONE);
 
             // if data are cached we don't need of a progress bar
             final Boolean expired = Storo.hasExpired(symbol).execute();
@@ -325,7 +348,7 @@ final public class MainActivity extends AppCompatActivity
                             if (history != null) {
                                 //TODO: double check on the currency/action to avoid wasting time on old selections
                                 drawChart(history);
-                                chart.setVisibility(View.VISIBLE);
+                                chartFragmentContainer.setVisibility(View.VISIBLE);
                                 if (!isCached) {
                                     progressBar.setVisibility(View.INVISIBLE);
                                 }
@@ -334,78 +357,31 @@ final public class MainActivity extends AppCompatActivity
                     });
             compositeSubscription.add(history);
         } catch (IOException e) {
-            Log.e("IOError",e.getLocalizedMessage());
+            Log.e("IOError", e.getLocalizedMessage());
         }
     }
 
     /**
      * display the chart with the given history
+     *
      * @param marketHistory
      */
-    private void drawChart(MarketHistory marketHistory) {
+    private void drawChart(final MarketHistory marketHistory) {
 
         if (marketHistory == null) {
             return;
         }
 
-        final List<HistoricalValue> history = marketHistory.getHistory();
-
-        if (history == null || history.size() < 2) {
-            return;
+        Chart chartFragment = (Chart) getSupportFragmentManager().findFragmentById(R.id.chart_fragment);
+        if (chartFragment != null) {
+            chartFragment.update(marketHistory);
         }
-
-        final List<PointValue> values = new ArrayList<PointValue>();
-
-        final int steps = Environment.chartSteps;
-        final int step = (history.size() < steps) ? 1 : history.size()/steps;
-
-        float minValue = Float.MAX_VALUE;
-        float maxValue = Float.MIN_VALUE;
-
-        for(int i = 0; i< history.size(); i+=step ){
-            final HistoricalValue historicalValue = history.get(i);
-            float value = historicalValue.getValue().floatValue();
-
-            // if the currency has values with 6 digits
-            // we can use less digits to improve the ui
-            if (value > 1000000) {
-                value = value / 1000;
-            }
-
-            if (value < minValue) minValue = value;
-            if (value > maxValue) maxValue = value;
-
-            //TODO: add labels to X axis
-            values.add(new PointValue(i, value));
-        }
-
-        final Line line = new Line(values)
-                .setColor(Environment.chartLineColor)
-                .setHasPoints(true)
-                .setPointRadius(Environment.chartLinePointRadius)
-                .setCubic(true);
-        final List<Line> lines = new ArrayList<Line>();
-        lines.add(line);
-        final LineChartData lineChartData = new LineChartData();
-        lineChartData.setLines(lines);
-
-        final Axis axisY = new Axis().setHasLines(true).setLineColor(Environment.chartAxisColor);
-        final Axis axisX = new Axis().setHasLines(true).setLineColor(Environment.chartAxisColor);
-
-        axisY.setFormatter(new SimpleAxisValueFormatter());
-        axisX.setAutoGenerated(false);
-
-        lineChartData.setAxisXBottom(axisX);
-        lineChartData.setAxisYLeft(axisY);
-        lineChartData.setBaseValue(minValue);
-
-        chart.setLineChartData(lineChartData);
-        chart.setVisibility(View.VISIBLE);
 
     }
 
     /**
      * render the current market values on screen
+     *
      * @param m
      */
     private void showCurrentMarket(final Market m) {
@@ -439,15 +415,16 @@ final public class MainActivity extends AppCompatActivity
 
     /**
      * change the style to an horizontal scrollbar with list of list_of_symbols_main or currencies
+     *
      * @param layout
      * @param value
      */
-    private void applySelectionToContainer(final LinearLayout layout, final String value){
+    private void applySelectionToContainer(final LinearLayout layout, final String value) {
         final Context context = getApplicationContext();
         final String valueToSearch = getString(R.string.string_space, value.toUpperCase());
-        for (int i=0; i<layout.getChildCount(); i++) {
+        for (int i = 0; i < layout.getChildCount(); i++) {
             final View v = layout.getChildAt(i);
-            if ( v instanceof TextView ) {
+            if (v instanceof TextView) {
                 final TextView t = (TextView) v;
                 final String text = t.getText().toString();
                 final int resource = text.equals(valueToSearch) ? R.color.SelectedCurrencyItem : R.color.UnselectedCurrencyItem;
@@ -467,18 +444,16 @@ final public class MainActivity extends AppCompatActivity
         // fill the currencies scrollView
         this.symbolsContainer.removeAllViews();
 
-        for (String symbol: symbols) {
+        for (String symbol : symbols) {
             final String currentSymbol = symbol;
-            final TextView systemTextView = (TextView)getLayoutInflater().inflate(R.layout.currency_template, null);
+            final TextView systemTextView = (TextView) getLayoutInflater().inflate(R.layout.currency_template, null);
             systemTextView.setText(getString(R.string.string_space, symbol));
             systemTextView.setTag(symbol);
-            systemTextView.setOnClickListener(new View.OnClickListener()
-            {
+            systemTextView.setOnClickListener(new View.OnClickListener() {
 
                 @Override
-                public void onClick(View v)
-                {
-                    Log.e("Tag","clicked on "+systemTextView.getText());
+                public void onClick(View v) {
+                    Log.e("Tag", "clicked on " + systemTextView.getText());
                     currentSelection.setCurrentMarketSymbol(currentSymbol);
                     onSelectedSymbol();
                 }
@@ -494,14 +469,14 @@ final public class MainActivity extends AppCompatActivity
      * display the market on the screen
      */
     private void onSelectedSymbol() {
-        chart.setVisibility(View.INVISIBLE);
+        chartFragmentContainer.setVisibility(View.INVISIBLE);
 
         String symbol = currentSelection.getCurrentMarketSymbol();
         final String currency = currentSelection.getCurrentMarketCurrency();
         final Market selectedMarket = markets.getMarket(currency, symbol);
         if (selectedMarket != null) {
 
-            if (symbol == null && ! StringUtils.isNullOrEmpty( selectedMarket.getSymbol())) {
+            if (symbol == null && !StringUtils.isNullOrEmpty(selectedMarket.getSymbol())) {
                 currentSelection.setCurrentMarketSymbol(BitcoinChartsUtils.normalizeSymbolName(selectedMarket.getSymbol()));
                 symbol = currentSelection.getCurrentMarketSymbol();
             }
@@ -516,6 +491,7 @@ final public class MainActivity extends AppCompatActivity
 
     /**
      * called everytime the list of market tickers should be updated
+     *
      * @param newMarkets
      */
     private void updateMarkets(final List<Market> newMarkets) {
@@ -527,18 +503,16 @@ final public class MainActivity extends AppCompatActivity
         // fill the currencies scrollView
         this.currenciesContainer.removeAllViews();
 
-        for (String currency: this.markets.getCurrencies()) {
+        for (String currency : this.markets.getCurrencies()) {
             final String currentCurrency = currency;
-            final TextView currencyTextView = (TextView)getLayoutInflater().inflate(R.layout.currency_template, null);
+            final TextView currencyTextView = (TextView) getLayoutInflater().inflate(R.layout.currency_template, null);
             currencyTextView.setText(getString(R.string.string_space, currency));
             currencyTextView.setTag(currency);
-            currencyTextView.setOnClickListener(new View.OnClickListener()
-            {
+            currencyTextView.setOnClickListener(new View.OnClickListener() {
 
                 @Override
-                public void onClick(View v)
-                {
-                    Log.e("Tag","clicked on "+currencyTextView.getText());
+                public void onClick(View v) {
+                    Log.e("Tag", "clicked on " + currencyTextView.getText());
                     currentSelection.setCurrentMarketCurrency(currentCurrency);
                     onSelectedCurrency();
                 }
@@ -604,5 +578,10 @@ final public class MainActivity extends AppCompatActivity
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

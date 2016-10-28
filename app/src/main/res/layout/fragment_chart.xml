@@ -1,0 +1,31 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="it.alessioricco.btc.fragments.Chart">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--<SeekBar-->
+            <!--android:id="@+id/seekBar1"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="8dp"-->
+            <!--android:max="1500"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_marginLeft="8dp"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:layout_toLeftOf="@+id/tvXMax"/>-->
+
+        <lecho.lib.hellocharts.view.LineChartView
+        android:id="@+id/chart"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</FrameLayout>
