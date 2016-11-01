@@ -18,8 +18,5 @@ public class MarketHistory  implements Serializable {
     private @Getter @Setter String symbol;
     private @Getter @Setter String currency;
 
-    //private @Getter @Setter
-    //List<HistoricalValue> history;
-
     private @Getter @Setter HistoricalValueSample historySamples = new HistoricalValueSample();
 }

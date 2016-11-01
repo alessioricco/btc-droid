@@ -146,27 +146,13 @@ public class Chart extends Fragment {
             return;
         }
 
-//        final List<HistoricalValue> history = marketHistory.getHistory();
         final HistoricalValueSample history = marketHistory.getHistorySamples();
-
-//        if (history == null || history.size() < 2) {
-//            return;
-//        }
 
         if (history == null) {
             return;
         }
 
         final List<PointValue> values = new ArrayList<PointValue>();
-
-        //final int step = (history.size() < 20) ? 1 : history.size()/20;
-
-//        for(int i = 0; i< history.size(); i+=step ){
-//            final HistoricalValue historicalValue = history.get(i);
-//            float value = historicalValue.getValue().floatValue();
-//            //TODO: add labels to X axis
-//            values.add(new PointValue(i, value));
-//        }
 
         for(int i = 0; i< HistoricalValueSample.MAX_SAMPLES ; i++ ){
             final HistoricalValue historicalValue = history.get(i);
