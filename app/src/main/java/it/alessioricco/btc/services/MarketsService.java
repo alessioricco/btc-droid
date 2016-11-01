@@ -15,9 +15,10 @@ import it.alessioricco.btc.api.BitcoinChartsAPI;
 import it.alessioricco.btc.api.RestAdapterFactory;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.models.HistoricalValue;
-import it.alessioricco.btc.models.HistoricalValueSample;
 import it.alessioricco.btc.models.Market;
 import it.alessioricco.btc.models.MarketHistory;
+import it.alessioricco.btc.utils.HistorySamplingDescriptor;
+import it.alessioricco.btc.utils.HistorySamplingHelper;
 import it.alessioricco.btc.utils.StringUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -74,9 +75,12 @@ public final class MarketsService {
 
         final List<HistorySample> calls = new ArrayList<HistorySample>();
         int index = 0;
-        for(long startSample: HistoricalValueSample.starts) {
-            final long endSample = startSample + HistoricalValueSample.ONE_HOUR;
-            final long suggestedCacheDuration = HistoricalValueSample.cacheDurationInMinutes[index];
+        //for(long startSample: HistorySamplingHelper) {
+        for(int i=0; i < HistorySamplingHelper.MAX_SAMPLES; i++) {
+            final HistorySamplingDescriptor sample = HistorySamplingHelper.getSampleDescriptor(i);
+            final long startSample = sample.getSample();
+            final long endSample = startSample + sample.getDuration();
+            final long suggestedCacheDuration = sample.getCacheDuration();
             calls.add(new HistorySample(index,symbol,startSample, endSample, suggestedCacheDuration));
             index++;
         }
@@ -85,19 +89,28 @@ public final class MarketsService {
     }
 
 
+    /**
+     * given a result as csv, trasform it in an historical value to show on the chart
+     * @param resultAsString
+     * @param index
+     * @return
+     */
     private HistoricalValue transformCSVToHistoricalValue(final String resultAsString, int index) {
         if (StringUtils.isNullOrEmpty(resultAsString)) {
             return null;
         }
 
         String[] lines = resultAsString.split("\n");
+        Log.i("charts samples", String.format("received %d lines of result", lines.length));
         for(String line: lines) {
-            String[] columns = line.split(",");
+            final String[] columns = line.split(",");
             HistoricalValue value = new HistoricalValue();
             value.setDate(new Date(1000 * Long.parseLong(columns[0])));
             value.setValue(Double.parseDouble(columns[1]));
             value.setAmount(Double.parseDouble(columns[2]));
             value.setIndex(index);
+            //TODO: check if index and date are compatible, because we cannot trust in the api endpoint
+            Log.i("charts samples", String.format("value is %s at time %s", columns[1], columns[0]));
             // return the 1st value (alternative is to calculate an average value)
             return value;
         }
@@ -128,7 +141,7 @@ public final class MarketsService {
 
                                 try {
 
-                                    final String cacheKey = String.format("%s-%d", sample.symbol, sample.index);
+                                    final String cacheKey = String.format("%s%d", sample.symbol, sample.index);
                                     //TODO: must be variable and depending on sample.index
                                     final long cacheDuration = sample.cacheDuration;
 
@@ -141,18 +154,19 @@ public final class MarketsService {
                                             // we need a new object
                                         } else {
                                             // we retrieve the object
-                                            // todo: make it async
-                                            Storo.get(cacheKey, String.class)
-                                                    .async(new st.lowlevel.storo.model.Callback<String>() {
+
+                                            Storo.get(cacheKey, HistoricalValue.class)
+                                                    .async(new st.lowlevel.storo.model.Callback<HistoricalValue>() {
                                                         @Override
-                                                        public void onResult(String cachedResult) {
-                                                            final HistoricalValue history = transformCSVToHistoricalValue(cachedResult, sample.index);
-                                                            subscriber.onNext(history);    // Pass on the data to subscriber
+                                                        public void onResult(HistoricalValue cachedResult) {
+                                                            //final HistoricalValue history = transformCSVToHistoricalValue(cachedResult, sample.index);
+                                                            subscriber.onNext(cachedResult);    // Pass on the data to subscriber
                                                             //subscriber.onCompleted();     // Signal about the completion subscriber
                                                             Log.i("charts samples", String.format("%s %d get from cache", sample.symbol, sample.index));
                                                             return;
                                                         }
                                                     });
+
                                             return;
                                         }
                                     }
@@ -169,12 +183,12 @@ public final class MarketsService {
                                                 return;
                                             }
 
-                                            // results must be cached
-                                            Storo.put(cacheKey, body)
+                                            final HistoricalValue history = transformCSVToHistoricalValue(body, sample.index);
+                                            Log.i("charts samples", String.format("%s %d get from api", sample.symbol, sample.index));
+
+                                            Storo.put(cacheKey, history)
                                                     .setExpiry(cacheDuration, TimeUnit.MINUTES)
                                                     .execute();
-
-                                            Log.i("charts samples", String.format("%s %d get from api", sample.symbol, sample.index));
 
                                             if (sample.symbol != m.getSymbol()) {
                                                 // we changed symbol in the meantime
@@ -184,7 +198,6 @@ public final class MarketsService {
                                                 return;
                                             }
 
-                                            final HistoricalValue history = transformCSVToHistoricalValue(body, sample.index);
                                             subscriber.onNext(history);
                                             //subscriber.onCompleted();
                                         }
@@ -236,7 +249,7 @@ public final class MarketsService {
      *  (now, 10minutes ago, yesterday, etc...)
      *  each of those sampling point is represented by this class
      */
-    private class HistorySample {
+    private final class HistorySample {
 
         final Call<String> call;
         final String symbol;
