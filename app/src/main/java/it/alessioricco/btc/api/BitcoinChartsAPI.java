@@ -26,4 +26,7 @@ public interface BitcoinChartsAPI {
     //api.bitcoincharts.com/v1/trades.csv?symbol=btceUSD
     @GET("/v1/trades.csv")
     Call<String> getHistory(@Query("symbol") String symbol, @Query("start") long start);
+
+    @GET("/v1/trades.csv")
+    Call<String> getHistorySample(@Query("symbol") String symbol, @Query("start") long start, @Query("start") long end);
 }

@@ -12,6 +12,7 @@ import lombok.Setter;
 
 public class HistoricalValue implements Serializable {
 
+    private @Getter @Setter int index;
     private @Getter @Setter Date date;
     private @Getter @Setter Double value;
     private @Getter @Setter Double amount;

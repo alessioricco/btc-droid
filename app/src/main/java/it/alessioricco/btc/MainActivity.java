@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -22,10 +21,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.AxisValueFormatter;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -33,9 +28,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.ocpsoft.pretty.time.PrettyTime;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -46,29 +38,13 @@ import butterknife.InjectView;
 import it.alessioricco.btc.fragments.Chart;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.models.CurrentSelection;
-import it.alessioricco.btc.models.HistoricalValue;
 import it.alessioricco.btc.models.Market;
 import it.alessioricco.btc.models.MarketHistory;
 import it.alessioricco.btc.models.Markets;
 import it.alessioricco.btc.services.MarketsService;
 import it.alessioricco.btc.utils.BitcoinChartsUtils;
-import it.alessioricco.btc.utils.Environment;
 import it.alessioricco.btc.utils.ProgressDialogHelper;
 import it.alessioricco.btc.utils.StringUtils;
-//import it.alessioricco.btc.charts.IAxisValueFormatter;
-//import lecho.lib.hellocharts.formatter.SimpleAxisValueFormatter;
-//import lecho.lib.hellocharts.model.Axis;
-//import lecho.lib.hellocharts.model.Line;
-//import lecho.lib.hellocharts.model.LineChartData;
-//import lecho.lib.hellocharts.model.PointValue;
-
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.utils.ColorTemplate;
-
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.Subscriber;
@@ -79,9 +55,6 @@ import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 import st.lowlevel.storo.Storo;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
-
-import static android.R.attr.max;
-import static android.R.attr.y;
 
 /**
  * main activity of the app
@@ -114,7 +87,6 @@ final public class MainActivity extends AppCompatActivity
     LinearLayout symbolsContainer;
     @InjectView(R.id.chart_fragment_container)
     LinearLayout chartFragmentContainer;
-
 
     @InjectView(R.id.latest_trade)
     TextView latestTrade;
@@ -312,7 +284,6 @@ final public class MainActivity extends AppCompatActivity
     private void getHistoricalData(final String symbol) {
         try {
 
-            //TODO: chart must be a fragment
             chartFragmentContainer.setVisibility(View.GONE);
 
             // if data are cached we don't need of a progress bar
@@ -322,7 +293,7 @@ final public class MainActivity extends AppCompatActivity
                 progressBar.setVisibility(View.VISIBLE);
             }
 
-            final Observable<MarketHistory> observable = this.marketsService.getHistory(symbol);
+            final Observable<MarketHistory> observable = this.marketsService.getHistorySamples(symbol);
             final Subscription history = observable
                     .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
                     .observeOn(AndroidSchedulers.mainThread())
