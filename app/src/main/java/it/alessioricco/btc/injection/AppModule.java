@@ -8,14 +8,11 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import it.alessioricco.btc.BtcTickerApp;
+import it.alessioricco.btc.App;
 import it.alessioricco.btc.MainActivity;
 import it.alessioricco.btc.api.HttpClientFactory;
 import it.alessioricco.btc.api.RestAdapterFactory;
 import it.alessioricco.btc.services.MarketsService;
-import retrofit2.Retrofit;
-import st.lowlevel.storo.Storo;
-import st.lowlevel.storo.StoroBuilder;
 
 
 /**
@@ -26,7 +23,7 @@ import st.lowlevel.storo.StoroBuilder;
 
 @Module(
         injects = {
-                BtcTickerApp.class,
+                App.class,
                 MarketsService.class,
 
                 RestAdapterFactory.class,
@@ -37,14 +34,14 @@ import st.lowlevel.storo.StoroBuilder;
 
 public class AppModule {
 
-    private BtcTickerApp app; // App: constructor
-    private BtcTickerApp testApp; // Test: constructor and environment
+    private App app; // App: constructor
+    private App testApp; // Test: constructor and environment
 
     /**
      * constructor for the main android app
      * @param app the application itself
      */
-    public AppModule(BtcTickerApp app) {
+    public AppModule(App app) {
         this.app = app;
     }
 
@@ -54,7 +51,7 @@ public class AppModule {
     public AppModule() {
         try {
             if (testApp == null) {
-                testApp = new BtcTickerApp();
+                testApp = new App();
             }
             app = testApp;
         } catch (Exception e)

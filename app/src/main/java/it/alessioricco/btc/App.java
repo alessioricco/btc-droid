@@ -1,6 +1,7 @@
 package it.alessioricco.btc;
 
 import android.app.Application;
+import android.content.Context;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,10 +19,13 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
  *
  */
 
-public final class BtcTickerApp extends Application {
+public final class App extends Application {
+
+    private static Context mContext;
 
     @Override public void onCreate() {
         super.onCreate();
+        mContext = this;
 
         // Initialize ObjectGraph for dependency Injection
         if (ObjectGraphSingleton.getInstance() == null) {
@@ -41,6 +45,11 @@ public final class BtcTickerApp extends Application {
                 .initialize();
     }
 
+    //http://stackoverflow.com/questions/4391720/how-can-i-get-a-resource-content-from-a-static-context/4391811#4391811
+    public static Context getContext(){
+        return mContext;
+    }
+
     final private List<Object> getModules() {
         return Arrays.<Object>asList(new AppModule(this));
     }
@@ -49,4 +58,5 @@ public final class BtcTickerApp extends Application {
         super.onTerminate();
         ObjectGraphSingleton.reset();
     }
+
 }

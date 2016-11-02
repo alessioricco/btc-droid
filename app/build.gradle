@@ -105,6 +105,7 @@ dependencies {
     //test
     testCompile 'junit:junit:4.12'
     testCompile "org.robolectric:robolectric:3.1.4"
+    testCompile 'org.robolectric:shadows-support-v4:3.0'
     testCompile 'org.assertj:assertj-core:2.5.0'
     compile 'org.mockito:mockito-core:2.2.9'
 }

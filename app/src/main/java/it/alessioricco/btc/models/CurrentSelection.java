@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import it.alessioricco.btc.App;
+import it.alessioricco.btc.R;
 import it.alessioricco.btc.utils.StringUtils;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Created by alessioricco on 06/10/2016.
@@ -26,7 +26,7 @@ public class CurrentSelection implements Serializable {
 
     public String getCurrentMarketCurrency() {
         if (StringUtils.isNullOrEmpty(currentMarketCurrency)) {
-            currentMarketCurrency = "USD";
+            currentMarketCurrency = App.getContext().getString(R.string.currency_usd);
         }
         return currentMarketCurrency;
     }
