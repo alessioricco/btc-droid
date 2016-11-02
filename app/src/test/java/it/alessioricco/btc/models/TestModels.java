@@ -98,8 +98,34 @@ public class TestModels {
         assertThat(currentSelection.getCurrentMarketCurrency()).isNotEmpty();
         assertThat(currentSelection.getCurrentMarketCurrency()).isNotNull();
 
+        // no currency selected
+        final String default_currency = context.getString(R.string.currency_usd);
         assertThat(currentSelection.getCurrentMarketCurrency())
-                .isEqualToIgnoringCase( context.getString(R.string.currency_usd));
+                .isEqualToIgnoringCase(default_currency);
+
+        // currency: eur
+        final String EUR = "EUR";
+        currentSelection.setCurrentMarketCurrency(EUR);
+        assertThat(currentSelection.getCurrentMarketCurrency()).isEqualTo(EUR);
+
+        // select one market
+        final String BTCEUR = "BTCEUR";
+        currentSelection.setCurrentMarketSymbol(BTCEUR);
+        assertThat(currentSelection.getCurrentMarketSymbol()).isEqualTo(BTCEUR);
+
+        // select a different market
+        final String BTCEEUR = "BTCEEUR";
+        currentSelection.setCurrentMarketSymbol(BTCEEUR);
+        assertThat(currentSelection.getCurrentMarketSymbol()).isEqualTo(BTCEEUR);
+
+        //  no currency selected again
+        currentSelection.setCurrentMarketCurrency("");
+        assertThat(currentSelection.getCurrentMarketCurrency()).isEqualTo(default_currency);
+
+        // select again eur and testing the market
+        currentSelection.setCurrentMarketCurrency(EUR);
+        assertThat(currentSelection.getCurrentMarketCurrency()).isEqualTo(EUR);
+        assertThat(currentSelection.getCurrentMarketSymbol()).isEqualTo(BTCEEUR);
 
     }
 

@@ -30,7 +30,7 @@ import static java.lang.Math.abs;
 public class Market implements Serializable {
 
     @Getter @Setter private Double volume;
-    @Getter @Setter private long latest_trade;
+    @Getter @Setter private Long latest_trade;
     @Getter @Setter private Double bid;
     @Getter @Setter private Double high;
     @Getter @Setter private String currency;
@@ -42,6 +42,7 @@ public class Market implements Serializable {
     @Getter @Setter private Double low;
 
     public Date getDate() {
+        if (latest_trade == null) return null;
         final long dv = Long.valueOf(latest_trade)*1000;
         return new java.util.Date(dv);
     }
@@ -54,15 +55,24 @@ public class Market implements Serializable {
 
     public Double percent() {
         //TODO: add a method nearzero abs()<epsilon
-        if (avg == 0d) return 0d;
-        return 100*((delta())/avg);
+        if (avg == null) return null;
+        if (avg == 0d) return null;
+        Double delta = delta();
+        if (delta == null) return null;
+        return 100*(delta/avg);
     }
 
     public Double delta() {
+        if (avg == null) return null;
+        if (close == null) return null;
         return (close-avg);
     }
 
     private boolean marketToFilter() {
+
+        if (StringUtils.isNullOrEmpty(symbol)) {
+            return true;
+        }
 
         final String uSymbol = symbol.toUpperCase();
 
@@ -85,6 +95,8 @@ public class Market implements Serializable {
                 avg != null &&
                 currency_volume != null &&
                 currency_volume > 1 &&
+                latest_trade != null &&
+                ! StringUtils.isNullOrEmpty(symbol) &&
                 ! tooOld() &&
                 ! marketToFilter() &&
                 ! StringUtils.isNullOrEmpty(symbol) &&

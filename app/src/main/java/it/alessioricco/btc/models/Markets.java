@@ -18,8 +18,8 @@ import it.alessioricco.btc.utils.StringUtils;
  *
  * this model represent the available markets
  * after been filtered and sorted
- * it provides the currencies and list_of_symbols_main structures
- * is an array of Market objects
+ *
+ * is based on a map between currency and the map between symbol and market
  */
 public class Markets implements Serializable {
 
