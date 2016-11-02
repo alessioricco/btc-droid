@@ -15,7 +15,7 @@ public class TestObjectGraphInitializer {
         };
 
         ObjectGraphSingleton.reset();
-        ObjectGraphSingleton.setInstance(ObjectGraph.create((TestAppModule[]) modules));
+        ObjectGraphSingleton.setInstance(ObjectGraph.create((Object[]) modules));
     }
 
     static public ObjectGraph getObjectGraphIstance() {

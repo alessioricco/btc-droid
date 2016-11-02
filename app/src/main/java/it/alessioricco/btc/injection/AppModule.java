@@ -61,6 +61,10 @@ public class AppModule {
         {/* do nothing */}
     }
 
+    @Provides @Singleton public Context provideContext() {
+        return app;
+    }
+
     /**
      * Markets Service factory
      * @return a well formed marketsService object

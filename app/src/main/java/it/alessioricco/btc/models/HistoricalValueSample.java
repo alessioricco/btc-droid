@@ -13,7 +13,11 @@ import it.alessioricco.btc.utils.HistorySamplingHelper;
 
 final public class HistoricalValueSample  implements Serializable {
 
-    final private HistoricalValue[] samples = new HistoricalValue[HistorySamplingHelper.MAX_SAMPLES];
+    final private HistoricalValue[] samples = new HistoricalValue[getMaxSamples()];
+
+    final static public int getMaxSamples() {
+        return HistorySamplingHelper.MAX_SAMPLES;
+    }
 
     final public HistoricalValue get(int index) {
         return samples[index];
