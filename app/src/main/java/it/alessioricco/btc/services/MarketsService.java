@@ -142,7 +142,6 @@ public final class MarketsService {
                                 try {
 
                                     final String cacheKey = String.format("%s%d", sample.symbol, sample.index);
-                                    //TODO: must be variable and depending on sample.index
                                     final long cacheDuration = sample.cacheDuration;
 
                                     // check cache

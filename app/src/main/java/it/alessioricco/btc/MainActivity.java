@@ -132,7 +132,6 @@ final public class MainActivity extends AppCompatActivity
         ObjectGraphSingleton.getInstance().inject(this);
         ButterKnife.inject(this);
 
-
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();

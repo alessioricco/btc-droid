@@ -98,7 +98,13 @@ dependencies {
     compile 'com.github.nisrulz:stackedhorizontalprogressbar:1.0.2'
     compile 'com.android.support:support-v4:24.2.1'
     compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
-    testCompile 'junit:junit:4.12'
+
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
     provided 'org.projectlombok:lombok:1.12.6'
+
+    //test
+    testCompile 'junit:junit:4.12'
+    testCompile "org.robolectric:robolectric:3.1.4"
+    testCompile 'org.assertj:assertj-core:3.5.2'
+    compile 'org.mockito:mockito-core:2.2.9'
 }
