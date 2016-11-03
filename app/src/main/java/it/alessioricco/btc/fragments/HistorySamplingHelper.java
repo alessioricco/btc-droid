@@ -39,6 +39,9 @@ final public class HistorySamplingHelper  {
      * @return
      */
     public static HistorySamplingDescriptor getSampleDescriptor(int index) {
+        if (index <0 || index >= MAX_SAMPLES) {
+            return null;
+        }
         return samples[index];
     }
 

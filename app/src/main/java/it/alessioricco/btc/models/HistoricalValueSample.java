@@ -20,10 +20,6 @@ final public class HistoricalValueSample  implements Serializable {
         return samples[index];
     }
 
-//    final public void put(HistoricalValue historicalValue, int index) {
-//        samples[index] = historicalValue;
-//    }
-
     final public void put(HistoricalValue historicalValue) {
         samples[historicalValue.getIndex()] = historicalValue;
     }

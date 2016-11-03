@@ -9,6 +9,7 @@ import java.util.List;
 import dagger.ObjectGraph;
 import it.alessioricco.btc.injection.AppModule;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
+import st.lowlevel.storo.Storo;
 import st.lowlevel.storo.StoroBuilder;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
@@ -41,9 +42,11 @@ public final class App extends Application {
                         .build());
         // caching
         //TODO: a problem with initialization must be fixed (injection?)
-        StoroBuilder.configure(100*1024)  // maximum size to allocate in bytes
-                .setDefaultCacheDirectory(this)
-                .initialize();
+        if (!Storo.isInitialized()) {
+            StoroBuilder.configure(100 * 1024)  // maximum size to allocate in bytes
+                    .setDefaultCacheDirectory(this)
+                    .initialize();
+        }
     }
 
     //http://stackoverflow.com/questions/4391720/how-can-i-get-a-resource-content-from-a-static-context/4391811#4391811

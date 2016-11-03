@@ -89,9 +89,6 @@ public class TestMarkets {
         final String jsonMarket = "{\"high\": 9334100.000000000000, \"latest_trade\": 1478109584, \"bid\": 9285700.000000000000, \"volume\": 615.496164440000, \"currency\": \"IDR\", \"currency_volume\": 5710601675.554674000000, \"ask\": 9298400.000000000000, \"close\": 9298400.000000000000, \"avg\": 9278045.917232286432930220455, \"symbol\": \"btcoidIDR\", \"low\": 9202400.000000000000}";
 
         return new Gson().fromJson(jsonMarket,Market.class);
-
-
-
     }
 
     /**
