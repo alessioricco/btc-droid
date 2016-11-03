@@ -208,7 +208,7 @@ public final class MarketsService {
                 .doOnNext(new Action1<HistoricalValue>() {
                     @Override
                     public void call(HistoricalValue historicalValue) {
-                        m.getHistorySamples().put(historicalValue,historicalValue.getIndex());
+                        m.getHistorySamples().put(historicalValue);
                     }
                 })
                 .concatMap(new Func1<HistoricalValue, Observable<? extends MarketHistory>>() {

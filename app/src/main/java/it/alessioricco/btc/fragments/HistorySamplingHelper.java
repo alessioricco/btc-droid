@@ -26,7 +26,6 @@ final public class HistorySamplingHelper  {
             new HistorySamplingDescriptor("12h",    HALF_DAY, TEN_MINUTES, ONE_HOUR / ONE_MINUTE, true),
             new HistorySamplingDescriptor( "1d",     ONE_DAY, TEN_MINUTES, HALF_DAY / ONE_MINUTE, true),
             new HistorySamplingDescriptor( "2d",     TWO_DAYS, TEN_MINUTES, HALF_DAY / ONE_MINUTE, true),
-            //new HistorySamplingDescriptor( "3d",  THREE_DAYS, TEN_MINUTES, ONE_DAY / ONE_MINUTE, false),
             new HistorySamplingDescriptor( "5d",  FIVE_DAYS, TEN_MINUTES, ONE_DAY / ONE_MINUTE, true),
             new HistorySamplingDescriptor( "1w",    ONE_WEEK, TEN_MINUTES, THREE_DAYS / ONE_MINUTE, false),
             new HistorySamplingDescriptor( "1M",    ONE_MONTH,TEN_MINUTES, ONE_WEEK / ONE_MINUTE, false)
@@ -34,6 +33,11 @@ final public class HistorySamplingHelper  {
 
     public final static int MAX_SAMPLES = samples.length;
 
+    /**
+     * retrieve a sample descriptor
+     * @param index
+     * @return
+     */
     public static HistorySamplingDescriptor getSampleDescriptor(int index) {
         return samples[index];
     }

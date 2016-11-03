@@ -6,7 +6,7 @@ import lombok.Setter;
 /**
  * for each sample contains caching, label, duration
  */
-public class HistorySamplingDescriptor {
+public final class HistorySamplingDescriptor {
     private @Getter @Setter String label;
     private @Getter @Setter long cacheDuration;
     private @Getter @Setter long sample;

@@ -27,7 +27,7 @@ import rx.schedulers.Schedulers;
 
 public final class RestAdapterFactory {
 
-    @Inject OkHttpClient httpClient;
+    //@Inject OkHttpClient httpClient;
 
     final String url = "http://api.bitcoincharts.com";
 

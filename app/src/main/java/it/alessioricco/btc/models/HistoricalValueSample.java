@@ -4,13 +4,10 @@ import java.io.Serializable;
 
 import it.alessioricco.btc.fragments.HistorySamplingHelper;
 
+
 /**
- * Created by alessioricco on 28/10/2016.
- *
+ * collection of samples used for the chart visualization
  */
-
-
-
 final public class HistoricalValueSample  implements Serializable {
 
     final private HistoricalValue[] samples = new HistoricalValue[getMaxSamples()];
@@ -23,7 +20,11 @@ final public class HistoricalValueSample  implements Serializable {
         return samples[index];
     }
 
-    final public void put(HistoricalValue historicalValue, int index) {
-        samples[index] = historicalValue;
+//    final public void put(HistoricalValue historicalValue, int index) {
+//        samples[index] = historicalValue;
+//    }
+
+    final public void put(HistoricalValue historicalValue) {
+        samples[historicalValue.getIndex()] = historicalValue;
     }
 }

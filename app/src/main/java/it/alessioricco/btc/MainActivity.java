@@ -327,7 +327,8 @@ final public class MainActivity extends AppCompatActivity
                                     currentValue.setValue(currentMarket.getClose());
                                     currentValue.setDate(currentMarket.getDate());
                                     currentValue.setAmount(0d);
-                                    history.getHistorySamples().put(currentValue, 0);
+                                    currentValue.setIndex(0);
+                                    history.getHistorySamples().put(currentValue);
                                 }
 
                                 //TODO: double check on the currency/action to avoid wasting time on old selections

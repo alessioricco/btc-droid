@@ -2,15 +2,12 @@ package it.alessioricco.btc.injection;
 
 import android.content.Context;
 
-import com.squareup.okhttp.OkHttpClient;
-
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import it.alessioricco.btc.App;
 import it.alessioricco.btc.MainActivity;
-import it.alessioricco.btc.api.HttpClientFactory;
 import it.alessioricco.btc.api.RestAdapterFactory;
 import it.alessioricco.btc.fragments.HistorySample;
 import it.alessioricco.btc.services.MarketsService;
@@ -84,7 +81,4 @@ public class AppModule {
         return new RestAdapterFactory();
     }
 
-    @Provides @Singleton public OkHttpClient providesOkHttpClient() {
-        return new HttpClientFactory().getHttpClient();
-    }
 }

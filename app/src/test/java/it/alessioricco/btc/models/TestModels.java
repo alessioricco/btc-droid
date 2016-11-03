@@ -36,14 +36,12 @@ import static org.assertj.core.api.Java6Assertions.*;
 @RunWith(RobolectricTestRunner.class)
 public class TestModels {
 
-    Context context;
     @Before public void init() throws Exception {
 
         // Init the IoC and inject us
         TestObjectGraphInitializer.init();
         TestObjectGraphInitializer.getObjectGraphIstance().inject(this);
 
-        context = RuntimeEnvironment.application;
     }
 
     /**
@@ -51,7 +49,6 @@ public class TestModels {
      */
     @After public void tearDown() {
 
-        context = null;
         TestObjectGraphInitializer.reset();
 
     }
@@ -76,7 +73,7 @@ public class TestModels {
             assertThat(hv0.getValue()/100d).isEqualTo(i);
 
             //todo: remove the need for an index as argument or remove the index from the historicalValue
-            h.put(hv0, hv0.getIndex());
+            h.put(hv0);
             assertThat(h.get(hv0.getIndex()).getIndex()).isEqualTo(hv0.getIndex());
         }
 
@@ -98,6 +95,7 @@ public class TestModels {
         assertThat(currentSelection.getCurrentMarketCurrency()).isNotEmpty();
         assertThat(currentSelection.getCurrentMarketCurrency()).isNotNull();
 
+        Context context = RuntimeEnvironment.application;
         // no currency selected
         final String default_currency = context.getString(R.string.currency_usd);
         assertThat(currentSelection.getCurrentMarketCurrency())

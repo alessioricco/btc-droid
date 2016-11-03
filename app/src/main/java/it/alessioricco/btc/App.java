@@ -40,6 +40,7 @@ public final class App extends Application {
                         .setFontAttrId(R.attr.fontPath)
                         .build());
         // caching
+        //TODO: a problem with initialization must be fixed (injection?)
         StoroBuilder.configure(100*1024)  // maximum size to allocate in bytes
                 .setDefaultCacheDirectory(this)
                 .initialize();
