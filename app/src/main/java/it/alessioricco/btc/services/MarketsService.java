@@ -89,10 +89,8 @@ public final class MarketsService {
             return null;
         }
 
-        //TODO: we can optimize split if we'll use just one value
-
+        // extract just the first line from the csv response
         final String line = StringUtils.firstLineOf(resultAsString);
-
         return HistoricalValue.fromCSVLine(line, index);
     }
 
@@ -162,6 +160,10 @@ public final class MarketsService {
                                             }
 
                                             final HistoricalValue history = transformCSVToHistoricalValue(body, sample.getIndex());
+                                            if (history == null) {
+                                                return;
+                                            }
+
                                             Log.i(LOG_TAG, String.format("%s %d get from api", sample.getSymbol(), sample.getIndex()));
 
                                             if (cacheEnabled) {

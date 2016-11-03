@@ -3,6 +3,7 @@ package it.alessioricco.btc.models;
 import java.io.Serializable;
 
 import it.alessioricco.btc.fragments.HistorySamplingHelper;
+import lombok.Getter;
 
 
 /**
@@ -10,16 +11,23 @@ import it.alessioricco.btc.fragments.HistorySamplingHelper;
  */
 final public class MarketHistory implements Serializable {
 
-    final private HistoricalValue[] samples = new HistoricalValue[getMaxSamples()];
+    final static private @Getter int maxSamples = HistorySamplingHelper.MAX_SAMPLES;
+    final private HistoricalValue[] samples = new HistoricalValue[maxSamples];
 
-    final static public int getMaxSamples() {
-        return HistorySamplingHelper.MAX_SAMPLES;
-    }
-
+    /**
+     * retrieve a sample from the market history
+     * @param index
+     * @return
+     */
     final public HistoricalValue get(int index) {
+        if (index >= maxSamples) return null;
         return samples[index];
     }
 
+    /**
+     * add a sample to the market history
+     * @param historicalValue
+     */
     final public void put(HistoricalValue historicalValue) {
         samples[historicalValue.getIndex()] = historicalValue;
     }

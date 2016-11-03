@@ -143,18 +143,13 @@ public class Chart extends Fragment {
             return;
         }
 
-        final MarketHistory history = marketHistory; //marketHistory.getHistorySamples();
-
-//        if (history == null) {
-//            return;
-//        }
-
         final List<PointValue> values = new ArrayList<PointValue>();
 
         final List<AxisValue> axisValues = new ArrayList<AxisValue>();
 
+        //todo: use an iterator
         for(int i = 0; i< HistorySamplingHelper.MAX_SAMPLES ; i++ ){
-            final HistoricalValue historicalValue = history.get(i);
+            final HistoricalValue historicalValue = marketHistory.get(i);
             if (historicalValue != null) {
                 final Double d = historicalValue.getValue();
                 if (d != null) {

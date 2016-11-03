@@ -12,6 +12,7 @@ import java.util.Objects;
 
 import it.alessioricco.btc.utils.BitcoinChartsUtils;
 import it.alessioricco.btc.utils.StringUtils;
+import lombok.Getter;
 
 /**
  * Created by alessioricco on 01/10/2016.
@@ -26,13 +27,15 @@ public class Markets implements Serializable {
     // (currency->(symbol->market))
     final private Map<String, Map<String,Market>> currencies = new HashMap<String, Map<String,Market>>();
 
+    //todo: make them resources
+    final private static @Getter String[] privilegedCurrencies = new String[] {"EUR", "GBP", "USD"};
     /**
      * return the sorted list of available currencies
      * @return a list of string with the currencies id
      */
     public List<String> getCurrencies() {
         final List<String> currencies = new ArrayList(this.currencies.keySet());
-        final String[] privilegedCurrencies = new String[] {"EUR", "GBP", "USD"};
+
         Collections.sort(currencies, new Comparator<String>() {
             public int compare(String left, String right) {
 

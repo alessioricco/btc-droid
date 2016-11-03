@@ -3,16 +3,10 @@ package it.alessioricco.btc.models;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowResources;
 
 import java.util.List;
 
-import it.alessioricco.btc.BuildConfig;
-import it.alessioricco.btc.TestEnvironment;
 import it.alessioricco.btc.mocks.MockBitcoinCharts;
-import it.alessioricco.btc.util.CustomRobolectricTestRunner;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
@@ -22,18 +16,18 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 
 public class TestMarkets {
 
-    @Before
-    public void init() throws Exception {
-
-    }
-
-    /**
-     * Method executed after any test
-     */
-    @After
-    public void tearDown() {
-
-    }
+//    @Before
+//    public void init() throws Exception {
+//
+//    }
+//
+//    /**
+//     * Method executed after any test
+//     */
+//    @After
+//    public void tearDown() {
+//
+//    }
 
 
     /**
@@ -53,6 +47,22 @@ public class TestMarkets {
         final List<String> currencies = markets.getCurrencies();
         assertThat(currencies).isNotNull();
         assertThat(currencies.size()).isGreaterThan(0);
+
+        // the list of privileged currencies is not null
+        assertThat(Markets.getPrivilegedCurrencies()).isNotNull();
+
+        // test currency sort
+        for (int i=0; i<Markets.getPrivilegedCurrencies().length; i++) {
+            assertThat(currencies.get(i)).isEqualTo(Markets.getPrivilegedCurrencies()[i]);
+        }
+        String lastCurrency = "";
+        for (int i=Markets.getPrivilegedCurrencies().length; i<currencies.size(); i++) {
+            final String currency = currencies.get(i);
+            assertThat(currencies).isNotNull();
+            assertThat(currencies).isNotEmpty();
+            assertThat(currency.compareTo(lastCurrency)).isGreaterThan(0);
+            lastCurrency = currency;
+        }
 
         // for each currency we test the symbols
         for(String currency: currencies) {

@@ -4,8 +4,9 @@ import android.content.Context;
 
 import dagger.Module;
 import dagger.Provides;
+import it.alessioricco.btc.models.TestCurrentSelection;
 import it.alessioricco.btc.models.TestMarket;
-import it.alessioricco.btc.models.TestModels;
+import it.alessioricco.btc.models.TestHistoricalValue;
 
 import org.robolectric.shadows.ShadowApplication;
 
@@ -19,8 +20,7 @@ import javax.inject.Singleton;
         AppModule.class
         },
         injects = {
-                TestModels.class,
-                TestMarket.class
+                TestCurrentSelection.class
         },
         library = true, overrides = true)
 public class TestAppModule {
