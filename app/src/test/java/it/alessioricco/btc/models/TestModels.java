@@ -6,15 +6,10 @@ package it.alessioricco.btc.models;
 
 import android.content.Context;
 
-import org.junit.Assert;
 import org.junit.Test;
-import javax.inject.Inject;
-import javax.inject.Named;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowResources;
@@ -24,11 +19,9 @@ import java.util.Date;
 import it.alessioricco.btc.BuildConfig;
 import it.alessioricco.btc.R;
 import it.alessioricco.btc.TestEnvironment;
-import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.injection.TestObjectGraphInitializer;
 import it.alessioricco.btc.util.CustomRobolectricTestRunner;
 
-import static org.junit.Assert.*;
 import static org.assertj.core.api.Java6Assertions.*;
 
 @Config(shadows = { ShadowResources.class },
@@ -61,7 +54,7 @@ public class TestModels {
      */
     @Test
     public void testHistoricalValueSample() throws Exception {
-        HistoricalValueSample h = new HistoricalValueSample();
+        MarketHistory h = new MarketHistory();
 
         for (int i=0; i< h.getMaxSamples(); i++) {
             final HistoricalValue hv0 = new HistoricalValue();
@@ -86,8 +79,8 @@ public class TestModels {
      */
     @Test(expected=IndexOutOfBoundsException.class)
     public void testIndexOutOfBoundsException() {
-        HistoricalValueSample h = new HistoricalValueSample();
-        h.get(HistoricalValueSample.getMaxSamples());
+        MarketHistory h = new MarketHistory();
+        h.get(MarketHistory.getMaxSamples());
     }
 
     @Test

@@ -39,8 +39,9 @@ import it.alessioricco.btc.fragments.Chart;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.models.CurrentSelection;
 import it.alessioricco.btc.models.HistoricalValue;
-import it.alessioricco.btc.models.Market;
 import it.alessioricco.btc.models.MarketHistory;
+import it.alessioricco.btc.models.Market;
+//import it.alessioricco.btc.models.MarketHistory;
 import it.alessioricco.btc.models.Markets;
 import it.alessioricco.btc.services.MarketsService;
 import it.alessioricco.btc.utils.BitcoinChartsUtils;
@@ -322,13 +323,13 @@ final public class MainActivity extends AppCompatActivity
 
                                 // check if the current value is present
                                 // if not is filled with the current value
-                                if (history.getHistorySamples().get(0) == null) {
+                                if (history.get(0) == null) {
                                     HistoricalValue currentValue = new HistoricalValue();
                                     currentValue.setValue(currentMarket.getClose());
                                     currentValue.setDate(currentMarket.getDate());
                                     currentValue.setAmount(0d);
                                     currentValue.setIndex(0);
-                                    history.getHistorySamples().put(currentValue);
+                                    history.put(currentValue);
                                 }
 
                                 //TODO: double check on the currency/action to avoid wasting time on old selections

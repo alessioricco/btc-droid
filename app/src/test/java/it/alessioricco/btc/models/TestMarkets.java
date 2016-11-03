@@ -17,10 +17,10 @@ import it.alessioricco.btc.util.CustomRobolectricTestRunner;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
 /**
- * TestMarketList
+ * TestMarkets
  */
 
-public class TestMarketList {
+public class TestMarkets {
 
     @Before
     public void init() throws Exception {

@@ -3,7 +3,6 @@ package it.alessioricco.btc.services;
 import android.util.Log;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -15,8 +14,8 @@ import it.alessioricco.btc.api.RestAdapterFactory;
 import it.alessioricco.btc.fragments.HistorySample;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.models.HistoricalValue;
-import it.alessioricco.btc.models.Market;
 import it.alessioricco.btc.models.MarketHistory;
+import it.alessioricco.btc.models.Market;
 import it.alessioricco.btc.utils.StringUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,6 +25,8 @@ import rx.Subscriber;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import st.lowlevel.storo.Storo;
+
+//import it.alessioricco.btc.models.MarketHistory;
 
 /**
  * Created by alessioricco on 01/10/2016.
@@ -108,7 +109,6 @@ public final class MarketsService {
         final Boolean cacheEnabled = true;
 
         final MarketHistory m = new MarketHistory();
-        m.setSymbol(symbol);
 
         final Func1<HistorySample, Observable<HistoricalValue>> query =
                 new Func1<HistorySample, Observable<HistoricalValue>>() {
@@ -133,14 +133,12 @@ public final class MarketsService {
                                                 // we need a new object
                                             } else {
                                                 // we retrieve the object
-
+                                                //todo: it could return an observable...
                                                 Storo.get(cacheKey, HistoricalValue.class)
                                                         .async(new st.lowlevel.storo.model.Callback<HistoricalValue>() {
                                                             @Override
                                                             public void onResult(HistoricalValue cachedResult) {
-                                                                //final HistoricalValue history = transformCSVToHistoricalValue(cachedResult, sample.index);
                                                                 subscriber.onNext(cachedResult);    // Pass on the data to subscriber
-                                                                //subscriber.onCompleted();     // Signal about the completion subscriber
                                                                 Log.i(LOG_TAG, String.format("%s %d get from cache", sample.getSymbol(), sample.getIndex()));
                                                                 return;
                                                             }
@@ -172,16 +170,7 @@ public final class MarketsService {
                                                         .execute();
                                             }
 
-                                            if (sample.getSymbol() != m.getSymbol()) {
-                                                // we changed symbol in the meantime
-                                                // the cached value is still valid because we cached a real result,
-                                                // but we cannot associate it to the current stream
-                                                Log.i(LOG_TAG, String.format("%s %d is a glitch", sample.getSymbol(), sample.getIndex()));
-                                                return;
-                                            }
-
                                             subscriber.onNext(history);
-                                            //subscriber.onCompleted();
                                         }
 
                                         @Override
@@ -208,7 +197,7 @@ public final class MarketsService {
                 .doOnNext(new Action1<HistoricalValue>() {
                     @Override
                     public void call(HistoricalValue historicalValue) {
-                        m.getHistorySamples().put(historicalValue);
+                        m.put(historicalValue);
                     }
                 })
                 .concatMap(new Func1<HistoricalValue, Observable<? extends MarketHistory>>() {

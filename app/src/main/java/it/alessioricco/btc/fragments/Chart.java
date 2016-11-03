@@ -15,8 +15,8 @@ import java.util.List;
 import butterknife.ButterKnife;
 import it.alessioricco.btc.R;
 import it.alessioricco.btc.models.HistoricalValue;
-import it.alessioricco.btc.models.HistoricalValueSample;
 import it.alessioricco.btc.models.MarketHistory;
+//import it.alessioricco.btc.models.MarketHistory;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Line;
@@ -143,11 +143,11 @@ public class Chart extends Fragment {
             return;
         }
 
-        final HistoricalValueSample history = marketHistory.getHistorySamples();
+        final MarketHistory history = marketHistory; //marketHistory.getHistorySamples();
 
-        if (history == null) {
-            return;
-        }
+//        if (history == null) {
+//            return;
+//        }
 
         final List<PointValue> values = new ArrayList<PointValue>();
 
@@ -161,8 +161,12 @@ public class Chart extends Fragment {
                     float value = historicalValue.getValue().floatValue();
                     values.add(new PointValue(i, value));
                     final AxisValue axisValue = new AxisValue(i);
-                    axisValue.setLabel(HistorySamplingHelper.getSampleDescriptor(i).getLabel());
-                    axisValues.add(axisValue);
+                    final HistorySamplingDescriptor sampleDescriptor = HistorySamplingHelper.getSampleDescriptor(i);
+                    if (sampleDescriptor != null) {
+                        axisValue.setLabel(sampleDescriptor.getLabel());
+                        axisValues.add(axisValue);
+                    }
+
                 }
             }
         }

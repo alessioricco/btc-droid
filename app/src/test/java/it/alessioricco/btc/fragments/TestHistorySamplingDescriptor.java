@@ -1,36 +1,19 @@
 package it.alessioricco.btc.fragments;
 
 
-import android.content.Context;
-
-import com.google.gson.Gson;
-
-import org.junit.Assert;
 import org.junit.Test;
-import javax.inject.Inject;
-import javax.inject.Named;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowResources;
 
-import java.util.Date;
 import java.util.List;
 
 import it.alessioricco.btc.BuildConfig;
-import it.alessioricco.btc.R;
 import it.alessioricco.btc.TestEnvironment;
-import it.alessioricco.btc.injection.ObjectGraphSingleton;
-import it.alessioricco.btc.injection.TestObjectGraphInitializer;
-import it.alessioricco.btc.models.HistoricalValue;
-import it.alessioricco.btc.models.HistoricalValueSample;
 import it.alessioricco.btc.util.CustomRobolectricTestRunner;
 
-import static org.junit.Assert.*;
 import static org.assertj.core.api.Java6Assertions.*;
 
 @Config(shadows = { ShadowResources.class },

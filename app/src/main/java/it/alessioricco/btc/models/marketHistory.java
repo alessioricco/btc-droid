@@ -1,22 +1,26 @@
 package it.alessioricco.btc.models;
 
 import java.io.Serializable;
-import java.util.List;
 
-import lombok.Getter;
-import lombok.Setter;
+import it.alessioricco.btc.fragments.HistorySamplingHelper;
+
 
 /**
- * Created by alessioricco on 08/10/2016.
+ * collection of samples used for the chart visualization
  */
+final public class MarketHistory implements Serializable {
 
+    final private HistoricalValue[] samples = new HistoricalValue[getMaxSamples()];
 
-public class MarketHistory  implements Serializable {
+    final static public int getMaxSamples() {
+        return HistorySamplingHelper.MAX_SAMPLES;
+    }
 
-    //TODO: manage those fields
-    private @Getter @Setter boolean isCached = false;
-    private @Getter @Setter String symbol;
-    private @Getter @Setter String currency;
+    final public HistoricalValue get(int index) {
+        return samples[index];
+    }
 
-    private @Getter @Setter HistoricalValueSample historySamples = new HistoricalValueSample();
+    final public void put(HistoricalValue historicalValue) {
+        samples[historicalValue.getIndex()] = historicalValue;
+    }
 }
