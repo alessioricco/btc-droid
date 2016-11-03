@@ -2,7 +2,7 @@ package it.alessioricco.btc.models;
 
 import java.io.Serializable;
 
-import it.alessioricco.btc.utils.HistorySamplingHelper;
+import it.alessioricco.btc.fragments.HistorySamplingHelper;
 
 /**
  * Created by alessioricco on 28/10/2016.

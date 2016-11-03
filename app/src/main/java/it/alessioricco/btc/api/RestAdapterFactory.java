@@ -1,6 +1,13 @@
 package it.alessioricco.btc.api;
 
+import android.util.Log;
+
+import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -43,10 +50,22 @@ public final class RestAdapterFactory {
     // todo: refactor to be a class and not a method
     public Retrofit getRawRestAdapter() {
 
-        RxJavaCallAdapterFactory rxAdapter = RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
+        //needed for printing urls
+        okhttp3.OkHttpClient client = new okhttp3.OkHttpClient()
+                .newBuilder()
+                .addInterceptor(new okhttp3.Interceptor() {
+                    @Override
+                    public okhttp3.Response intercept(Chain chain) throws IOException {
+                        okhttp3.Request request = chain.request();
+                        Log.i("rest", request.url().toString());
+                        return chain.proceed(chain.request());
+                    }
+                }).build();
+
         return new Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(new ToStringConverterFactory())
+                .client(client)
                 .build();
 
     }

@@ -17,7 +17,6 @@ import it.alessioricco.btc.R;
 import it.alessioricco.btc.models.HistoricalValue;
 import it.alessioricco.btc.models.HistoricalValueSample;
 import it.alessioricco.btc.models.MarketHistory;
-import it.alessioricco.btc.utils.HistorySamplingHelper;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Line;

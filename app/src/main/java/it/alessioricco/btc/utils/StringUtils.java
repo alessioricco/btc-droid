@@ -22,4 +22,11 @@ public class StringUtils {
     public static final String formatPercentValue(double value) {
         return String.format("%+.2f%%", value);
     }
+
+    public static final String firstLineOf(final String lines) {
+        int eol = lines.indexOf('\n');
+        if (eol == -1) return lines;
+        return lines.substring(0,eol);
+    }
+
 }

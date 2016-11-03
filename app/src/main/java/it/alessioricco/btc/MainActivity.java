@@ -38,6 +38,7 @@ import butterknife.InjectView;
 import it.alessioricco.btc.fragments.Chart;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.models.CurrentSelection;
+import it.alessioricco.btc.models.HistoricalValue;
 import it.alessioricco.btc.models.Market;
 import it.alessioricco.btc.models.MarketHistory;
 import it.alessioricco.btc.models.Markets;
@@ -280,10 +281,11 @@ final public class MainActivity extends AppCompatActivity
                 });
     }
 
-    private void getHistoricalData(final String symbol) {
+    private void getHistoricalData(final Market currentMarket) {
         try {
 
             chartFragmentContainer.setVisibility(View.GONE);
+            final String symbol = currentMarket.getSymbol();
 
             // if data are cached we don't need of a progress bar
             final Boolean expired = Storo.hasExpired(symbol).execute();
@@ -314,8 +316,20 @@ final public class MainActivity extends AppCompatActivity
 
                         @Override
                         public void onNext(MarketHistory history) {
+
                             // if history is null we keep the chart invisible
                             if (history != null) {
+
+                                // check if the current value is present
+                                // if not is filled with the current value
+                                if (history.getHistorySamples().get(0) == null) {
+                                    HistoricalValue currentValue = new HistoricalValue();
+                                    currentValue.setValue(currentMarket.getClose());
+                                    currentValue.setDate(currentMarket.getDate());
+                                    currentValue.setAmount(0d);
+                                    history.getHistorySamples().put(currentValue, 0);
+                                }
+
                                 //TODO: double check on the currency/action to avoid wasting time on old selections
                                 drawChart(history);
                                 chartFragmentContainer.setVisibility(View.VISIBLE);
@@ -379,7 +393,7 @@ final public class MainActivity extends AppCompatActivity
         latestTrade.setText((new PrettyTime()).format(m.getDate()));
 
         // retrieve history and display on screen
-        getHistoricalData(m.getSymbol());
+        getHistoricalData(m);
 
     }
 

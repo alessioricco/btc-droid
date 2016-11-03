@@ -12,6 +12,7 @@ import it.alessioricco.btc.App;
 import it.alessioricco.btc.MainActivity;
 import it.alessioricco.btc.api.HttpClientFactory;
 import it.alessioricco.btc.api.RestAdapterFactory;
+import it.alessioricco.btc.fragments.HistorySample;
 import it.alessioricco.btc.services.MarketsService;
 
 
@@ -27,6 +28,8 @@ import it.alessioricco.btc.services.MarketsService;
                 MarketsService.class,
 
                 RestAdapterFactory.class,
+
+                HistorySample.class,
 
                 MainActivity.class
         },

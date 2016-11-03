@@ -28,5 +28,5 @@ public interface BitcoinChartsAPI {
     Call<String> getHistory(@Query("symbol") String symbol, @Query("start") long start);
 
     @GET("/v1/trades.csv")
-    Call<String> getHistorySample(@Query("symbol") String symbol, @Query("start") long start, @Query("start") long end);
+    Call<String> getHistorySample(@Query("symbol") String symbol, @Query("start") long start, @Query("end") long end);
 }
