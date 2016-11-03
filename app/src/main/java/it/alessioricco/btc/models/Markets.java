@@ -104,13 +104,12 @@ public class Markets implements Serializable {
 
         currencies.clear();
 
-        // creating the needed data structure (currency and markets)
+        // given the markets list we'll create the currencies data structure
         for (Iterator<Market> iterator = markets.iterator(); iterator.hasNext(); ) {
             final Market m = iterator.next();
 
             // apply a filter (no need for now)
             if (! m.isValid()) {
-                iterator.remove();
                 continue;
             }
 

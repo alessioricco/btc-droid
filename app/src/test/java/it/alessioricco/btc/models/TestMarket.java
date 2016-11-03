@@ -19,6 +19,7 @@ import java.util.Date;
 
 import it.alessioricco.btc.BuildConfig;
 import it.alessioricco.btc.R;
+import it.alessioricco.btc.TestEnvironment;
 import it.alessioricco.btc.injection.TestObjectGraphInitializer;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
@@ -51,26 +52,22 @@ import it.alessioricco.btc.BuildConfig;
 import it.alessioricco.btc.R;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.injection.TestObjectGraphInitializer;
+import it.alessioricco.btc.mocks.MockBitcoinCharts;
+import it.alessioricco.btc.util.CustomRobolectricTestRunner;
 
 import static org.junit.Assert.*;
 import static org.assertj.core.api.Java6Assertions.*;
 
 @Config(shadows = { ShadowResources.class },
-        sdk = 18,
+        sdk = TestEnvironment.sdk,
         constants = BuildConfig.class,
-        manifest = "src/main/AndroidManifest.xml")
-@RunWith(RobolectricTestRunner.class)
-public class TestMarkets {
+        manifest = TestEnvironment.manifest)
+@RunWith(CustomRobolectricTestRunner.class)
+public class TestMarket {
 
-    Context context;
     @Before
     public void init() throws Exception {
 
-        // Init the IoC and inject us
-        TestObjectGraphInitializer.init();
-        TestObjectGraphInitializer.getObjectGraphIstance().inject(this);
-
-        context = RuntimeEnvironment.application;
     }
 
     /**
@@ -79,17 +76,8 @@ public class TestMarkets {
     @After
     public void tearDown() {
 
-        context = null;
-        TestObjectGraphInitializer.reset();
-
     }
 
-
-    private Market buildMarketToTest() {
-        final String jsonMarket = "{\"high\": 9334100.000000000000, \"latest_trade\": 1478109584, \"bid\": 9285700.000000000000, \"volume\": 615.496164440000, \"currency\": \"IDR\", \"currency_volume\": 5710601675.554674000000, \"ask\": 9298400.000000000000, \"close\": 9298400.000000000000, \"avg\": 9278045.917232286432930220455, \"symbol\": \"btcoidIDR\", \"low\": 9202400.000000000000}";
-
-        return new Gson().fromJson(jsonMarket,Market.class);
-    }
 
     /**
      * testing the historical samples
@@ -98,7 +86,7 @@ public class TestMarkets {
     @Test
     public void testMarket() throws Exception {
 
-        Market market = buildMarketToTest();
+        Market market = MockBitcoinCharts.buildMarketToTest();
 
         assertThat(market.getHigh()).isEqualTo(9334100d);
         assertThat(market.getBid()).isEqualTo(9285700d);
@@ -111,50 +99,50 @@ public class TestMarkets {
 
         assertThat(market.isValid()).isTrue();
 
-        market = buildMarketToTest();
+        market = MockBitcoinCharts.buildMarketToTest();
         market.setSymbol("");
         assertThat(market.isValid()).isFalse();
 
-        market = buildMarketToTest();
+        market = MockBitcoinCharts.buildMarketToTest();
         market.setAsk(null);
         assertThat(market.isValid()).isFalse();
 
-        market = buildMarketToTest();
+        market = MockBitcoinCharts.buildMarketToTest();
         market.setBid(null);
         assertThat(market.isValid()).isFalse();
 
-        market = buildMarketToTest();
+        market = MockBitcoinCharts.buildMarketToTest();
         market.setHigh(null);
         assertThat(market.isValid()).isFalse();
 
-        market = buildMarketToTest();
+        market = MockBitcoinCharts.buildMarketToTest();
         market.setAvg(null);
         assertThat(market.percent()).isNull();
         assertThat(market.delta()).isNull();
         assertThat(market.isValid()).isFalse();
 
-        market = buildMarketToTest();
+        market = MockBitcoinCharts.buildMarketToTest();
         market.setClose(null);
         assertThat(market.isValid()).isFalse();
 
-        market = buildMarketToTest();
+        market = MockBitcoinCharts.buildMarketToTest();
         market.setLow(null);
         assertThat(market.isValid()).isFalse();
 
-        market = buildMarketToTest();
+        market = MockBitcoinCharts.buildMarketToTest();
         market.setCurrency(null);
         assertThat(market.isValid()).isFalse();
 
-        market = buildMarketToTest();
+        market = MockBitcoinCharts.buildMarketToTest();
         market.setAvg(0d);
         assertThat(market.percent()).isNull();
 
-        market = buildMarketToTest();
+        market = MockBitcoinCharts.buildMarketToTest();
         assertThat(market.getLatest_trade()).isNotNull();
         market.setLatest_trade(null);
         assertThat(market.getLatest_trade()).isNull();
 
-        market = buildMarketToTest();
+        market = MockBitcoinCharts.buildMarketToTest();
         market.setSymbol("LOCALBTC");
         assertThat(market.isValid()).isFalse();
         market.setSymbol("BITBAY");

@@ -23,17 +23,19 @@ import java.util.Date;
 
 import it.alessioricco.btc.BuildConfig;
 import it.alessioricco.btc.R;
+import it.alessioricco.btc.TestEnvironment;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.injection.TestObjectGraphInitializer;
+import it.alessioricco.btc.util.CustomRobolectricTestRunner;
 
 import static org.junit.Assert.*;
 import static org.assertj.core.api.Java6Assertions.*;
 
 @Config(shadows = { ShadowResources.class },
-        sdk = 18,
+        sdk = TestEnvironment.sdk,
         constants = BuildConfig.class,
-        manifest = "src/main/AndroidManifest.xml")
-@RunWith(RobolectricTestRunner.class)
+        manifest = TestEnvironment.manifest)
+@RunWith(CustomRobolectricTestRunner.class)
 public class TestModels {
 
     @Before public void init() throws Exception {
