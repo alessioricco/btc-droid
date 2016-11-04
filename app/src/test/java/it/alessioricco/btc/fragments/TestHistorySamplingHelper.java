@@ -58,7 +58,7 @@ public class TestHistorySamplingHelper {
             assertThat(sample.getDuration()).isGreaterThan(0);
 
             // if the value is false, all the following should be false
-            if (lastEnabled == false) {
+            if (!lastEnabled) {
                 assertThat(sample.getEnabled()).isFalse();
             }
 

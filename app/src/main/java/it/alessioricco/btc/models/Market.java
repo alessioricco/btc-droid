@@ -43,7 +43,7 @@ public class Market implements Serializable {
 
     public Date getDate() {
         if (latest_trade == null) return null;
-        final long dv = Long.valueOf(latest_trade)*1000;
+        final long dv = latest_trade *1000;
         return new java.util.Date(dv);
     }
 
@@ -86,20 +86,6 @@ public class Market implements Serializable {
      * @return
      */
     final public boolean isValid() {
-        return bid != null &&
-                ask != null &&
-                high != null &&
-                low != null &&
-                currency_volume != null &&
-                close != null &&
-                avg != null &&
-                currency_volume != null &&
-                currency_volume > 1 &&
-                latest_trade != null &&
-                ! StringUtils.isNullOrEmpty(symbol) &&
-                ! tooOld() &&
-                ! marketToFilter() &&
-                ! StringUtils.isNullOrEmpty(symbol) &&
-                ! StringUtils.isNullOrEmpty(currency);
+        return bid != null && ask != null && high != null && low != null && currency_volume != null && close != null && avg != null && currency_volume > 1 && latest_trade != null && !StringUtils.isNullOrEmpty(symbol) && !tooOld() && !marketToFilter() && !StringUtils.isNullOrEmpty(symbol) && !StringUtils.isNullOrEmpty(currency);
     }
 }

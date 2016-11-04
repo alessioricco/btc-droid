@@ -34,7 +34,6 @@ import lecho.lib.hellocharts.model.Viewport;
 public class Chart extends Fragment {
 
     public static final String ARG_HISTORY = "history";
-    private MarketHistory mHistory;
 
     lecho.lib.hellocharts.view.LineChartView chart;
 
@@ -66,7 +65,7 @@ public class Chart extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mHistory = (MarketHistory) getArguments().getSerializable(ARG_HISTORY);
+            MarketHistory mHistory = (MarketHistory) getArguments().getSerializable(ARG_HISTORY);
             drawChart(mHistory);
         }
     }
@@ -75,9 +74,8 @@ public class Chart extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_chart, container, false);
 
-        return view;
+        return inflater.inflate(R.layout.fragment_chart, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

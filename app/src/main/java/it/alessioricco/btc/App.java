@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import dagger.ObjectGraph;
@@ -22,6 +23,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public final class App extends Application {
 
+    //todo: this is a memory leak, must be fixed
     private static Context mContext;
 
     @Override public void onCreate() {
@@ -54,8 +56,8 @@ public final class App extends Application {
         return mContext;
     }
 
-    final private List<Object> getModules() {
-        return Arrays.<Object>asList(new AppModule(this));
+    private List<Object> getModules() {
+        return Collections.<Object>singletonList(new AppModule(this));
     }
 
     @Override public void onTerminate() {

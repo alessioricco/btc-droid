@@ -65,6 +65,9 @@ public final class HistorySample {
         // start from 1 to save an api call (
         for(int i = 1; i < HistorySamplingHelper.MAX_SAMPLES; i++) {
             final HistorySamplingDescriptor sample = HistorySamplingHelper.getSampleDescriptor(i);
+            if (sample == null) {
+                continue;
+            }
             if (sample.getEnabled()) {
                 final long startSample = sample.getSample();
                 final long durationSample = sample.getDuration();

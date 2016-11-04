@@ -46,7 +46,7 @@ public class TestHistorySample {
         int disabled = 0;
         for (int i=0; i < HistorySamplingHelper.MAX_SAMPLES; i++) {
             final HistorySamplingDescriptor sample = HistorySamplingHelper.getSampleDescriptor(i);
-            if (sample.getEnabled() == false) disabled++;
+            if (!sample.getEnabled()) disabled++;
         }
 
         // the samples are the MAX_SAMPLES-the disbled one

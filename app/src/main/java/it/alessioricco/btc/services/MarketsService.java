@@ -138,7 +138,6 @@ public final class MarketsService {
                                                             public void onResult(HistoricalValue cachedResult) {
                                                                 subscriber.onNext(cachedResult);    // Pass on the data to subscriber
                                                                 Log.i(LOG_TAG, String.format("%s %d get from cache", sample.getSymbol(), sample.getIndex()));
-                                                                return;
                                                             }
                                                         });
 

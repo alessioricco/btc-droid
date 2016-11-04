@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -178,7 +179,7 @@ final public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -290,7 +291,7 @@ final public class MainActivity extends AppCompatActivity
 
             // if data are cached we don't need of a progress bar
             final Boolean expired = Storo.hasExpired(symbol).execute();
-            final boolean isCached = expired != null && expired == false;
+            final boolean isCached = expired != null && !expired;
             if (!isCached) {
                 progressBar.setVisibility(View.VISIBLE);
             }

@@ -19,7 +19,7 @@ public class HistoricalValue implements Serializable {
     private @Getter @Setter Double value;
     private @Getter @Setter Double amount;
 
-    static public final HistoricalValue fromCSVLine(final String line, final int index) {
+    static public HistoricalValue fromCSVLine(final String line, final int index) {
 
         try {
 

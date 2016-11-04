@@ -23,6 +23,9 @@ public class TestHistoricalValue {
 
         for (int i=0; i< h.getMaxSamples(); i++) {
             final HistoricalValue hv0 = new HistoricalValue();
+            if (hv0 == null) {
+                continue;
+            }
             hv0.setIndex(i);
             hv0.setAmount(10d*i);
             hv0.setDate(new Date());
