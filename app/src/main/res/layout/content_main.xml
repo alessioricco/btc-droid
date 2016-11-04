@@ -30,7 +30,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".50">
+            android:layout_weight=".40">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -178,13 +178,11 @@
 
             </LinearLayout>
 
-
-
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/chart_fragment_container"
-            android:layout_weight="0.4"
+            android:layout_weight=".5"
             android:layout_width="match_parent"
             android:layout_height="0dp">
         <fragment android:name="it.alessioricco.btc.fragments.Chart"

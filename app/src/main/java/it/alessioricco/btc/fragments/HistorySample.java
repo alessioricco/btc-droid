@@ -62,7 +62,7 @@ public final class HistorySample {
 
     public static List<HistorySample> createSamples(final String symbol) {
         final List<HistorySample> calls = new ArrayList<HistorySample>();
-        // start from 1 to save an api call (we already have the current value)
+        // start from 1 to save an api call (
         for(int i = 1; i < HistorySamplingHelper.MAX_SAMPLES; i++) {
             final HistorySamplingDescriptor sample = HistorySamplingHelper.getSampleDescriptor(i);
             if (sample.getEnabled()) {

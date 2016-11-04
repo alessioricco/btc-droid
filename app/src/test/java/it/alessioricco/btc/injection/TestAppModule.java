@@ -20,6 +20,7 @@ import javax.inject.Singleton;
         AppModule.class
         },
         injects = {
+                // here the list of classes using injection
                 TestCurrentSelection.class
         },
         library = true, overrides = true)
