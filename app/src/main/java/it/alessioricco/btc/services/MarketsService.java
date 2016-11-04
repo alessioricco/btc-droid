@@ -26,8 +26,6 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import st.lowlevel.storo.Storo;
 
-//import it.alessioricco.btc.models.MarketHistory;
-
 /**
  * Created by alessioricco on 01/10/2016.
  *
@@ -112,39 +110,28 @@ public final class MarketsService {
                 new Func1<HistorySample, Observable<HistoricalValue>>() {
                     @Override public Observable<HistoricalValue> call(final HistorySample sample) {
 
+                        final String cacheKey = String.format("%s%d", sample.getSymbol(), sample.getIndex());
+                        final long cacheDuration = sample.getCacheDuration();
+
+                        if (cacheEnabled) {
+                            // check cache
+                            final Boolean expired = Storo.hasExpired(cacheKey).execute();
+                            if (expired != null) {
+
+                                if (!expired) {
+                                    return Storo.get(cacheKey, HistoricalValue.class).async();
+                                }
+                                // expired, so we'll delete the key
+                                Storo.delete(cacheKey);
+                            }
+                        }
+
+                        // no cache, so we'll get the values from the endpoint
                         return Observable.create(new Observable.OnSubscribe<HistoricalValue>(){
                             @Override
                             public void call(final Subscriber<? super HistoricalValue> subscriber) {
 
                                 try {
-
-                                    final String cacheKey = String.format("%s%d", sample.getSymbol(), sample.getIndex());
-                                    final long cacheDuration = sample.getCacheDuration();
-
-                                    if (cacheEnabled) {
-                                        // check cache
-                                        final Boolean expired = Storo.hasExpired(cacheKey).execute();
-                                        if (expired != null) {
-
-                                            if (expired) {
-                                                Storo.delete(cacheKey);
-                                                // we need a new object
-                                            } else {
-                                                // we retrieve the object
-                                                //todo: it could return an observable...
-                                                Storo.get(cacheKey, HistoricalValue.class)
-                                                        .async(new st.lowlevel.storo.model.Callback<HistoricalValue>() {
-                                                            @Override
-                                                            public void onResult(HistoricalValue cachedResult) {
-                                                                subscriber.onNext(cachedResult);    // Pass on the data to subscriber
-                                                                Log.i(LOG_TAG, String.format("%s %d get from cache", sample.getSymbol(), sample.getIndex()));
-                                                            }
-                                                        });
-
-                                                return;
-                                            }
-                                        }
-                                    }
 
                                     // value is not cached
                                     sample.getCall().enqueue(new Callback<String>() {

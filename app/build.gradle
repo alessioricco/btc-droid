@@ -31,23 +31,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    // RxAndroid
-    
-
-    // Inversion of Control, dependency Injection
-    
-    // HTTP
-    //compile 'com.squareup.retrofit:retrofit:1.9.0'
-    
-    // autoresize textview
-    
-    // Lombok
-    
-    // Event Bus
-    
-    // Image loading
-    
-    // Fonts
     
     // maven
     repositories {
@@ -56,13 +39,6 @@ dependencies {
         maven { url 'https://jitpack.io' } // for caching
     }
 
-    // orm
-    
-    // add by google
-    
-    // charts
-    //compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
-    
     //cache
     compile('com.github.lowlevel-studios:storo:1.0.3') {
         transitive = true

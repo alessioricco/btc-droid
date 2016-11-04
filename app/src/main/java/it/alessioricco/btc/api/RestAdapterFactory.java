@@ -27,31 +27,15 @@ import rx.schedulers.Schedulers;
 
 public final class RestAdapterFactory {
 
-    //@Inject OkHttpClient httpClient;
-
-    final String url = "http://api.bitcoincharts.com";
+    final private String url = "http://api.bitcoincharts.com";
 
     public RestAdapterFactory() {
         ObjectGraphSingleton.getInstance().inject(this);
     }
 
-    // todo: refactor to be a class and not a method
-    public Retrofit getJSONRestAdapter() {
-
-        RxJavaCallAdapterFactory rxAdapter = RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
-        return new Retrofit.Builder()
-                .baseUrl(url)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(rxAdapter)
-                .build();
-
-    }
-
-    // todo: refactor to be a class and not a method
-    public Retrofit getRawRestAdapter() {
-
-        //needed for printing urls
-        okhttp3.OkHttpClient client = new okhttp3.OkHttpClient()
+    //todo: we can inject it
+    private okhttp3.OkHttpClient createClient() {
+        return new okhttp3.OkHttpClient()
                 .newBuilder()
                 .addInterceptor(new okhttp3.Interceptor() {
                     @Override
@@ -61,11 +45,28 @@ public final class RestAdapterFactory {
                         return chain.proceed(chain.request());
                     }
                 }).build();
+    }
+
+    // todo: refactor to be a class and not a method
+    public Retrofit getJSONRestAdapter() {
+
+        final RxJavaCallAdapterFactory rxAdapter = RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
+        return new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(rxAdapter)
+                .client(createClient())
+                .build();
+
+    }
+
+    // todo: refactor to be a class and not a method
+    public Retrofit getRawRestAdapter() {
 
         return new Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(new ToStringConverterFactory())
-                .client(client)
+                .client(createClient())
                 .build();
 
     }
