@@ -16,8 +16,6 @@ import butterknife.ButterKnife;
 import it.alessioricco.btc.R;
 import it.alessioricco.btc.models.HistoricalValue;
 import it.alessioricco.btc.models.MarketHistory;
-//import it.alessioricco.btc.models.MarketHistory;
-import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Line;
@@ -183,7 +181,6 @@ public class Chart extends Fragment {
         chart.setLineChartData(lineChartData);
 
         //https://github.com/lecho/hellocharts-android/issues/246
-        //todo: cubic need a little bit of work on bounding boxes
         final Viewport v = new Viewport(chart.getMaximumViewport());
         final int offset = 5;
         v.top = v.top + offset;

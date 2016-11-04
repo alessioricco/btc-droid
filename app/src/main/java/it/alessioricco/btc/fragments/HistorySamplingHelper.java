@@ -27,10 +27,10 @@ final public class HistorySamplingHelper  {
             new HistorySamplingDescriptor( "6h",    SIX_HOURS, TEN_MINUTES, ONE_HOUR / ONE_MINUTE, true),
             new HistorySamplingDescriptor("12h",     HALF_DAY, TEN_MINUTES, ONE_HOUR / ONE_MINUTE, true),
             new HistorySamplingDescriptor( "1d",      ONE_DAY, TEN_MINUTES, ONE_HOUR / ONE_MINUTE, true),
-            new HistorySamplingDescriptor( "2d",     TWO_DAYS,TEN_MINUTES, SIX_HOURS / ONE_MINUTE, true),
+            new HistorySamplingDescriptor( "2d",     TWO_DAYS, TEN_MINUTES, SIX_HOURS / ONE_MINUTE, true),
             new HistorySamplingDescriptor( "5d",    FIVE_DAYS, TEN_MINUTES, ONE_DAY / ONE_MINUTE, true),
-            new HistorySamplingDescriptor( "1w",     ONE_WEEK, TEN_MINUTES, THREE_DAYS / ONE_MINUTE, false),
-            new HistorySamplingDescriptor( "1M",    ONE_MONTH,TEN_MINUTES, ONE_WEEK / ONE_MINUTE, false)
+            new HistorySamplingDescriptor( "1w",     ONE_WEEK, ONE_HOUR, THREE_DAYS / ONE_MINUTE, false),
+            new HistorySamplingDescriptor( "1M",    ONE_MONTH, ONE_HOUR, ONE_WEEK / ONE_MINUTE, false)
     };
 
     public final static int MAX_SAMPLES = samples.length;
