@@ -149,6 +149,8 @@ public class HistoryService {
                 Storo.delete(cacheKey);
             }
         }
+
+        // not in cache, we have to download it
         sample.getCall().enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

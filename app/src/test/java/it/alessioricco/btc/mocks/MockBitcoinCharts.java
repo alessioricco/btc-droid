@@ -2,6 +2,7 @@ package it.alessioricco.btc.mocks;
 
 import com.google.gson.Gson;
 
+import java.util.Date;
 import java.util.List;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -48,12 +49,21 @@ final public class MockBitcoinCharts {
             "1478213698,615.000000000000,0.100000000000\n" +
             "1478213711,616.000000000000,0.160000000000";
 
-    public static Market buildMarketToTest() {
-        return new Gson().fromJson(jsonMarket,Market.class);
+    public static Market buildMarketToTest(Boolean today) {
+        Market m = new Gson().fromJson(jsonMarket,Market.class);
+        if (today) {
+            m.setLatest_trade((new Date()).getTime()/1000);
+        }
+        return m;
     }
 
-    public static List<Market> buildListOfMarketsToTest() {
+    public static List<Market> buildListOfMarketsToTest(Boolean today) {
         Market[] array = new Gson().fromJson(jsonListOfMarkets,Market[].class);
+        if (today) {
+            for (int i=0; i<array.length; i++) {
+                array[i].setLatest_trade((new Date()).getTime()/1000);
+            }
+        }
         return Arrays.asList(array);
     }
 

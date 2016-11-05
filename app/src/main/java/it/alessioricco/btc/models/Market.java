@@ -86,6 +86,19 @@ public class Market implements Serializable {
      * @return
      */
     final public boolean isValid() {
-        return bid != null && ask != null && high != null && low != null && currency_volume != null && close != null && avg != null && currency_volume > 1 && latest_trade != null && !StringUtils.isNullOrEmpty(symbol) && !tooOld() && !marketToFilter() && !StringUtils.isNullOrEmpty(symbol) && !StringUtils.isNullOrEmpty(currency);
+        return bid != null &&
+                ask != null &&
+                high != null &&
+                low != null &&
+                currency_volume != null &&
+                close != null &&
+                avg != null &&
+                currency_volume > 1 &&
+                latest_trade != null &&
+                !StringUtils.isNullOrEmpty(symbol) &&
+                !tooOld() &&
+                !marketToFilter() &&
+                !StringUtils.isNullOrEmpty(symbol) &&
+                !StringUtils.isNullOrEmpty(currency);
     }
 }

@@ -82,22 +82,7 @@ public class TestHistorySamplingDescriptor {
         assertThat(sample).isNull();
     }
 
-    @Test
-    public void TestSample() throws Exception {
-        final List<HistorySample> samples = HistorySample.createSamples("testSymbol");
-        assertThat(samples).isNotNull();
-        assertThat(samples).isNotEmpty();
 
-        //counting disabled samples
-        int disabled = 0;
-        for (int i=0; i < HistorySamplingHelper.MAX_SAMPLES; i++) {
-            final HistorySamplingDescriptor sample = HistorySamplingHelper.getSampleDescriptor(i);
-            if (sample.getEnabled() == false) disabled++;
-        }
-
-        // the samples are the MAX_SAMPLES-the disbled one
-        assertThat(samples.size()).isEqualTo(HistorySamplingHelper.MAX_SAMPLES-1-disabled);
-    }
 }
 
 

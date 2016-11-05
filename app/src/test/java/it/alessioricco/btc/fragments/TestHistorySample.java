@@ -38,19 +38,23 @@ public class TestHistorySample {
     
     @Test
     public void TestSample() throws Exception {
-        final List<HistorySample> samples = HistorySample.createSamples("testSymbol");
-        assertThat(samples).isNotNull();
-        assertThat(samples).isNotEmpty();
+        final HistorySample sample = HistorySample.buildSample("testSymbol",1);
+        assertThat(sample).isNotNull();
+        assertThat(sample.getIndex()).isEqualTo(1);
+
+        final HistorySample sample2 = HistorySample.buildSample("testSymbol",-1);
+        assertThat(sample2).isNull();
+
+        final HistorySample sample3 = HistorySample.buildSample("testSymbol",HistorySamplingHelper.MAX_SAMPLES);
+        assertThat(sample3).isNull();
 
         //counting disabled samples
         int disabled = 0;
         for (int i=0; i < HistorySamplingHelper.MAX_SAMPLES; i++) {
-            final HistorySamplingDescriptor sample = HistorySamplingHelper.getSampleDescriptor(i);
-            if (!sample.getEnabled()) disabled++;
+            final HistorySamplingDescriptor sampleDescriptor = HistorySamplingHelper.getSampleDescriptor(i);
+            if (!sampleDescriptor.getEnabled()) disabled++;
         }
 
-        // the samples are the MAX_SAMPLES-the disbled one
-        assertThat(samples.size()).isEqualTo(HistorySamplingHelper.MAX_SAMPLES-1-disabled);
     }
 }
 

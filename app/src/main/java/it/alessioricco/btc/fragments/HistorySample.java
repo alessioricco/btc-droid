@@ -60,40 +60,14 @@ public final class HistorySample {
         call = api.getHistorySample(symbol, startFromNow, end);
     }
 
-    public static List<HistorySample> createSamples(final String symbol) {
-        final List<HistorySample> calls = new ArrayList<HistorySample>();
-        // start from 1 to save an api call (
-        for(int i = 1; i < HistorySamplingHelper.MAX_SAMPLES; i++) {
-//            final HistorySamplingDescriptor sample = HistorySamplingHelper.getSampleDescriptor(i);
-//            if (sample == null) {
-//                continue;
-//            }
-//            if (sample.getEnabled()) {
-//                final long startSample = sample.getSample();
-//                final long durationSample = sample.getDuration();
-//                final long suggestedCacheDuration = sample.getCacheDuration();
-//                calls.add(new HistorySample(i, symbol, startSample, durationSample, suggestedCacheDuration));
-//            }
-            calls.add(buildSample(symbol,i));
-        }
-        return calls;
-    }
-
     public static HistorySample buildSample(final String symbol, final int index) {
-        //final List<HistorySample> calls = new ArrayList<HistorySample>();
-        // start from 1 to save an api call (
-        //for(int i = 1; i < HistorySamplingHelper.MAX_SAMPLES; i++) {
             final HistorySamplingDescriptor sampleDescriptor = HistorySamplingHelper.getSampleDescriptor(index);
-//            if (sample == null) {
-//                return null;
-//            }
             if (sampleDescriptor != null && sampleDescriptor.getEnabled()) {
                 final long startSample = sampleDescriptor.getSample();
                 final long durationSample = sampleDescriptor.getDuration();
                 final long suggestedCacheDuration = sampleDescriptor.getCacheDuration();
                 return (new HistorySample(index, symbol, startSample, durationSample, suggestedCacheDuration));
             }
-        //}
         return null;
     }
 }
