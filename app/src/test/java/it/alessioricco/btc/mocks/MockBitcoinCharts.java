@@ -24,4 +24,8 @@ final public class MockBitcoinCharts {
         Market[] array = new Gson().fromJson(jsonListOfMarkets,Market[].class);
         return Arrays.asList(array);
     }
+
+    public static String getRawResponse() {
+        return jsonListOfMarkets;
+    }
 }

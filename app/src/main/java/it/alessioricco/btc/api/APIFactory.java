@@ -16,5 +16,4 @@ public class APIFactory {
         return retrofit.create(BitcoinChartsAPI.class);
     }
 
-
 }

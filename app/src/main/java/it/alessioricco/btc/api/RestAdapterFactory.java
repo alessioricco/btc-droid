@@ -2,14 +2,14 @@ package it.alessioricco.btc.api;
 
 import android.util.Log;
 
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+//import com.squareup.okhttp.Interceptor;
+//import com.squareup.okhttp.OkHttpClient;
+//import com.squareup.okhttp.Request;
+//import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
+//import javax.inject.Inject;
 
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import retrofit2.Retrofit;
@@ -25,9 +25,13 @@ import rx.schedulers.Schedulers;
  * TODO: need for better refactoring for those builders
  */
 
-public final class RestAdapterFactory {
+public class RestAdapterFactory {
 
-    final private String url = "http://api.bitcoincharts.com";
+    //final private String url = "http://api.bitcoincharts.com";
+
+    protected String getBaseUrl() {
+        return "http://api.bitcoincharts.com";
+    }
 
     public RestAdapterFactory() {
         ObjectGraphSingleton.getInstance().inject(this);
@@ -52,7 +56,7 @@ public final class RestAdapterFactory {
 
         final RxJavaCallAdapterFactory rxAdapter = RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
         return new Retrofit.Builder()
-                .baseUrl(url)
+                .baseUrl(getBaseUrl())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(rxAdapter)
                 .client(createClient())
@@ -62,9 +66,8 @@ public final class RestAdapterFactory {
 
     // todo: refactor to be a class and not a method
     public Retrofit getRawRestAdapter() {
-
         return new Retrofit.Builder()
-                .baseUrl(url)
+                .baseUrl(getBaseUrl())
                 .addConverterFactory(new ToStringConverterFactory())
                 .client(createClient())
                 .build();

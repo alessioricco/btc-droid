@@ -13,7 +13,7 @@ import org.robolectric.shadows.ShadowResources;
 import it.alessioricco.btc.BuildConfig;
 import it.alessioricco.btc.R;
 import it.alessioricco.btc.TestEnvironment;
-import it.alessioricco.btc.injection.TestObjectGraphInitializer;
+import it.alessioricco.btc.injection.TestObjectGraphSingleton;
 import it.alessioricco.btc.util.CustomRobolectricTestRunner;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
@@ -29,8 +29,8 @@ public class TestCurrentSelection {
     public void init() throws Exception {
 
         // Init the IoC and inject us
-        TestObjectGraphInitializer.init();
-        TestObjectGraphInitializer.getObjectGraphIstance().inject(this);
+        TestObjectGraphSingleton.init();
+        TestObjectGraphSingleton.getInstance().inject(this);
 
     }
 
@@ -40,7 +40,7 @@ public class TestCurrentSelection {
     @After
     public void tearDown() {
 
-        TestObjectGraphInitializer.reset();
+        TestObjectGraphSingleton.reset();
 
     }
 

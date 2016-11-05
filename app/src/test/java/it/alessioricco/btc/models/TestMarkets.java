@@ -16,20 +16,6 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 
 public class TestMarkets {
 
-//    @Before
-//    public void init() throws Exception {
-//
-//    }
-//
-//    /**
-//     * Method executed after any test
-//     */
-//    @After
-//    public void tearDown() {
-//
-//    }
-
-
     /**
      * testing the historical samples
      * @throws Exception
