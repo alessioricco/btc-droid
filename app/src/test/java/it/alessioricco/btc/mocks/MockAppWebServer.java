@@ -14,27 +14,37 @@ import okhttp3.mockwebserver.RecordedRequest;
 public class MockAppWebServer {
 
     final MockWebServer mockWebServer;
+
+    MockResponse newResponse;
+    public void setMockResponse(final MockResponse mockResponse) {
+        newResponse = mockResponse;
+    }
+
     final Dispatcher dispatcher = new Dispatcher() {
 
         @Override
         public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
 
-            if (request.getPath().equals("/v1/markets.json")){
+            if (newResponse != null) {
+                return newResponse;  //new MockResponse().setResponseCode(responseCode);
+            }
 
-                final String response = MockBitcoinCharts.getRawResponse();
+            if (request.getPath().equals("/v1/markets.json")){
+                final String response = MockBitcoinCharts.getMarketsJsonRawResponse();
                 return new MockResponse()
                         .setResponseCode(200)
                         .addHeader("Content-Type", "application/json; charset=utf-8")
                         .addHeader("Cache-Control", "no-cache")
                         .setBody(response);
+            }
+             else if (request.getPath().startsWith("/v1/trades.csv")){
+                final String response = MockBitcoinCharts.getHistoryCSVRawResponse();
+                return new MockResponse()
+                        .setResponseCode(200)
+                        .setBody(response);
 
             }
-//             else if (request.getPath().equals("v1/check/version/")){
-//                return new MockResponse().setResponseCode(200).setBody("version=9");
-//
-//            } else if (request.getPath().equals("/v1/profile/info")) {
-//                return new MockResponse().setResponseCode(200).setBody("{\\\"info\\\":{\\\"name\":\"Lucas Albuquerque\",\"age\":\"21\",\"gender\":\"male\"}}");
-//            }
+            //HTTP/1.1 404 Client Error
             return new MockResponse().setResponseCode(404);
 
         }
@@ -42,11 +52,16 @@ public class MockAppWebServer {
 
     public MockAppWebServer() {
         mockWebServer = new MockWebServer();
+        //super();
         mockWebServer.setDispatcher(dispatcher);
     }
 
     public void start() throws IOException {
         mockWebServer.start();
+    }
+
+    public MockWebServer getMockWebServer() {
+        return mockWebServer;
     }
 
     public void shutdown(){

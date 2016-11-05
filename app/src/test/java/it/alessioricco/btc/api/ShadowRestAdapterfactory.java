@@ -3,6 +3,7 @@ package it.alessioricco.btc.api;
 import javax.inject.Inject;
 
 import it.alessioricco.btc.injection.TestObjectGraphSingleton;
+import it.alessioricco.btc.mocks.MockAppWebServer;
 import okhttp3.mockwebserver.MockWebServer;
 
 /**
@@ -12,7 +13,7 @@ import okhttp3.mockwebserver.MockWebServer;
 public class ShadowRestAdapterFactory extends RestAdapterFactory{
 
     @Inject
-    MockWebServer mockWebServer;
+    MockAppWebServer mockWebServer;
 
     public ShadowRestAdapterFactory(){
         super();
@@ -21,7 +22,7 @@ public class ShadowRestAdapterFactory extends RestAdapterFactory{
 
     @Override
     protected String getBaseUrl() {
-        return mockWebServer.url("").toString();
+        return mockWebServer.getMockWebServer().url("").toString();
     }
 
 

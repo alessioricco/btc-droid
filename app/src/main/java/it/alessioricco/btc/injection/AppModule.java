@@ -10,6 +10,7 @@ import it.alessioricco.btc.App;
 import it.alessioricco.btc.MainActivity;
 import it.alessioricco.btc.api.RestAdapterFactory;
 import it.alessioricco.btc.fragments.HistorySample;
+import it.alessioricco.btc.services.HistoryService;
 import it.alessioricco.btc.services.MarketsService;
 import st.lowlevel.storo.Storo;
 import st.lowlevel.storo.StoroBuilder;
@@ -25,7 +26,7 @@ import st.lowlevel.storo.StoroBuilder;
         injects = {
                 App.class,
                 MarketsService.class,
-
+                HistoryService.class,
                 RestAdapterFactory.class,
 
                 HistorySample.class,
@@ -74,15 +75,12 @@ public class AppModule {
         return new MarketsService();
     }
 
-//    @Provides
-//    public @Singleton
-//    Storo provideCaching() {
-//        //TODO: a problem with initialization must be fixed (injection?)
-//        StoroBuilder.configure(100*1024)  // maximum size to allocate in bytes
-//                .setDefaultCacheDirectory(provideContext())
-//                .initialize();
-//        return;
-//    }
+    @Provides
+    public @Singleton
+    HistoryService provideHistoryService() {
+        return new HistoryService();
+    }
+
 
     /**
      * RestAdapter factory

@@ -4,11 +4,14 @@ import android.content.Context;
 
 import dagger.Module;
 import dagger.Provides;
-import it.alessioricco.btc.TestMockServer;
+import it.alessioricco.btc.services.HistoryService;
+import it.alessioricco.btc.services.ShadowHistoryService;
+import it.alessioricco.btc.services.TestHistoryAPICall;
+import it.alessioricco.btc.services.TestMarketService;
 import it.alessioricco.btc.api.RestAdapterFactory;
 import it.alessioricco.btc.api.ShadowRestAdapterFactory;
+import it.alessioricco.btc.mocks.MockAppWebServer;
 import it.alessioricco.btc.models.TestCurrentSelection;
-import okhttp3.mockwebserver.MockWebServer;
 
 import org.robolectric.shadows.ShadowApplication;
 
@@ -23,8 +26,11 @@ import javax.inject.Singleton;
         },
         injects = {
                 // here the list of classes using injection
-                TestMockServer.class,
+                TestMarketService.class,
                 TestCurrentSelection.class,
+                TestHistoryAPICall.class,
+                MockAppWebServer.class,
+                ShadowHistoryService.class,
                 ShadowRestAdapterFactory.class
         },
         library = true, overrides = true)
@@ -45,8 +51,8 @@ public class TestAppModule {
 
     @Provides
     @Singleton
-    public MockWebServer getWebServer() {
-        return new MockWebServer();
+    public MockAppWebServer getWebServer() {
+        return new MockAppWebServer();
     }
 
     /**
@@ -56,5 +62,11 @@ public class TestAppModule {
      */
     @Provides @Singleton public RestAdapterFactory provideRestAdapter() {
         return new ShadowRestAdapterFactory();
+    }
+
+    @Provides
+    public @Singleton
+    HistoryService provideHistoryService() {
+        return new ShadowHistoryService();
     }
 }

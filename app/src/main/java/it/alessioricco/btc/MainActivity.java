@@ -44,6 +44,7 @@ import it.alessioricco.btc.models.MarketHistory;
 import it.alessioricco.btc.models.Market;
 //import it.alessioricco.btc.models.MarketHistory;
 import it.alessioricco.btc.models.Markets;
+import it.alessioricco.btc.services.HistoryService;
 import it.alessioricco.btc.services.MarketsService;
 import it.alessioricco.btc.utils.BitcoinChartsUtils;
 import it.alessioricco.btc.utils.ProgressDialogHelper;
@@ -70,6 +71,10 @@ final public class MainActivity extends AppCompatActivity
     protected CompositeSubscription compositeSubscription = new CompositeSubscription();
     @Inject
     MarketsService marketsService;
+    @Inject
+    HistoryService historyService;
+
+
     @InjectView(R.id.current)
     TextView currentValue;
     @InjectView(R.id.ask)
@@ -274,6 +279,7 @@ final public class MainActivity extends AppCompatActivity
                             //TODO: add a toast
                             //TODO: retry if it doesn't works
                         }
+                        //TODO: what happens to the UI?
                     }
 
                     @Override
@@ -296,7 +302,7 @@ final public class MainActivity extends AppCompatActivity
                 progressBar.setVisibility(View.VISIBLE);
             }
 
-            final Observable<MarketHistory> observable = this.marketsService.getHistorySamples(symbol);
+            final Observable<MarketHistory> observable = this.historyService.getHistory(symbol);
             final Subscription history = observable
                     .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
                     .observeOn(AndroidSchedulers.mainThread())
@@ -314,6 +320,7 @@ final public class MainActivity extends AppCompatActivity
                                 int code = response.code();
                                 //TODO: add a toast
                             }
+                            //TODO: what happens to the UI?
                         }
 
                         @Override

@@ -14,10 +14,14 @@ import lombok.Setter;
 
 public class HistoricalValue implements Serializable {
 
-    private @Getter @Setter int index;
-    private @Getter @Setter Date date;
-    private @Getter @Setter Double value;
-    private @Getter @Setter Double amount;
+    private @Getter @Setter int index = -1;
+    private @Getter @Setter Date date = null;
+    private @Getter @Setter Double value = null;
+    private @Getter @Setter Double amount = null;
+
+    public boolean isValid() {
+        return !(index == -1 || date == null || value == null);
+    }
 
     static public HistoricalValue fromCSVLine(final String line, final int index) {
 
