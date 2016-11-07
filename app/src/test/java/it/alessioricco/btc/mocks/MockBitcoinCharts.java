@@ -49,10 +49,14 @@ final public class MockBitcoinCharts {
             "1478213698,615.000000000000,0.100000000000\n" +
             "1478213711,616.000000000000,0.160000000000";
 
+    private static long Now() {
+        return (new Date()).getTime()/1000;
+    }
+
     public static Market buildMarketToTest(Boolean today) {
         Market m = new Gson().fromJson(jsonMarket,Market.class);
         if (today) {
-            m.setLatest_trade((new Date()).getTime()/1000);
+            m.setLatest_trade(Now());
         }
         return m;
     }
@@ -61,14 +65,14 @@ final public class MockBitcoinCharts {
         Market[] array = new Gson().fromJson(jsonListOfMarkets,Market[].class);
         if (today) {
             for (int i=0; i<array.length; i++) {
-                array[i].setLatest_trade((new Date()).getTime()/1000);
+                array[i].setLatest_trade(Now());
             }
         }
         return Arrays.asList(array);
     }
 
     public static String getMarketsJsonRawResponse() {
-        return jsonListOfMarkets;
+        return jsonListOfMarkets.replace("\"latest_trade\":",String.format("\"latest_trade\": %s, \"dummy\": ", Now()));
     }
 
     public static String getHistoryCSVRawResponse() {

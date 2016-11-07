@@ -91,6 +91,12 @@ public class HistoryService {
                                     subscriber.onCompleted();
                                 }
                             })
+                            .doOnError(new Action1<Throwable>() {
+                                @Override
+                                public void call(Throwable throwable) {
+
+                                }
+                            })
                             // for each stream result put it in the right place
                             .forEach(new Action1<HistoricalValue>() {
                                 @Override

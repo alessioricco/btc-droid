@@ -5,7 +5,7 @@ android {
     buildToolsVersion "24.0.3"
     defaultConfig {
         applicationId "it.alessioricco.btc"
-        minSdkVersion 15
+        minSdkVersion 19
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -22,56 +22,49 @@ android {
         targetCompatibility 1.7
         sourceCompatibility 1.7
     }
+    productFlavors {
+    }
 }
 
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
-    
     // maven
     repositories {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" } // for orm
         maven { url 'https://jitpack.io' } // for caching
     }
-
     //cache
     compile('com.github.lowlevel-studios:storo:1.0.3') {
         transitive = true
     }
-
     //pretty time
-    // https://mvnrepository.com/artifact/com.ocpsoft/ocpsoft-pretty-time
-    compile group: 'com.ocpsoft', name: 'ocpsoft-pretty-time', version: '1.0.6'
 
+    // https://mvnrepository.com/artifact/com.ocpsoft/ocpsoft-pretty-time
+    compile 'com.ocpsoft:ocpsoft-pretty-time:1.0.6'
     // progress
-    
+
     // horizontal stacked progress bar
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
-
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.2.+'
-
     compile 'com.jakewharton:butterknife:6.1.0'
     compile 'com.squareup.dagger:dagger:1.2.2'
-
     //compile 'com.squareup.okhttp:okhttp:2.3.0'
-    //compile 'com.squareup.okhttp:okhttp-urlconnection:2.3.0'
 
+    //compile 'com.squareup.okhttp:okhttp-urlconnection:2.3.0'
     compile 'com.squareup.okhttp3:okhttp:3.4.2'
     compile 'com.squareup.okhttp3:logging-interceptor:3.3.1'
-
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
-
     compile 'me.grantland:autofittextview:0.2.+'
     compile 'de.greenrobot:eventbus:2.2.+'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.1'
@@ -82,16 +75,15 @@ dependencies {
     compile 'com.github.nisrulz:stackedhorizontalprogressbar:1.0.2'
     compile 'com.android.support:support-v4:24.2.1'
     compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
-
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
     provided 'org.projectlombok:lombok:1.12.6'
-
     //test
     testCompile 'junit:junit:4.12'
-    testCompile "org.robolectric:robolectric:3.1.4"
+    testCompile 'org.robolectric:robolectric:3.1.4'
     testCompile 'org.robolectric:shadows-support-v4:3.0'
     testCompile 'org.assertj:assertj-core:2.5.0'
     compile 'org.mockito:mockito-core:2.2.9'
     //testCompile 'com.squareup.okhttp3:mockwebserver:(insert latest version)'
     testCompile 'com.squareup.okhttp3:mockwebserver:3.4.2'
+    testCompile 'org.khronos:opengl-api:gl1.1-android-2.1_r1'
 }

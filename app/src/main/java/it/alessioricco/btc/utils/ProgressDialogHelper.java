@@ -39,7 +39,7 @@ public class ProgressDialogHelper {
         LayoutInflater inflater = LayoutInflater.from(activity);
         if (inflater != null) {
             inflater.inflate(R.layout.progress_fullscreen, viewGroup);
-            final View progressBackground = viewGroup.findViewById(R.id.progress_fullscreen);
+            //final View progressBackground = viewGroup.findViewById(R.id.progress_fullscreen);
         }
 
     }

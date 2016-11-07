@@ -139,6 +139,8 @@ final public class MainActivity extends AppCompatActivity
         //begin of the custom code
         ObjectGraphSingleton.getInstance().inject(this);
         ButterKnife.inject(this);
+        // no values
+        showEmptyMarket();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -280,6 +282,7 @@ final public class MainActivity extends AppCompatActivity
                             //TODO: retry if it doesn't works
                         }
                         //TODO: what happens to the UI?
+                        showEmptyMarket();
                     }
 
                     @Override
@@ -370,6 +373,33 @@ final public class MainActivity extends AppCompatActivity
         if (chartFragment != null) {
             chartFragment.update(marketHistory);
         }
+
+    }
+
+
+    /**
+     * populate the UI with empty methods
+     */
+    private void showEmptyMarket() {
+
+        final String defaultEmptyTextValue  = "";
+        final String defaultEmptyNumericValue  = getString(R.string.empty_numeric_value);
+
+        // given the received model, draw the UI
+        currentValue.setText(defaultEmptyTextValue);
+        askValue.setText(defaultEmptyNumericValue);
+        bidValue.setText(defaultEmptyNumericValue);
+        highValue.setText(defaultEmptyNumericValue);
+        lowValue.setText(defaultEmptyNumericValue);
+        volume.setText(defaultEmptyNumericValue);
+
+        avgValue.setText(defaultEmptyNumericValue);
+        int color = Color.WHITE;
+        avgValue.setTextColor(color);
+
+        //TODO show a clock near the text
+        latestTrade.setText("data not available");
+
 
     }
 
@@ -483,17 +513,7 @@ final public class MainActivity extends AppCompatActivity
 
     }
 
-    /**
-     * called everytime the list of market tickers should be updated
-     *
-     * @param newMarkets
-     */
-    private void updateMarkets(final List<Market> newMarkets) {
-
-        this.markets.setMarkets(newMarkets);
-
-        //TODO: validate the markets structure
-
+    public void populateCurrencyList() {
         // fill the currencies scrollView
         this.currenciesContainer.removeAllViews();
 
@@ -506,14 +526,24 @@ final public class MainActivity extends AppCompatActivity
 
                 @Override
                 public void onClick(View v) {
-                    Log.e("Tag", "clicked on " + currencyTextView.getText());
+                    //Log.e("Tag", "clicked on " + currencyTextView.getText());
                     currentSelection.setCurrentMarketCurrency(currentCurrency);
                     onSelectedCurrency();
                 }
             });
             this.currenciesContainer.addView(currencyTextView);
         }
+    }
 
+    /**
+     * called everytime the list of market tickers should be updated
+     *
+     * @param newMarkets
+     */
+    public void updateMarkets(final List<Market> newMarkets) {
+
+        this.markets.setMarkets(newMarkets);
+        populateCurrencyList();
         onSelectedCurrency();
 
     }

@@ -30,7 +30,7 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
         constants = BuildConfig.class,
         manifest = TestEnvironment.manifest)
 @RunWith(CustomRobolectricTestRunner.class)
-public class TestHistoryAPICall {
+public class TestHistoryService {
 
     @Inject
     MockAppWebServer mockWebServer;

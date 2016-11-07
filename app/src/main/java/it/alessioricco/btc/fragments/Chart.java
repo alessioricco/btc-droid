@@ -136,6 +136,7 @@ public class Chart extends Fragment {
         final List<PointValue> values = new ArrayList<PointValue>();
         final List<AxisValue> axisXValues = new ArrayList<AxisValue>();
 
+        int availableDataCounter = 0;
         for(int i = 0; i< MarketHistory.getMaxSamples(); i++ ){
 
             final HistoricalValue historicalValue = marketHistory.get(i);
@@ -158,6 +159,12 @@ public class Chart extends Fragment {
                 axisXValues.add(axisValue);
             }
 
+            availableDataCounter++;
+        }
+
+        if (availableDataCounter <= 2) {
+            // chart will be not visible
+            return;
         }
 
         final Line line = new Line(values)
