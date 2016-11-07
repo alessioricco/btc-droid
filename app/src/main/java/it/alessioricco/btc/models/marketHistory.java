@@ -14,11 +14,6 @@ final public class MarketHistory implements Serializable {
     final static private @Getter int maxSamples = HistorySamplingHelper.MAX_SAMPLES;
     final private HistoricalValue[] samples = new HistoricalValue[maxSamples];
 
-//    public MarketHistory() {
-//        for (int i=0; i< maxSamples; i++) {
-//            samples[i].setIndex(-1);
-//        }
-//    }
 
     /**
      * retrieve a sample from the market history
@@ -36,5 +31,20 @@ final public class MarketHistory implements Serializable {
      */
     final public void put(HistoricalValue historicalValue) {
         samples[historicalValue.getIndex()] = historicalValue;
+    }
+
+    /**
+     * true if the number of samples
+     * is good for visualization
+     * @return
+     */
+    final public boolean hasValidData() {
+        int n = 0;
+        for (int i=1; i<maxSamples; i++) {
+            if (samples[i] != null && samples[i].isValid()) {
+                n++;
+            }
+        }
+        return n>1;
     }
 }

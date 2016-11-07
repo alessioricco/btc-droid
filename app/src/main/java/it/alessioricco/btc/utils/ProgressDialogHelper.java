@@ -18,7 +18,7 @@ public class ProgressDialogHelper {
             view.setEnabled(enabled);
 
             if ( view instanceof ViewGroup ) {
-                ViewGroup group = (ViewGroup)view;
+                final ViewGroup group = (ViewGroup)view;
 
                 for ( int idx = 0 ; idx < group.getChildCount() ; idx++ ) {
                     enableDisableView(group.getChildAt(idx), enabled);
@@ -36,10 +36,9 @@ public class ProgressDialogHelper {
         final ViewGroup viewGroup = getMainView(activity);
         enableDisableView(viewGroup, false);
 
-        LayoutInflater inflater = LayoutInflater.from(activity);
+        final LayoutInflater inflater = LayoutInflater.from(activity);
         if (inflater != null) {
             inflater.inflate(R.layout.progress_fullscreen, viewGroup);
-            //final View progressBackground = viewGroup.findViewById(R.id.progress_fullscreen);
         }
 
     }

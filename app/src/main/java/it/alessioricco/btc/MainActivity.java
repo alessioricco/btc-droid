@@ -174,7 +174,7 @@ final public class MainActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        final int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
@@ -188,7 +188,7 @@ final public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        final int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
@@ -213,8 +213,8 @@ final public class MainActivity extends AppCompatActivity
      * start the timer for updating the charts
      */
     void updateMarketsTimer() {
-        long delay = 5;
-        Observable<Long> observable = Observable.interval(delay, TimeUnit.MINUTES, Schedulers.io());
+        final long delay = 5;
+        final Observable<Long> observable = Observable.interval(delay, TimeUnit.MINUTES, Schedulers.io());
 
         Subscription subscription = observable
                 .subscribeOn(Schedulers.io())
@@ -299,11 +299,7 @@ final public class MainActivity extends AppCompatActivity
             final String symbol = currentMarket.getSymbol();
 
             // if data are cached we don't need of a progress bar
-            final Boolean expired = Storo.hasExpired(symbol).execute();
-            final boolean isCached = expired != null && !expired;
-            if (!isCached) {
-                progressBar.setVisibility(View.VISIBLE);
-            }
+            progressBar.setVisibility(View.VISIBLE);
 
             final Observable<MarketHistory> observable = this.historyService.getHistory(symbol);
             final Subscription history = observable
@@ -312,7 +308,7 @@ final public class MainActivity extends AppCompatActivity
                     .subscribe(new Subscriber<MarketHistory>() {
                         @Override
                         public void onCompleted() {
-
+                            progressBar.setVisibility(View.INVISIBLE);
                         }
 
                         @Override
@@ -324,33 +320,38 @@ final public class MainActivity extends AppCompatActivity
                                 //TODO: add a toast
                             }
                             //TODO: what happens to the UI?
+                            progressBar.setVisibility(View.INVISIBLE);
                         }
 
                         @Override
                         public void onNext(MarketHistory history) {
 
                             // if history is null we keep the chart invisible
-                            if (history != null) {
-
-                                // check if the current value is present
-                                // if not is filled with the current value
-                                if (history.get(0) == null) {
-                                    HistoricalValue currentValue = new HistoricalValue();
-                                    currentValue.setValue(currentMarket.getClose());
-                                    currentValue.setDate(currentMarket.getDate());
-                                    currentValue.setAmount(0d);
-                                    currentValue.setIndex(0);
-                                    history.put(currentValue);
-                                }
-
-                                //TODO: double check on the currency/action to avoid wasting time on old selections
-                                drawChart(history);
-                                chartFragmentContainer.setVisibility(View.VISIBLE);
-                                if (!isCached) {
-                                    progressBar.setVisibility(View.INVISIBLE);
-                                }
+                            if (history == null) {
+                                return;
                             }
+
+                            if (! history.hasValidData()) {
+                                return;
+                            }
+
+                            // check if the current value is present
+                            // if not is filled with the current value
+                            if (history.get(0) == null) {
+                                HistoricalValue currentValue = new HistoricalValue();
+                                currentValue.setValue(currentMarket.getClose());
+                                currentValue.setDate(currentMarket.getDate());
+                                currentValue.setAmount(0d);
+                                currentValue.setIndex(0);
+                                history.put(currentValue);
+                            }
+
+                            //TODO: double check on the currency/action to avoid wasting time on old selections
+                            drawChart(history);
+                            chartFragmentContainer.setVisibility(View.VISIBLE);
+
                         }
+
                     });
             compositeSubscription.add(history);
         } catch (IOException e) {
