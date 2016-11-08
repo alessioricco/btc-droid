@@ -4,7 +4,17 @@
     android:layout_height="match_parent"
     tools:context="it.alessioricco.btc.fragments.Chart">
 
+    <TextView
+        android:text="@string/chart_not_available"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/UnselectedCurrencyItem"
+        android:id="@+id/notAvailable"
+        android:layout_gravity="center_vertical|center_horizontal" />
+
     <LinearLayout
+        android:id="@+id/chart_layout_container"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

@@ -5,9 +5,12 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,6 +120,20 @@ public class Chart extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    final public void showError(int visibility) {
+        TextView text = ButterKnife.findById(this.getActivity(), R.id.notAvailable);
+        if (text == null) {
+            return;
+        }
+        text.setVisibility(visibility);
+
+        LinearLayout chartLayout = ButterKnife.findById(this.getActivity(), R.id.chart_layout_container);
+        if (chartLayout == null) {
+            return;
+        }
+        chartLayout.setVisibility((visibility != View.VISIBLE) ? View.VISIBLE : View.INVISIBLE);
+    }
+
     final public void update(MarketHistory marketHistory) {
         drawChart(marketHistory);
     }
@@ -162,11 +179,6 @@ public class Chart extends Fragment {
             availableDataCounter++;
         }
 
-        if (availableDataCounter <= 2) {
-            // chart will be not visible
-            return;
-        }
-
         final Line line = new Line(values)
                 .setColor(Color.YELLOW)
                 .setHasPoints(true)
@@ -192,8 +204,6 @@ public class Chart extends Fragment {
         v.bottom = v.bottom - offset;
         chart.setMaximumViewport(v);
         chart.setCurrentViewport(v);
-
-        chart.setVisibility(View.VISIBLE);
 
     }
 }

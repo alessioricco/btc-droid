@@ -96,6 +96,9 @@ final public class MainActivity extends AppCompatActivity
     @InjectView(R.id.chart_fragment_container)
     LinearLayout chartFragmentContainer;
 
+//    @InjectView(R.id.notAvailable)
+//    TextView notAvailable;
+
     @InjectView(R.id.latest_trade)
     TextView latestTrade;
     @InjectView(R.id.chart_progress)
@@ -240,6 +243,7 @@ final public class MainActivity extends AppCompatActivity
             progressBar.setVisibility(View.VISIBLE);
         }
 
+
     }
 
     void endProgress() {
@@ -249,6 +253,7 @@ final public class MainActivity extends AppCompatActivity
         } else {
             progressBar.setVisibility(View.INVISIBLE);
         }
+
     }
 
     /**
@@ -283,6 +288,7 @@ final public class MainActivity extends AppCompatActivity
                         }
                         //TODO: what happens to the UI?
                         showEmptyMarket();
+                        endProgress();
                     }
 
                     @Override
@@ -292,14 +298,17 @@ final public class MainActivity extends AppCompatActivity
                 });
     }
 
+
+
     private void getHistoricalData(final Market currentMarket) {
         try {
 
-            chartFragmentContainer.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+            chartFragmentContainer.setVisibility(View.INVISIBLE);
+
             final String symbol = currentMarket.getSymbol();
 
             // if data are cached we don't need of a progress bar
-            progressBar.setVisibility(View.VISIBLE);
 
             final Observable<MarketHistory> observable = this.historyService.getHistory(symbol);
             final Subscription history = observable
@@ -309,6 +318,7 @@ final public class MainActivity extends AppCompatActivity
                         @Override
                         public void onCompleted() {
                             progressBar.setVisibility(View.INVISIBLE);
+                            chartFragmentContainer.setVisibility(View.VISIBLE);
                         }
 
                         @Override
@@ -321,34 +331,14 @@ final public class MainActivity extends AppCompatActivity
                             }
                             //TODO: what happens to the UI?
                             progressBar.setVisibility(View.INVISIBLE);
+                            chartFragmentContainer.setVisibility(View.VISIBLE);
                         }
 
                         @Override
                         public void onNext(MarketHistory history) {
 
-                            // if history is null we keep the chart invisible
-                            if (history == null) {
-                                return;
-                            }
-
-                            if (! history.hasValidData()) {
-                                return;
-                            }
-
-                            // check if the current value is present
-                            // if not is filled with the current value
-                            if (history.get(0) == null) {
-                                HistoricalValue currentValue = new HistoricalValue();
-                                currentValue.setValue(currentMarket.getClose());
-                                currentValue.setDate(currentMarket.getDate());
-                                currentValue.setAmount(0d);
-                                currentValue.setIndex(0);
-                                history.put(currentValue);
-                            }
-
                             //TODO: double check on the currency/action to avoid wasting time on old selections
-                            drawChart(history);
-                            chartFragmentContainer.setVisibility(View.VISIBLE);
+                            drawChart(currentMarket, history);
 
                         }
 
@@ -364,16 +354,28 @@ final public class MainActivity extends AppCompatActivity
      *
      * @param marketHistory
      */
-    private void drawChart(final MarketHistory marketHistory) {
+    private void drawChart(final Market currentMarket, final MarketHistory marketHistory) {
 
-        if (marketHistory == null) {
+        Chart chartFragment = (Chart) getSupportFragmentManager().findFragmentById(R.id.chart_fragment);
+
+        if (chartFragment == null || marketHistory == null || ! marketHistory.hasValidData()) {
+            chartFragment.showError(View.VISIBLE);
             return;
         }
 
-        Chart chartFragment = (Chart) getSupportFragmentManager().findFragmentById(R.id.chart_fragment);
-        if (chartFragment != null) {
-            chartFragment.update(marketHistory);
+        // check if the current value is present
+        // if not is filled with the current value
+        if (marketHistory.get(0) == null) {
+            HistoricalValue currentValue = new HistoricalValue();
+            currentValue.setValue(currentMarket.getClose());
+            currentValue.setDate(currentMarket.getDate());
+            currentValue.setAmount(0d);
+            currentValue.setIndex(0);
+            marketHistory.put(currentValue);
         }
+
+        chartFragment.showError(View.GONE);
+        chartFragment.update(marketHistory);
 
     }
 
@@ -385,6 +387,7 @@ final public class MainActivity extends AppCompatActivity
 
         final String defaultEmptyTextValue  = "";
         final String defaultEmptyNumericValue  = getString(R.string.empty_numeric_value);
+        final String defaultDataNotAvailable  = getString(R.string.data_not_available);
 
         // given the received model, draw the UI
         currentValue.setText(defaultEmptyTextValue);
@@ -399,8 +402,7 @@ final public class MainActivity extends AppCompatActivity
         avgValue.setTextColor(color);
 
         //TODO show a clock near the text
-        latestTrade.setText("data not available");
-
+        latestTrade.setText(defaultDataNotAvailable);
 
     }
 
@@ -494,23 +496,23 @@ final public class MainActivity extends AppCompatActivity
      * display the market on the screen
      */
     private void onSelectedSymbol() {
-        chartFragmentContainer.setVisibility(View.INVISIBLE);
+        //chartFragmentContainer.setVisibility(View.INVISIBLE);
 
         String symbol = currentSelection.getCurrentMarketSymbol();
         final String currency = currentSelection.getCurrentMarketCurrency();
         final Market selectedMarket = markets.getMarket(currency, symbol);
-        if (selectedMarket != null) {
-
-            if (symbol == null && !StringUtils.isNullOrEmpty(selectedMarket.getSymbol())) {
-                currentSelection.setCurrentMarketSymbol(BitcoinChartsUtils.normalizeSymbolName(selectedMarket.getSymbol()));
-                symbol = currentSelection.getCurrentMarketSymbol();
-            }
-
-            showCurrentMarket(selectedMarket);
-            applySelectionToContainer(this.currenciesContainer, currency);
-            applySelectionToContainer(this.symbolsContainer, symbol);
+        if (selectedMarket == null) {
+            return;
         }
 
+        if (symbol == null && !StringUtils.isNullOrEmpty(selectedMarket.getSymbol())) {
+            currentSelection.setCurrentMarketSymbol(BitcoinChartsUtils.normalizeSymbolName(selectedMarket.getSymbol()));
+            symbol = currentSelection.getCurrentMarketSymbol();
+        }
+
+        showCurrentMarket(selectedMarket);
+        applySelectionToContainer(this.currenciesContainer, currency);
+        applySelectionToContainer(this.symbolsContainer, symbol);
 
     }
 
