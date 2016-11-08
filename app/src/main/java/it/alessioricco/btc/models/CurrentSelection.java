@@ -26,7 +26,8 @@ public class CurrentSelection implements Serializable {
 
     public String getCurrentMarketCurrency() {
         if (StringUtils.isNullOrEmpty(currentMarketCurrency)) {
-            currentMarketCurrency = App.getContext().getString(R.string.currency_usd);
+            // we select the default value
+            currentMarketCurrency = App.getContext().getString(R.string.default_currency);
         }
         return currentMarketCurrency;
     }

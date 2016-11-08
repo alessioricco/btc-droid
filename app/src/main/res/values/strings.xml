@@ -17,7 +17,9 @@
     <string name="main_avg">AVG</string>
     <string name="main_hi">HIGH</string>
     <string name="main_lo">LOW</string>
+    <string name="currency_eur">EUR</string>
     <string name="currency_usd">USD</string>
+    <string name="default_currency">@string/currency_eur</string>
     <string name="empty_numeric_value">--.--</string>
     <string name="chart_not_available">Chart data temporarily unavailable</string>
     <string name="data_not_available">Data not available</string>

@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:loaídingview="http://schemas.android.com/tools"
     xmlns:loadingview="http://schemas.android.com/apk/res-auto"
-    android:background="@android:color/black"
+    android:background="@drawable/splash_image"
     android:layout_width="match_parent"
     android:id="@+id/progress_fullscreen"
     android:gravity="center"

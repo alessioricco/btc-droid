@@ -53,7 +53,7 @@ public class TestCurrentSelection {
 
         Context context = RuntimeEnvironment.application;
         // no currency selected
-        final String default_currency = context.getString(R.string.currency_usd);
+        final String default_currency = context.getString(R.string.default_currency);
         assertThat(currentSelection.getCurrentMarketCurrency())
                 .isEqualToIgnoringCase(default_currency);
 
