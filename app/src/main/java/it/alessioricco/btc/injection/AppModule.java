@@ -12,8 +12,6 @@ import it.alessioricco.btc.api.RestAdapterFactory;
 import it.alessioricco.btc.fragments.HistorySample;
 import it.alessioricco.btc.services.HistoryService;
 import it.alessioricco.btc.services.MarketsService;
-import st.lowlevel.storo.Storo;
-import st.lowlevel.storo.StoroBuilder;
 
 
 /**

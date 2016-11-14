@@ -41,9 +41,8 @@ import it.alessioricco.btc.fragments.Chart;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.models.CurrentSelection;
 import it.alessioricco.btc.models.HistoricalValue;
-import it.alessioricco.btc.models.MarketHistory;
 import it.alessioricco.btc.models.Market;
-//import it.alessioricco.btc.models.MarketHistory;
+import it.alessioricco.btc.models.MarketHistory;
 import it.alessioricco.btc.models.Markets;
 import it.alessioricco.btc.services.HistoryService;
 import it.alessioricco.btc.services.MarketsService;
@@ -51,7 +50,6 @@ import it.alessioricco.btc.utils.BitcoinChartsUtils;
 import it.alessioricco.btc.utils.Environment;
 import it.alessioricco.btc.utils.ProgressDialogHelper;
 import it.alessioricco.btc.utils.StringUtils;
-import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -59,8 +57,9 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
-import st.lowlevel.storo.Storo;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
+//import it.alessioricco.btc.models.MarketHistory;
 
 /**
  * main activity of the app
@@ -227,9 +226,6 @@ final public class MainActivity extends AppCompatActivity
         }
 
         final Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse(Environment.sourceCodeUrl));
-        if (intent == null) {
-            return;
-        }
         startActivity(intent);
     }
 
@@ -301,12 +297,12 @@ final public class MainActivity extends AppCompatActivity
                     @Override
                     public void onError(Throwable e) {
                         // cast to retrofit.HttpException to get the response code
-                        if (e instanceof HttpException) {
-                            HttpException response = (HttpException) e;
-                            int code = response.code();
-                            //TODO: add a toast
-                            //TODO: retry if it doesn't works
-                        }
+//                        if (e instanceof HttpException) {
+//                            HttpException response = (HttpException) e;
+//                            int code = response.code();
+//                            //TODO: add a toast
+//                            //TODO: retry if it doesn't works
+//                        }
                         //TODO: what happens to the UI?
                         showEmptyMarket();
                         endProgress();
@@ -352,11 +348,11 @@ final public class MainActivity extends AppCompatActivity
                         @Override
                         public void onError(Throwable e) {
                             // cast to retrofit.HttpException to get the response code
-                            if (e instanceof HttpException) {
-                                HttpException response = (HttpException) e;
-                                int code = response.code();
-                                //TODO: add a toast
-                            }
+//                            if (e instanceof HttpException) {
+//                                HttpException response = (HttpException) e;
+//                                int code = response.code();
+//                                //TODO: add a toast
+//                            }
                             //TODO: what happens to the UI?
                             progressBar.setVisibility(View.INVISIBLE);
                             chartFragmentContainer.setVisibility(View.VISIBLE);

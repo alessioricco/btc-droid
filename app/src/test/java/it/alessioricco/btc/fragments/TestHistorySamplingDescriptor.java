@@ -1,20 +1,18 @@
 package it.alessioricco.btc.fragments;
 
 
-import org.junit.Test;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowResources;
-
-import java.util.List;
 
 import it.alessioricco.btc.BuildConfig;
 import it.alessioricco.btc.TestEnvironment;
 import it.alessioricco.btc.util.CustomRobolectricTestRunner;
 
-import static org.assertj.core.api.Java6Assertions.*;
+import static org.assertj.core.api.Java6Assertions.assertThat;
 
 @Config(shadows = { ShadowResources.class },
         sdk = TestEnvironment.sdk,
@@ -71,7 +69,7 @@ public class TestHistorySamplingDescriptor {
             assertThat(sample.getDuration()).isGreaterThan(0);
 
             // if the value is false, all the following should be false
-            if (lastEnabled == false) {
+            if (!lastEnabled) {
                 assertThat(sample.getEnabled()).isFalse();
             }
 

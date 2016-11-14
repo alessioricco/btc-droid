@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import it.alessioricco.btc.utils.BitcoinChartsUtils;
 import it.alessioricco.btc.utils.StringUtils;
@@ -34,7 +33,7 @@ public class Markets implements Serializable {
      * @return a list of string with the currencies id
      */
     public List<String> getCurrencies() {
-        final List<String> currencies = new ArrayList(this.currencies.keySet());
+        final List<String> currencies = new ArrayList<>(this.currencies.keySet());
 
         Collections.sort(currencies, new Comparator<String>() {
             public int compare(String left, String right) {

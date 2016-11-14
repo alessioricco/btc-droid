@@ -2,9 +2,6 @@ package it.alessioricco.btc.injection;
 
 import dagger.ObjectGraph;
 
-/**
- * Created by alessioricco on 02/11/2016.
- */
 
 public class TestObjectGraphSingleton {
 

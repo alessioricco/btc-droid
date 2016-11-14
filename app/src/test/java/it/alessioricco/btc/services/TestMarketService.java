@@ -16,7 +16,6 @@ import it.alessioricco.btc.TestEnvironment;
 import it.alessioricco.btc.injection.TestObjectGraphSingleton;
 import it.alessioricco.btc.mocks.MockAppWebServer;
 import it.alessioricco.btc.models.Market;
-import it.alessioricco.btc.models.MarketHistory;
 import it.alessioricco.btc.util.CustomRobolectricTestRunner;
 import okhttp3.mockwebserver.MockResponse;
 import rx.Observable;

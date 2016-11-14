@@ -1,7 +1,6 @@
 package it.alessioricco.btc.fragments;
 
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * for each sample contains caching, label, duration

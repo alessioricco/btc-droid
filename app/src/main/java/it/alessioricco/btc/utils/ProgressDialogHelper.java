@@ -7,9 +7,6 @@ import android.view.ViewGroup;
 
 import it.alessioricco.btc.R;
 
-/**
- * Created by alessioricco on 12/10/2016.
- */
 
 public class ProgressDialogHelper {
 

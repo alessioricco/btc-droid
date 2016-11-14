@@ -1,8 +1,5 @@
 package it.alessioricco.btc.api;
 
-/**
- * Created by alessioricco on 07/10/2016.
- */
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;

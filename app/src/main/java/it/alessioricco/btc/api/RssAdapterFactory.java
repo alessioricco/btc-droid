@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-
+import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 
 public class RssAdapterFactory {
@@ -24,7 +24,7 @@ public class RssAdapterFactory {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create()) // RxJava adapter
-                //.addConverterFactory(SimpleXmlConverterFactory.create()) // Simple XML converter
+                .addConverterFactory(SimpleXmlConverterFactory.create()) // Simple XML converter
                 .client(HttpClientFactory.create())
                 .build();
 

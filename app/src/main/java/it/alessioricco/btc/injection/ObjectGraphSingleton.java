@@ -1,7 +1,4 @@
 package it.alessioricco.btc.injection;
-/**
- * Created by alessioricco on 02/10/2016.
- */
 
 import dagger.ObjectGraph;
 

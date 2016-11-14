@@ -6,10 +6,6 @@ import it.alessioricco.btc.fragments.HistorySample;
 import it.alessioricco.btc.models.HistoricalValue;
 import rx.Subscriber;
 
-/**
- * Created by alessioricco on 05/11/2016.
- */
-
 public class ShadowHistoryService extends HistoryService {
 
     @Override

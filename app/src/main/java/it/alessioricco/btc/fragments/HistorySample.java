@@ -1,14 +1,8 @@
 package it.alessioricco.btc.fragments;
 
-/**
- * Created by alessioricco on 02/11/2016.
- */
-
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.inject.Inject;
 

@@ -4,9 +4,6 @@ import android.util.Log;
 
 import java.io.IOException;
 
-/**
- * Created by alessioricco on 14/11/2016.
- */
 
 public class HttpClientFactory {
 

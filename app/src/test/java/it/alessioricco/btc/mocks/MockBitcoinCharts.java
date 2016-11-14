@@ -61,7 +61,7 @@ final public class MockBitcoinCharts {
         return m;
     }
 
-    public static List<Market> buildListOfMarketsToTest(Boolean today) {
+    public static List buildListOfMarketsToTest(Boolean today) {
         Market[] array = new Gson().fromJson(jsonListOfMarkets,Market[].class);
         if (today) {
             for (int i=0; i<array.length; i++) {

@@ -18,11 +18,6 @@ import it.alessioricco.btc.TestEnvironment;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-
-/**
- * Created by alessioricco on 02/11/2016.
- */
-
 import it.alessioricco.btc.mocks.MockBitcoinCharts;
 import it.alessioricco.btc.util.CustomRobolectricTestRunner;
 

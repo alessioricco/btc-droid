@@ -1,35 +1,15 @@
 package it.alessioricco.btc.services;
 
-import android.util.Log;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import it.alessioricco.btc.api.APIFactory;
 import it.alessioricco.btc.api.BitcoinChartsAPI;
 import it.alessioricco.btc.api.RestAdapterFactory;
-import it.alessioricco.btc.fragments.HistorySample;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
-import it.alessioricco.btc.models.HistoricalValue;
-import it.alessioricco.btc.models.MarketHistory;
 import it.alessioricco.btc.models.Market;
-import it.alessioricco.btc.utils.StringUtils;
-import lombok.Getter;
-import lombok.Setter;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Action0;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import st.lowlevel.storo.Storo;
 
 /**
  * Created by alessioricco on 01/10/2016.

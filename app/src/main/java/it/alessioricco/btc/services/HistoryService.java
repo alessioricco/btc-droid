@@ -24,7 +24,6 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action0;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import st.lowlevel.storo.Storo;
 
 /**
@@ -191,7 +190,7 @@ public class HistoryService {
         });
     }
 
-    private final String getCacheKey(final HistorySample sample) {
+    private String getCacheKey(final HistorySample sample) {
         return String.format("%s%d", sample.getSymbol(), sample.getIndex());
     }
 

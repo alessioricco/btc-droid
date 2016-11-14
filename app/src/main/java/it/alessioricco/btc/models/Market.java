@@ -7,8 +7,6 @@ import it.alessioricco.btc.utils.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 
-import static java.lang.Math.abs;
-
 /**
  * Created by alessioricco on 02/10/2016.
  *

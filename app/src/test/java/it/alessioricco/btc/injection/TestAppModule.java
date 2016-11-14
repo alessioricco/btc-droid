@@ -18,10 +18,6 @@ import org.robolectric.shadows.ShadowApplication;
 
 import javax.inject.Singleton;
 
-/**
- * Created by alessioricco on 02/11/2016.
- */
-
 @Module(includes = {
         AppModule.class
         },

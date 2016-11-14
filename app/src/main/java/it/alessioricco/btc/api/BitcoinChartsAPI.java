@@ -1,12 +1,8 @@
 package it.alessioricco.btc.api;
 
-import android.support.v4.util.Pair;
-
-import java.util.Date;
 import java.util.List;
 
 import it.alessioricco.btc.models.Market;
-import it.alessioricco.btc.models.Markets;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;

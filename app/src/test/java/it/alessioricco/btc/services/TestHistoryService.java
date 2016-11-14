@@ -21,10 +21,6 @@ import rx.Subscriber;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-/**
- * Created by alessioricco on 05/11/2016.
- */
-
 @Config(shadows = { ShadowResources.class },
         sdk = TestEnvironment.sdk,
         constants = BuildConfig.class,

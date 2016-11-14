@@ -5,12 +5,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowResources;
-import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
-import org.robolectric.util.ActivityController;
+import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowActivity;
+import org.robolectric.shadows.ShadowResources;
+import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
 
@@ -21,9 +20,6 @@ import okhttp3.mockwebserver.MockResponse;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-/**
- * Created by alessioricco on 05/11/2016.
- */
 
 @Config(shadows = { ShadowResources.class },
         sdk = TestEnvironment.sdk,

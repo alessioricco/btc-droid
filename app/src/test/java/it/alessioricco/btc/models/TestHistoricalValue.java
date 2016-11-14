@@ -1,15 +1,10 @@
 package it.alessioricco.btc.models;
 
-/**
- * Created by alessioricco on 02/11/2016.
- */
-
 import org.junit.Test;
 
 import java.util.Date;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
-
 
 public class TestHistoricalValue {
 
@@ -23,9 +18,6 @@ public class TestHistoricalValue {
 
         for (int i=0; i< h.getMaxSamples(); i++) {
             final HistoricalValue hv0 = new HistoricalValue();
-            if (hv0 == null) {
-                continue;
-            }
             hv0.setIndex(i);
             hv0.setAmount(10d*i);
             hv0.setDate(new Date());

@@ -8,8 +8,6 @@ import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowResources;
 
-import java.util.List;
-
 import it.alessioricco.btc.BuildConfig;
 import it.alessioricco.btc.TestEnvironment;
 import it.alessioricco.btc.util.CustomRobolectricTestRunner;

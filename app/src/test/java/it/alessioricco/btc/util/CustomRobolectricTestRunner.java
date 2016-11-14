@@ -2,7 +2,6 @@ package it.alessioricco.btc.util;
 
 import org.junit.runners.model.InitializationError;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.internal.bytecode.ClassInfo;
 import org.robolectric.internal.bytecode.InstrumentationConfiguration;
 
 
