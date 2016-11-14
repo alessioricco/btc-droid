@@ -11,6 +11,9 @@ import org.simpleframework.xml.Text;
 
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+
 //https://gist.github.com/macsystems/01d7e80554efd344b1f9
 
 @NamespaceList({
@@ -23,7 +26,7 @@ public class Channel {
     public List<Link> links;
 
     @ElementList(name = "item", required = true, inline = true)
-    public List<Item> itemList;
+    public List<FeedItem> feedItemList;
 
 
     @Element
@@ -41,7 +44,7 @@ public class Channel {
     public String toString() {
         return "Channel{" +
                 "links=" + links +
-                ", itemList=" + itemList +
+                ", feedItemList=" + feedItemList +
                 ", title='" + title + '\'' +
                 ", language='" + language + '\'' +
                 ", ttl=" + ttl +
@@ -64,9 +67,10 @@ public class Channel {
     }
 
     @Root(name = "item", strict = false)
-    public static class Item {
+    public static class FeedItem {
 
         @Element(name = "title", required = true)
+        @Getter @Setter
         String title;//The title of the item.	Venice Film Festival Tries to Quit Sinking
         @Element(name = "link", required = true)
         String link;//The URL of the item.	http://www.nytimes.com/2002/09/07/movies/07FEST.html
@@ -91,7 +95,7 @@ public class Channel {
 
         @Override
         public String toString() {
-            return "Item{" +
+            return "FeedItem{" +
                     "title='" + title + '\'' +
                     ", link='" + link + '\'' +
                     ", description='" + description + '\'' +

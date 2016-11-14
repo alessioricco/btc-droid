@@ -37,6 +37,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import it.alessioricco.btc.activities.NewsActivity;
 import it.alessioricco.btc.fragments.Chart;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.models.CurrentSelection;
@@ -74,7 +75,6 @@ final public class MainActivity extends AppCompatActivity
     MarketsService marketsService;
     @Inject
     HistoryService historyService;
-
 
     @InjectView(R.id.current)
     TextView currentValue;
@@ -191,28 +191,20 @@ final public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         final int id = item.getItemId();
 
-//        if (id == R.id.nav_camera) {
-//            // Handle the camera action
-//        } else if (id == R.id.nav_gallery) {
-//
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        } else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
-//        }
 
         switch (id) {
             case R.id.nav_src: {
                 onNavigateSourceCode();
                 break;
             }
+            case R.id.nav_news: {
+                onNavigateNews();
+                break;
+            }
+            default: break;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -226,6 +218,11 @@ final public class MainActivity extends AppCompatActivity
         }
 
         final Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse(Environment.sourceCodeUrl));
+        startActivity(intent);
+    }
+
+    private void onNavigateNews() {
+        final Intent intent = new Intent(this, NewsActivity.class);
         startActivity(intent);
     }
 
@@ -573,7 +570,6 @@ final public class MainActivity extends AppCompatActivity
         onSelectedCurrency();
 
     }
-
 
     /**
      * https://github.com/ReactiveX/RxJava/wiki/The-RxJava-Android-Module

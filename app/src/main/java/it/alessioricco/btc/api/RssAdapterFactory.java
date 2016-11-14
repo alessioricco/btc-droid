@@ -1,16 +1,12 @@
 package it.alessioricco.btc.api;
 
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
-import lombok.Getter;
-import lombok.Setter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 
 public class RssAdapterFactory {
-
-    //private @Getter @Setter String baseUrl;
 
     public RssAdapterFactory() {
         ObjectGraphSingleton.getInstance().inject(this);

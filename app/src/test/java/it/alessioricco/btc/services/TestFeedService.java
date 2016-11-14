@@ -18,6 +18,7 @@ import it.alessioricco.btc.mocks.MockAppWebServer;
 import it.alessioricco.btc.models.Market;
 import it.alessioricco.btc.models.feed.RSS;
 import it.alessioricco.btc.util.CustomRobolectricTestRunner;
+import it.alessioricco.btc.utils.Environment;
 import rx.Observable;
 import rx.Subscriber;
 
@@ -60,7 +61,7 @@ public class TestFeedService {
     @Test
     public void testGetFeed200() throws Exception {
 
-        final Observable<RSS> feed = feedService.getFeed("http://feeds.feedburner.com/CoinDesk");
+        final Observable<RSS> feed = feedService.getFeed(Environment.newsFeedUrl);
 
         feed.toBlocking()
                 .subscribe(new Subscriber<RSS>() {
