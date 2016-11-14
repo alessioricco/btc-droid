@@ -26,6 +26,11 @@ android {
     }
 }
 
+configurations {
+    compile.exclude module: 'stax'
+    compile.exclude module: 'stax-api'
+    compile.exclude module: 'xpp3'
+}
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -67,6 +72,8 @@ dependencies {
 
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.squareup.retrofit2:converter-simplexml:2.1.0'
+
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
 
     compile 'me.grantland:autofittextview:0.2.1'
