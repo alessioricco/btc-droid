@@ -5,7 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import it.alessioricco.btc.api.APIFactory;
-import it.alessioricco.btc.api.BitcoinChartsAPI;
+import it.alessioricco.btc.api.interfaces.BitcoinChartsAPI;
 import it.alessioricco.btc.api.RestAdapterFactory;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.models.Market;
@@ -41,6 +41,5 @@ public final class MarketsService {
         final BitcoinChartsAPI api = APIFactory.createBitcoinChartsAPI(restAdapterFactory.getJSONRestAdapter());
         return api.getMarkets();
     }
-
 
 }

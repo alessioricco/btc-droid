@@ -5,6 +5,7 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Namespace;
 import org.simpleframework.xml.NamespaceList;
+import org.simpleframework.xml.Path;
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.Text;
 
@@ -73,7 +74,9 @@ public class Channel {
         String description;//The item synopsis.	Some of the most heated chatter at the Venice Film Festival this week was about the way that the arrival of the stars at the Palazzo del Cinema was being staged.
         @Element(name = "author", required = false)
         String author;//Email address of the author of the item. More.	oprah@oxygen.net
-        @Element(name = "category", required = false)
+        //@Element(name = "category", required = false)
+        @Path("category")
+        @Text(required=false)
         String category;//Includes the item in one or more categories. More.	Simpsons Characters
         @Element(name = "comments", required = false)
         String comments;//URL of a page for comments relating to the item. More.	http://www.myblog.org/cgi-local/mt/mt-comments.cgi?entry_id=290

@@ -7,7 +7,7 @@ import java.util.Date;
 import javax.inject.Inject;
 
 import it.alessioricco.btc.api.APIFactory;
-import it.alessioricco.btc.api.BitcoinChartsAPI;
+import it.alessioricco.btc.api.interfaces.BitcoinChartsAPI;
 import it.alessioricco.btc.api.RestAdapterFactory;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import lombok.Getter;

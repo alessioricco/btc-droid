@@ -10,7 +10,7 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 public class RssAdapterFactory {
 
-    private @Getter @Setter String baseUrl;
+    //private @Getter @Setter String baseUrl;
 
     public RssAdapterFactory() {
         ObjectGraphSingleton.getInstance().inject(this);
@@ -20,7 +20,7 @@ public class RssAdapterFactory {
      * Rest adapter for CVS feed (generic feed rss)
      * @return
      */
-    public Retrofit getRssRestAdapter() {
+    public Retrofit getRssRestAdapter(String baseUrl) {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create()) // RxJava adapter

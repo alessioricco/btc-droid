@@ -7,6 +7,7 @@ import dagger.Provides;
 import it.alessioricco.btc.TestMainActivity;
 import it.alessioricco.btc.services.HistoryService;
 import it.alessioricco.btc.services.ShadowHistoryService;
+import it.alessioricco.btc.services.TestFeedService;
 import it.alessioricco.btc.services.TestHistoryService;
 import it.alessioricco.btc.services.TestMarketService;
 import it.alessioricco.btc.api.RestAdapterFactory;
@@ -27,6 +28,7 @@ import javax.inject.Singleton;
                 TestMarketService.class,
                 TestCurrentSelection.class,
                 TestHistoryService.class,
+                TestFeedService.class,
                 MockAppWebServer.class,
                 ShadowHistoryService.class,
                 TestMainActivity.class,
