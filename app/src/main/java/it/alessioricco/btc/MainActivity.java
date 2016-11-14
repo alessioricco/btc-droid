@@ -1,6 +1,7 @@
 package it.alessioricco.btc;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ import it.alessioricco.btc.models.Markets;
 import it.alessioricco.btc.services.HistoryService;
 import it.alessioricco.btc.services.MarketsService;
 import it.alessioricco.btc.utils.BitcoinChartsUtils;
+import it.alessioricco.btc.utils.Environment;
 import it.alessioricco.btc.utils.ProgressDialogHelper;
 import it.alessioricco.btc.utils.StringUtils;
 import retrofit2.adapter.rxjava.HttpException;
@@ -95,9 +97,6 @@ final public class MainActivity extends AppCompatActivity
     LinearLayout symbolsContainer;
     @InjectView(R.id.chart_fragment_container)
     LinearLayout chartFragmentContainer;
-
-//    @InjectView(R.id.notAvailable)
-//    TextView notAvailable;
 
     @InjectView(R.id.latest_trade)
     TextView latestTrade;
@@ -193,23 +192,45 @@ final public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         final int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+//        if (id == R.id.nav_camera) {
+//            // Handle the camera action
+//        } else if (id == R.id.nav_gallery) {
+//
+//        } else if (id == R.id.nav_slideshow) {
+//
+//        } else if (id == R.id.nav_manage) {
+//
+//        } else if (id == R.id.nav_share) {
+//
+//        } else if (id == R.id.nav_send) {
+//
+//        }
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        switch (id) {
+            case R.id.nav_src: {
+                onNavigateSourceCode();
+                break;
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    /**
+     * open the source code github page
+     */
+    private void onNavigateSourceCode() {
+        if (StringUtils.isNullOrEmpty(Environment.sourceCodeUrl)) {
+            return;
+        }
+
+        final Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse(Environment.sourceCodeUrl));
+        if (intent == null) {
+            return;
+        }
+        startActivity(intent);
     }
 
     /**
@@ -301,6 +322,7 @@ final public class MainActivity extends AppCompatActivity
 
 
     private void getHistoricalData(final Market currentMarket) {
+
         try {
 
             progressBar.setVisibility(View.VISIBLE);
@@ -312,8 +334,14 @@ final public class MainActivity extends AppCompatActivity
 
             final Observable<MarketHistory> observable = this.historyService.getHistory(symbol);
             final Subscription history = observable
-                    .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
+                    //.subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
                     .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError(new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+                    })
                     .subscribe(new Subscriber<MarketHistory>() {
                         @Override
                         public void onCompleted() {
@@ -496,7 +524,6 @@ final public class MainActivity extends AppCompatActivity
      * display the market on the screen
      */
     private void onSelectedSymbol() {
-        //chartFragmentContainer.setVisibility(View.INVISIBLE);
 
         String symbol = currentSelection.getCurrentMarketSymbol();
         final String currency = currentSelection.getCurrentMarketCurrency();
@@ -579,7 +606,7 @@ final public class MainActivity extends AppCompatActivity
         Thing object = new Thing.Builder()
                 .setName("Main Page") // TODO: Define a title for the content shown.
                 // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .setUrl(Uri.parse(Environment.authorUrl))
                 .build();
         return new Action.Builder(Action.TYPE_VIEW)
                 .setObject(object)

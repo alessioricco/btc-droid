@@ -1,16 +1,5 @@
 package it.alessioricco.btc.api;
 
-import android.util.Log;
-
-//import com.squareup.okhttp.Interceptor;
-//import com.squareup.okhttp.OkHttpClient;
-//import com.squareup.okhttp.Request;
-//import com.squareup.okhttp.Response;
-
-import java.io.IOException;
-
-//import javax.inject.Inject;
-
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -27,8 +16,6 @@ import rx.schedulers.Schedulers;
 
 public class RestAdapterFactory {
 
-    //final private String url = "http://api.bitcoincharts.com";
-
     protected String getBaseUrl() {
         return "http://api.bitcoincharts.com";
     }
@@ -37,21 +24,11 @@ public class RestAdapterFactory {
         ObjectGraphSingleton.getInstance().inject(this);
     }
 
-    //todo: we can inject it
-    private okhttp3.OkHttpClient createClient() {
-        return new okhttp3.OkHttpClient()
-                .newBuilder()
-                .addInterceptor(new okhttp3.Interceptor() {
-                    @Override
-                    public okhttp3.Response intercept(Chain chain) throws IOException {
-                        okhttp3.Request request = chain.request();
-                        Log.i("rest", request.url().toString());
-                        return chain.proceed(chain.request());
-                    }
-                }).build();
-    }
 
-    // todo: refactor to be a class and not a method
+    /**
+     * Rest adapter for JSON feed (bitcoincharts)
+     * @return
+     */
     public Retrofit getJSONRestAdapter() {
 
         final RxJavaCallAdapterFactory rxAdapter = RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
@@ -59,19 +36,33 @@ public class RestAdapterFactory {
                 .baseUrl(getBaseUrl())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(rxAdapter)
-                .client(createClient())
+                .client(HttpClientFactory.create())
                 .build();
-
     }
 
-    // todo: refactor to be a class and not a method
-    public Retrofit getRawRestAdapter() {
+    /**
+     * Rest adapter for CVS feed (bitcoincharts history)
+     * @return
+     */
+     public Retrofit getRawRestAdapter() {
         return new Retrofit.Builder()
                 .baseUrl(getBaseUrl())
                 .addConverterFactory(new ToStringConverterFactory())
-                .client(createClient())
+                .client(HttpClientFactory.create())
                 .build();
 
     }
 
+    /**
+     * Rest adapter for CVS feed (generic feed rss)
+     * @return
+     */
+    public Retrofit getRssRestAdapter() {
+        return new Retrofit.Builder()
+                .baseUrl(getBaseUrl())
+                //.addConverterFactory(new ToStringConverterFactory())
+                .client(HttpClientFactory.create())
+                .build();
+
+    }
 }

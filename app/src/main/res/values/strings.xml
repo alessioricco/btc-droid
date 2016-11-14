@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">BTC Ticker</string>
+    <string name="app_name">BTC Droid</string>
+    <string name="app_title">BTC Droid</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -23,5 +24,6 @@
     <string name="empty_numeric_value">--.--</string>
     <string name="chart_not_available">Chart data temporarily unavailable</string>
     <string name="data_not_available">Data not available</string>
+
 
 </resources>

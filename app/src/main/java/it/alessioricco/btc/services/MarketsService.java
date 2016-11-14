@@ -51,7 +51,6 @@ public final class MarketsService {
         ObjectGraphSingleton.getInstance().inject(this);
     }
 
-
     /**
      * Returns all bookings for the current user
      *

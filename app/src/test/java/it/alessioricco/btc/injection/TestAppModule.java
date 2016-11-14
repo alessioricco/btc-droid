@@ -27,6 +27,7 @@ import javax.inject.Singleton;
         },
         injects = {
                 // here the list of classes using injection
+                AppModule.class,
                 TestMarketService.class,
                 TestCurrentSelection.class,
                 TestHistoryService.class,

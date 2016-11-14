@@ -66,7 +66,7 @@ public final class HistorySample {
                 final long startSample = sampleDescriptor.getSample();
                 final long durationSample = sampleDescriptor.getDuration();
                 final long suggestedCacheDuration = sampleDescriptor.getCacheDuration();
-                return (new HistorySample(index, symbol, startSample, durationSample, suggestedCacheDuration));
+                return new HistorySample(index, symbol, startSample, durationSample, suggestedCacheDuration);
             }
         return null;
     }

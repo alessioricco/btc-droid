@@ -16,10 +16,12 @@ public class StringUtils {
     }
 
     public static String formatValue(double value) {
+        //todo: fix it
         return String.format("%.2f", value);
     }
 
     public static String formatPercentValue(double value) {
+        //todo: fix it
         return String.format("%+.2f%%", value);
     }
 

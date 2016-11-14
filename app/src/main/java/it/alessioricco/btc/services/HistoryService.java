@@ -24,6 +24,7 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import st.lowlevel.storo.Storo;
 
 /**
@@ -101,7 +102,9 @@ public class HistoryService {
                             .forEach(new Action1<HistoricalValue>() {
                                 @Override
                                 public void call(HistoricalValue historicalValue) {
-                                    m.put(historicalValue);
+                                    if (historicalValue != null) {
+                                        m.put(historicalValue);
+                                    }
                                 }
                             });
 
@@ -112,7 +115,6 @@ public class HistoryService {
         });
 
     }
-
 
     private Observable<HistoricalValue> concatObservableHistorySamples(final String symbol) throws IOException {
 
