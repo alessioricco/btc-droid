@@ -1,4 +1,4 @@
-package it.alessioricco.btc.api;
+package it.alessioricco.btc.api.interfaces;
 
 import java.util.List;
 
