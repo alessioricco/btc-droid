@@ -24,6 +24,8 @@
     <string name="empty_numeric_value">--.--</string>
     <string name="chart_not_available">Chart data temporarily unavailable</string>
     <string name="data_not_available">Data not available</string>
+    <string name="error_retrieving_data">Error retrieving data.</string>
+    <string name="retry">Retry</string>
 
 
 </resources>

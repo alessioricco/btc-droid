@@ -1,22 +1,15 @@
 package it.alessioricco.btc.activities;
 
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import javax.inject.Inject;
 
@@ -25,7 +18,6 @@ import butterknife.InjectView;
 import it.alessioricco.btc.R;
 import it.alessioricco.btc.adapters.RSSListAdapter;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
-import it.alessioricco.btc.models.MarketHistory;
 import it.alessioricco.btc.models.feed.RSS;
 import it.alessioricco.btc.services.FeedService;
 import it.alessioricco.btc.utils.Environment;
@@ -41,11 +33,12 @@ public class NewsActivity extends AppCompatActivity {
 
     protected CompositeSubscription compositeSubscription = new CompositeSubscription();
 
-    //todo: inject
     @InjectView(R.id.recycler_view)
     RecyclerView recyclerView;
     @InjectView(R.id.progress_bar)
     ProgressBar progressBar;
+    @InjectView(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Inject
     FeedService feedService;
@@ -59,16 +52,26 @@ public class NewsActivity extends AppCompatActivity {
         ObjectGraphSingleton.getInstance().inject(this);
         ButterKnife.inject(this);
 
-        //
+        // initialization
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Refresh items
+                fetchFeed();
+            }
+        });
+    }
+
+    private void fetchFeed() {
+        compositeSubscription.add(asyncUpdateFeed());
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        compositeSubscription.add(asyncUpdateFeed());
-
+        fetchFeed();
     }
 
     @Override
@@ -78,9 +81,46 @@ public class NewsActivity extends AppCompatActivity {
         compositeSubscription.unsubscribe();
     }
 
-    private Subscription asyncUpdateFeed() {
+    private void errorMessage() {
+
+        Snackbar.make(this.recyclerView,R.string.error_retrieving_data, Snackbar.LENGTH_LONG)
+                .setAction(R.string.retry, new View.OnClickListener(){
+
+                    @Override
+                    public void onClick(View view) {
+                        fetchFeed();
+                    }
+                });
+    }
+
+    void startProgress() {
+
+        if (swipeRefreshLayout.isRefreshing()) {
+            return;
+        }
 
         progressBar.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * remove the progress dialog
+     *
+     * it dismiss the the dialog to prevent a leak
+     * http://stackoverflow.com/questions/6614692/progressdialog-how-to-prevent-leaked-window
+     */
+    void endProgress() {
+
+        if (swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(false);
+            return;
+        }
+
+        progressBar.setVisibility(View.GONE);
+    }
+
+    private Subscription asyncUpdateFeed() {
+
+        startProgress();
 
         final Observable<RSS> observable = this.feedService.getFeed(Environment.newsFeedUrl);
         return observable
@@ -95,29 +135,22 @@ public class NewsActivity extends AppCompatActivity {
                 .subscribe(new Subscriber<RSS>() {
                     @Override
                     public void onCompleted() {
-                        progressBar.setVisibility(View.GONE);
-                        //chartFragmentContainer.setVisibility(View.VISIBLE);
+                        endProgress();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        // cast to retrofit.HttpException to get the response code
-//                            if (e instanceof HttpException) {
-//                                HttpException response = (HttpException) e;
-//                                int code = response.code();
-//                                //TODO: add a toast
-//                            }
-                        //TODO: what happens to the UI?
                         progressBar.setVisibility(View.GONE);
-                        //chartFragmentContainer.setVisibility(View.VISIBLE);
+                        endProgress();
+
                     }
 
                     @Override
                     public void onNext(RSS rss) {
 
-                        //TODO: double check on the currency/action to avoid wasting time on old selections
-                        //drawChart(currentMarket, history);
-
+                        if (rss == null) {
+                            return;
+                        }
                         final RSSListAdapter adapter = new RSSListAdapter(getBaseContext(), rss);
                         recyclerView.setAdapter(adapter);
 

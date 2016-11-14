@@ -233,8 +233,9 @@ final public class MainActivity extends AppCompatActivity
         final long delay = 5;
         final Observable<Long> observable = Observable.interval(delay, TimeUnit.MINUTES, Schedulers.io());
 
+        // todo: check this snippet
         Subscription subscription = observable
-                .subscribeOn(Schedulers.io())
+                //.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<Long>() {
                     @Override
@@ -242,6 +243,7 @@ final public class MainActivity extends AppCompatActivity
                         asyncUpdateMarkets();
                     }
                 });
+
 
         if (!compositeSubscription.isUnsubscribed()) {
             compositeSubscription.add(subscription);
@@ -293,16 +295,9 @@ final public class MainActivity extends AppCompatActivity
 
                     @Override
                     public void onError(Throwable e) {
-                        // cast to retrofit.HttpException to get the response code
-//                        if (e instanceof HttpException) {
-//                            HttpException response = (HttpException) e;
-//                            int code = response.code();
-//                            //TODO: add a toast
-//                            //TODO: retry if it doesn't works
-//                        }
-                        //TODO: what happens to the UI?
                         showEmptyMarket();
                         endProgress();
+                        errorMessage();
                     }
 
                     @Override
@@ -344,13 +339,7 @@ final public class MainActivity extends AppCompatActivity
 
                         @Override
                         public void onError(Throwable e) {
-                            // cast to retrofit.HttpException to get the response code
-//                            if (e instanceof HttpException) {
-//                                HttpException response = (HttpException) e;
-//                                int code = response.code();
-//                                //TODO: add a toast
-//                            }
-                            //TODO: what happens to the UI?
+
                             progressBar.setVisibility(View.INVISIBLE);
                             chartFragmentContainer.setVisibility(View.VISIBLE);
                         }
@@ -368,6 +357,18 @@ final public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             Log.e("IOError", e.getLocalizedMessage());
         }
+    }
+
+    private void errorMessage() {
+
+        Snackbar.make(this.chartFragmentContainer,R.string.error_retrieving_data, Snackbar.LENGTH_LONG)
+                .setAction(R.string.retry, new View.OnClickListener(){
+
+                    @Override
+                    public void onClick(View view) {
+                        compositeSubscription.add(asyncUpdateMarkets());
+                    }
+                });
     }
 
     /**
@@ -549,7 +550,6 @@ final public class MainActivity extends AppCompatActivity
 
                 @Override
                 public void onClick(View v) {
-                    //Log.e("Tag", "clicked on " + currencyTextView.getText());
                     currentSelection.setCurrentMarketCurrency(currentCurrency);
                     onSelectedCurrency();
                 }
