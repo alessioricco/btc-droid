@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.appindexing.Action;
@@ -28,6 +29,8 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.ocpsoft.pretty.time.PrettyTime;
+
+import org.mockito.internal.matchers.And;
 
 import java.io.IOException;
 import java.util.List;
@@ -55,7 +58,10 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.plugins.RxJavaHooks;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -96,6 +102,9 @@ final public class MainActivity extends AppCompatActivity
     LinearLayout symbolsContainer;
     @InjectView(R.id.chart_fragment_container)
     LinearLayout chartFragmentContainer;
+
+    @InjectView(R.id.content_main)
+    RelativeLayout contentMain;
 
     @InjectView(R.id.latest_trade)
     TextView latestTrade;
@@ -230,7 +239,7 @@ final public class MainActivity extends AppCompatActivity
      * start the timer for updating the charts
      */
     void updateMarketsTimer() {
-        final long delay = 5;
+        final long delay = 2;
         final Observable<Long> observable = Observable.interval(delay, TimeUnit.MINUTES, Schedulers.io());
 
         // todo: check this snippet
@@ -240,7 +249,7 @@ final public class MainActivity extends AppCompatActivity
                 .subscribe(new Action1<Long>() {
                     @Override
                     public void call(Long aLong) {
-                        asyncUpdateMarkets();
+                        fetchData();
                     }
                 });
 
@@ -279,35 +288,43 @@ final public class MainActivity extends AppCompatActivity
      */
     private Subscription asyncUpdateMarkets() {
 
-        //todo the progress must me show only the first time, then we should use another thing
         startProgress();
         final Observable<List<Market>> observable = marketsService.getMarkets();
+        if (observable == null) {
+            return null;
+        }
 
         return observable
-                .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<Market>>() {
+                .subscribeOn(Schedulers.io())
+                // on error return an empty list
+                .onErrorReturn(new Func1<Throwable, List<Market>>() {
                     @Override
-                    public void onCompleted() {
-                        // todo hide the spinner
-                        endProgress();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
+                    public List<Market> call(Throwable throwable) {
                         showEmptyMarket();
                         endProgress();
                         errorMessage();
+                        return null;
                     }
-
+                })
+                .doOnNext(new Action1<List<Market>>() {
                     @Override
-                    public void onNext(List<Market> markets) {
+                    public void call(List<Market> markets) {
+                        if (markets == null) {
+                            return;
+                        }
                         updateMarkets(markets);
                     }
-                });
+                })
+                .doOnCompleted(new Action0() {
+                    @Override
+                    public void call() {
+                        endProgress();
+                    }
+                })
+                .subscribe();
+
     }
-
-
 
     private void getHistoricalData(final Market currentMarket) {
 
@@ -322,7 +339,6 @@ final public class MainActivity extends AppCompatActivity
 
             final Observable<MarketHistory> observable = this.historyService.getHistory(symbol);
             final Subscription history = observable
-                    //.subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnError(new Action1<Throwable>() {
                         @Override
@@ -334,6 +350,7 @@ final public class MainActivity extends AppCompatActivity
                         @Override
                         public void onCompleted() {
                             progressBar.setVisibility(View.INVISIBLE);
+                            //endProgress();
                             chartFragmentContainer.setVisibility(View.VISIBLE);
                         }
 
@@ -341,6 +358,7 @@ final public class MainActivity extends AppCompatActivity
                         public void onError(Throwable e) {
 
                             progressBar.setVisibility(View.INVISIBLE);
+                            //endProgress();
                             chartFragmentContainer.setVisibility(View.VISIBLE);
                         }
 
@@ -359,16 +377,20 @@ final public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void fetchData() {
+        compositeSubscription.add(asyncUpdateMarkets());
+    }
+
     private void errorMessage() {
 
-        Snackbar.make(this.chartFragmentContainer,R.string.error_retrieving_data, Snackbar.LENGTH_LONG)
+        Snackbar.make(this.contentMain,R.string.error_retrieving_data, Snackbar.LENGTH_LONG)
                 .setAction(R.string.retry, new View.OnClickListener(){
 
                     @Override
                     public void onClick(View view) {
-                        compositeSubscription.add(asyncUpdateMarkets());
+                        fetchData();
                     }
-                });
+                }).show();
     }
 
     /**
@@ -488,29 +510,41 @@ final public class MainActivity extends AppCompatActivity
      */
     private void onSelectedCurrency() {
         final String currency = currentSelection.getCurrentMarketCurrency();
-        final List<String> symbols = this.markets.getSymbols(currency);
 
-        // fill the currencies scrollView
-        this.symbolsContainer.removeAllViews();
+        this.markets.getSymbolsAsObservable(currency)
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        symbolsContainer.removeAllViews();
+                    }
+                })
+                .doOnNext(new Action1<String>() {
+                    @Override
+                    public void call(String symbol) {
+                        final String currentSymbol = symbol;
+                        final TextView systemTextView = (TextView) getLayoutInflater().inflate(R.layout.currency_template, null);
+                        systemTextView.setText(getString(R.string.string_space, symbol));
+                        systemTextView.setTag(symbol);
+                        systemTextView.setOnClickListener(new View.OnClickListener() {
 
-        for (String symbol : symbols) {
-            final String currentSymbol = symbol;
-            final TextView systemTextView = (TextView) getLayoutInflater().inflate(R.layout.currency_template, null);
-            systemTextView.setText(getString(R.string.string_space, symbol));
-            systemTextView.setTag(symbol);
-            systemTextView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Log.e("Tag", "clicked on " + systemTextView.getText());
+                                currentSelection.setCurrentMarketSymbol(currentSymbol);
+                                onSelectedSymbol();
+                            }
+                        });
+                        symbolsContainer.addView(systemTextView);
+                    }
+                })
+                .doOnCompleted(new Action0() {
+                    @Override
+                    public void call() {
+                        onSelectedSymbol();
+                    }
+                })
+                .subscribe();
 
-                @Override
-                public void onClick(View v) {
-                    Log.e("Tag", "clicked on " + systemTextView.getText());
-                    currentSelection.setCurrentMarketSymbol(currentSymbol);
-                    onSelectedSymbol();
-                }
-            });
-            this.symbolsContainer.addView(systemTextView);
-        }
-
-        onSelectedSymbol();
     }
 
     /**
@@ -541,21 +575,25 @@ final public class MainActivity extends AppCompatActivity
         // fill the currencies scrollView
         this.currenciesContainer.removeAllViews();
 
-        for (String currency : this.markets.getCurrencies()) {
-            final String currentCurrency = currency;
-            final TextView currencyTextView = (TextView) getLayoutInflater().inflate(R.layout.currency_template, null);
-            currencyTextView.setText(getString(R.string.string_space, currency));
-            currencyTextView.setTag(currency);
-            currencyTextView.setOnClickListener(new View.OnClickListener() {
+        this.markets.getCurrenciesAsObservable().doOnNext(new Action1<String>() {
+            @Override
+            public void call(String currency) {
+                final String currentCurrency = currency;
+                final TextView currencyTextView = (TextView) getLayoutInflater().inflate(R.layout.currency_template, null);
+                currencyTextView.setText(getString(R.string.string_space, currency));
+                currencyTextView.setTag(currency);
+                currencyTextView.setOnClickListener(new View.OnClickListener() {
 
-                @Override
-                public void onClick(View v) {
-                    currentSelection.setCurrentMarketCurrency(currentCurrency);
-                    onSelectedCurrency();
-                }
-            });
-            this.currenciesContainer.addView(currencyTextView);
-        }
+                    @Override
+                    public void onClick(View v) {
+                        currentSelection.setCurrentMarketCurrency(currentCurrency);
+                        onSelectedCurrency();
+                    }
+                });
+                currenciesContainer.addView(currencyTextView);
+            }
+        }).subscribe();
+
     }
 
     /**

@@ -1,6 +1,7 @@
 package it.alessioricco.btc.api;
 
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
+import it.alessioricco.btc.utils.Environment;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -17,7 +18,7 @@ import rx.schedulers.Schedulers;
 public class RestAdapterFactory {
 
     protected String getBaseUrl() {
-        return "http://api.bitcoincharts.com";
+        return Environment.marketsUrl;
     }
 
     public RestAdapterFactory() {
@@ -60,7 +61,6 @@ public class RestAdapterFactory {
     public Retrofit getRssRestAdapter() {
         return new Retrofit.Builder()
                 .baseUrl(getBaseUrl())
-                //.addConverterFactory(new ToStringConverterFactory())
                 .client(HttpClientFactory.create())
                 .build();
 

@@ -1,5 +1,7 @@
 package it.alessioricco.btc;
 
+import android.util.Log;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +19,8 @@ import it.alessioricco.btc.injection.TestObjectGraphSingleton;
 import it.alessioricco.btc.mocks.MockAppWebServer;
 import it.alessioricco.btc.util.CustomRobolectricTestRunner;
 import okhttp3.mockwebserver.MockResponse;
+import rx.functions.Action1;
+import rx.plugins.RxJavaHooks;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
@@ -37,6 +41,7 @@ public class TestMainActivity {
         // Init the IoC and inject us
         TestObjectGraphSingleton.init();
         TestObjectGraphSingleton.getInstance().inject(this);
+
 
     }
 

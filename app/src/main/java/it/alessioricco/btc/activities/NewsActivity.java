@@ -140,8 +140,8 @@ public class NewsActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        progressBar.setVisibility(View.GONE);
                         endProgress();
+                        errorMessage();
 
                     }
 

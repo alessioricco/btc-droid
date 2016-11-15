@@ -2,6 +2,7 @@ package it.alessioricco.btc;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import java.util.Collections;
 import java.util.List;
@@ -9,6 +10,10 @@ import java.util.List;
 import dagger.ObjectGraph;
 import it.alessioricco.btc.injection.AppModule;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
+import rx.functions.Action1;
+import rx.plugins.RxJavaErrorHandler;
+import rx.plugins.RxJavaHooks;
+import rx.plugins.RxJavaPlugins;
 import st.lowlevel.storo.Storo;
 import st.lowlevel.storo.StoroBuilder;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -48,6 +53,15 @@ public final class App extends Application {
                     .setDefaultCacheDirectory(this)
                     .initialize();
         }
+
+
+        //rx hooks
+        RxJavaHooks.setOnError(new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                Log.w("RXError",throwable);
+            }
+        });
     }
 
     //http://stackoverflow.com/questions/4391720/how-can-i-get-a-resource-content-from-a-static-context/4391811#4391811

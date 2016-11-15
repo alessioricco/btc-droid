@@ -12,6 +12,7 @@ import java.util.Map;
 import it.alessioricco.btc.utils.BitcoinChartsUtils;
 import it.alessioricco.btc.utils.StringUtils;
 import lombok.Getter;
+import rx.Observable;
 
 /**
  * Created by alessioricco on 01/10/2016.
@@ -32,7 +33,7 @@ public class Markets implements Serializable {
      * return the sorted list of available currencies
      * @return a list of string with the currencies id
      */
-    public List<String> getCurrencies() {
+    private List<String> getCurrencies() {
         final List<String> currencies = new ArrayList<>(this.currencies.keySet());
 
         Collections.sort(currencies, new Comparator<String>() {
@@ -49,12 +50,16 @@ public class Markets implements Serializable {
         return currencies;
     }
 
+    public Observable<String> getCurrenciesAsObservable() {
+        return Observable.from(getCurrencies());
+    }
+
     /**
      * given the currency, retrieve the list of list_of_symbols_main
      * @param currency
      * @return
      */
-    public List<String> getSymbols(final String currency) {
+    private List<String> getSymbols(final String currency) {
         Map<String,Market> symbols = currencies.get(currency);
 
         if (symbols == null) {
@@ -68,6 +73,10 @@ public class Markets implements Serializable {
             }
         });
         return a;
+    }
+
+    public Observable<String> getSymbolsAsObservable(final String currency) {
+        return Observable.from(getSymbols(currency));
     }
 
     /**
