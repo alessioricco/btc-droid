@@ -7,7 +7,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import it.alessioricco.btc.App;
-import it.alessioricco.btc.MainActivity;
+import it.alessioricco.btc.activities.MainActivity;
 import it.alessioricco.btc.activities.FeedRSSActivity;
 import it.alessioricco.btc.api.RestAdapterFactory;
 import it.alessioricco.btc.api.RssAdapterFactory;

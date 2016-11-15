@@ -1,8 +1,5 @@
 package it.alessioricco.btc.models;
 
-/**
- * Created by alessioricco on 02/11/2016.
- */
 
 import org.junit.After;
 import org.junit.Before;

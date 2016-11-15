@@ -55,7 +55,7 @@ public class TestHistorySample {
             }
             if (!sampleDescriptor.getEnabled()) {
                 disabled++;
-            };
+            }
         }
 
     }

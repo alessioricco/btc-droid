@@ -76,6 +76,10 @@ public class Markets implements Serializable {
     }
 
     public Observable<String> getSymbolsAsObservable(final String currency) {
+        List<String> list = getSymbols(currency);
+        if (list == null) {
+            return Observable.just(null);
+        }
         return Observable.from(getSymbols(currency));
     }
 

@@ -2,7 +2,6 @@ package it.alessioricco.btc.services;
 
 import android.util.Log;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +24,6 @@ import rx.Subscriber;
 import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 import st.lowlevel.storo.Storo;
 
 /**
@@ -40,7 +38,7 @@ public class HistoryService {
 
     private static final String TAG = HistoryService.class.getSimpleName();
 
-    protected @Getter @Setter Boolean cacheEnabled = true;
+    final protected @Getter @Setter Boolean cacheEnabled = true;
     @Inject
     RestAdapterFactory restAdapterFactory;
 
@@ -113,9 +111,7 @@ public class HistoryService {
                     @Override
                     public void call(HistoricalValue historicalValue) {
                         Log.d(TAG, String.format("received historicaValue index %d", historicalValue.getIndex()));
-                        if (historicalValue != null) {
-                            m.put(historicalValue);
-                        }
+                        m.put(historicalValue);
                     }
                 });
 
@@ -206,7 +202,7 @@ public class HistoryService {
         return String.format("%s%d", sample.getSymbol(), sample.getIndex());
     }
 
-    private final long getCacheDuration(final HistorySample sample) {
+    private long getCacheDuration(final HistorySample sample) {
         return sample.getCacheDuration();
     }
 

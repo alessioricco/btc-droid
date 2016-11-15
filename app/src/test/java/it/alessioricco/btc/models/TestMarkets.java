@@ -26,7 +26,7 @@ public class TestMarkets {
     @Test
     public void testMarkets() throws Exception {
 
-        final List<Market> marketList = MockBitcoinCharts.buildListOfMarketsToTest(true);
+        final List marketList = MockBitcoinCharts.buildListOfMarketsToTest(true);
         assertThat(marketList).isNotNull();
         assertThat(marketList.size()).isGreaterThan(0);
 
@@ -82,7 +82,7 @@ public class TestMarkets {
     @Test
     public void testSymbols() throws Exception {
 
-        final List<Market> marketList = MockBitcoinCharts.buildListOfMarketsToTest(true);
+        final List marketList = MockBitcoinCharts.buildListOfMarketsToTest(true);
         assertThat(marketList).isNotNull();
         assertThat(marketList.size()).isGreaterThan(0);
 

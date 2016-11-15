@@ -1,4 +1,4 @@
-package it.alessioricco.btc;
+package it.alessioricco.btc.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +37,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import it.alessioricco.btc.R;
 import it.alessioricco.btc.activities.FeedRSSActivity;
 import it.alessioricco.btc.fragments.Chart;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
@@ -51,6 +52,7 @@ import it.alessioricco.btc.utils.BitcoinChartsUtils;
 import it.alessioricco.btc.utils.Environment;
 import it.alessioricco.btc.utils.ProgressDialogHelper;
 import it.alessioricco.btc.utils.StringUtils;
+import lombok.Getter;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -72,16 +74,16 @@ final public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Chart.OnFragmentInteractionListener {
 
     // Container for subscriptions (RxJava). They will be unsubscribed onDestroy.
-    protected CompositeSubscription compositeSubscription = new CompositeSubscription();
+    final protected CompositeSubscription compositeSubscription = new CompositeSubscription();
     @Inject
     MarketsService marketsService;
     @Inject
     HistoryService historyService;
 
     @InjectView(R.id.current)
-    TextView currentValue;
+    @Getter TextView currentValue;
     @InjectView(R.id.ask)
-    TextView askValue;
+    @Getter TextView askValue;
     @InjectView(R.id.bid)
     TextView bidValue;
     @InjectView(R.id.high)
@@ -107,9 +109,9 @@ final public class MainActivity extends AppCompatActivity
     @InjectView(R.id.chart_progress)
     ProgressBar progressBar;
 
-    private Markets markets = new Markets();
+    final private Markets markets = new Markets();
 
-    private CurrentSelection currentSelection = new CurrentSelection();
+    final private CurrentSelection currentSelection = new CurrentSelection();
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -142,15 +144,19 @@ final public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        initialize();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    private void initialize() {
         //begin of the custom code
         ObjectGraphSingleton.getInstance().inject(this);
         ButterKnife.inject(this);
         // no values
         showEmptyMarket();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -238,7 +244,6 @@ final public class MainActivity extends AppCompatActivity
         final long delay = 2;
         final Observable<Long> observable = Observable.interval(delay, TimeUnit.MINUTES, Schedulers.io());
 
-        // todo: check this snippet
         Subscription subscription = observable
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<Long>() {
@@ -261,8 +266,6 @@ final public class MainActivity extends AppCompatActivity
         } else {
             progressBar.setVisibility(View.VISIBLE);
         }
-
-
     }
 
     void endProgress() {
@@ -272,7 +275,6 @@ final public class MainActivity extends AppCompatActivity
         } else {
             progressBar.setVisibility(View.INVISIBLE);
         }
-
     }
 
     /**
@@ -361,7 +363,10 @@ final public class MainActivity extends AppCompatActivity
 
 
     private void fetchData() {
-        compositeSubscription.add(asyncUpdateMarkets());
+        Subscription asyncUpdateMarkets = asyncUpdateMarkets();
+        if (asyncUpdateMarkets != null) {
+            compositeSubscription.add(asyncUpdateMarkets);
+        }
     }
 
     private void errorMessage() {
@@ -383,9 +388,13 @@ final public class MainActivity extends AppCompatActivity
      */
     private void drawChart(final Market currentMarket, final MarketHistory marketHistory) {
 
-        Chart chartFragment = (Chart) getSupportFragmentManager().findFragmentById(R.id.chart_fragment);
+        final Chart chartFragment = (Chart) getSupportFragmentManager().findFragmentById(R.id.chart_fragment);
 
-        if (chartFragment == null || marketHistory == null || ! marketHistory.hasValidData()) {
+        if (chartFragment == null) {
+            return;
+        }
+
+        if (marketHistory == null || ! marketHistory.hasValidData()) {
             chartFragment.showError(View.VISIBLE);
             return;
         }

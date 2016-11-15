@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -16,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 
 import javax.inject.Inject;
 
@@ -41,12 +39,14 @@ import rx.subscriptions.CompositeSubscription;
 
 public class FeedRSSActivity extends AppCompatActivity {
 
-    protected CompositeSubscription compositeSubscription = new CompositeSubscription();
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     @InjectView(R.id.recycler_view)
     RecyclerView recyclerView;
+
     @InjectView(R.id.progress_bar)
     ProgressBar progressBar;
+
     @InjectView(R.id.swipeRefreshLayout)
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -118,7 +118,7 @@ public class FeedRSSActivity extends AppCompatActivity {
                 });
     }
 
-    void startProgress() {
+    private void startProgress() {
 
         if (swipeRefreshLayout.isRefreshing()) {
             return;
@@ -133,7 +133,7 @@ public class FeedRSSActivity extends AppCompatActivity {
      * it dismiss the the dialog to prevent a leak
      * http://stackoverflow.com/questions/6614692/progressdialog-how-to-prevent-leaked-window
      */
-    void endProgress() {
+    private void endProgress() {
 
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
@@ -188,6 +188,7 @@ public class FeedRSSActivity extends AppCompatActivity {
                         }
                         feedItemList.addAll(rss.getChannel().feedItemList);
 
+                        // this could be slow, due the getDate() function
                         Collections.sort(feedItemList, new Comparator<Channel.FeedItem>() {
                             @Override
                             public int compare(Channel.FeedItem t1, Channel.FeedItem t2) {
@@ -200,7 +201,7 @@ public class FeedRSSActivity extends AppCompatActivity {
                     @Override
                     public void call() {
                         endProgress();
-                        final RSSListAdapter adapter = new RSSListAdapter(getBaseContext(), feedItemList);
+                        final RSSListAdapter adapter = new RSSListAdapter(feedItemList);
                         recyclerView.setAdapter(adapter);
                     }
                 }).subscribe();

@@ -22,12 +22,12 @@ public class CurrentSelection implements Serializable {
     private String currentMarketSymbol = "";
     private String currentMarketCurrency = "";
 
-    private Map<String,String> lastSelectedSymbol = new HashMap<String, String>();
+    private final Map<String,String> lastSelectedSymbol = new HashMap<String, String>();
 
     public String getCurrentMarketCurrency() {
         if (StringUtils.isNullOrEmpty(currentMarketCurrency)) {
             // we select the default value
-            currentMarketCurrency = App.getContext().getString(R.string.default_currency);
+            currentMarketCurrency = "EUR"; //App.getContext().getString(R.string.default_currency);
         }
         return currentMarketCurrency;
     }

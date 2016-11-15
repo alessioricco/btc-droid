@@ -31,7 +31,7 @@ public final class FeedService {
      */
     public Observable<RSS> getFeed(final String endPointUrl) {
 
-        String baseUrl = "";
+        String baseUrl;
         try
         {
             final URL url = new URL(endPointUrl);

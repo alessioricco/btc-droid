@@ -6,10 +6,10 @@ import lombok.Getter;
  * for each sample contains caching, label, duration
  */
 public final class HistorySamplingDescriptor {
-    private @Getter  String label;
-    private @Getter  long cacheDuration;
-    private @Getter  long sample;
-    private @Getter  long duration;
+    final private @Getter  String label;
+    final private @Getter  long cacheDuration;
+    final private @Getter  long sample;
+    final private @Getter  long duration;
 
     // if true it will be used, otherwise no
     private @Getter  Boolean enabled;

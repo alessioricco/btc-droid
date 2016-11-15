@@ -1,7 +1,5 @@
 package it.alessioricco.btc;
 
-import android.util.Log;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,12 +13,11 @@ import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
 
+import it.alessioricco.btc.activities.MainActivity;
 import it.alessioricco.btc.injection.TestObjectGraphSingleton;
 import it.alessioricco.btc.mocks.MockAppWebServer;
 import it.alessioricco.btc.util.CustomRobolectricTestRunner;
 import okhttp3.mockwebserver.MockResponse;
-import rx.functions.Action1;
-import rx.plugins.RxJavaHooks;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
@@ -74,8 +71,8 @@ public class TestMainActivity {
         assertThat(shadowActivity).isNotNull();
         assertThat(shadowActivity.isFinishing()).isFalse();
 
-        assertThat(activity.currentValue.getText()).isNotNull();
-        assertThat(activity.currentValue.getText()).isNotEmpty();
+        assertThat(activity.getCurrentValue().getText()).isNotNull();
+        assertThat(activity.getCurrentValue().getText()).isNotEmpty();
 
     }
 
@@ -101,11 +98,11 @@ public class TestMainActivity {
         assertThat(shadowActivity).isNotNull();
         assertThat(shadowActivity.isFinishing()).isFalse();
 
-        assertThat(activity.currentValue.getText()).isNotNull();
-        assertThat(activity.currentValue.getText()).isEmpty();
+        assertThat(activity.getCurrentValue().getText()).isNotNull();
+        assertThat(activity.getCurrentValue().getText()).isEmpty();
 
         final String emptyNumber = activity.getApplicationContext().getString(R.string.empty_numeric_value);
-        assertThat(activity.askValue.getText().toString()).isEqualTo(emptyNumber);
+        assertThat(activity.getAskValue().getText().toString()).isEqualTo(emptyNumber);
 
     }
 }

@@ -9,7 +9,6 @@
 
     <string name="mock_price_high">1234567.89</string>
     <string name="mock_price">12345.67</string>
-    <string name="mock_price_low">1.23</string>
 
     <string name="string_space">"%1$s  "</string>
     <string name="main_vol">24h Vol</string>
@@ -19,7 +18,6 @@
     <string name="main_hi">HIGH</string>
     <string name="main_lo">LOW</string>
     <string name="currency_eur">EUR</string>
-    <string name="currency_usd">USD</string>
     <string name="default_currency">@string/currency_eur</string>
     <string name="empty_numeric_value">--.--</string>
     <string name="chart_not_available">Chart data temporarily unavailable</string>

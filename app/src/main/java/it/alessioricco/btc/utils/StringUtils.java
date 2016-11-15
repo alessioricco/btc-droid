@@ -47,7 +47,7 @@ public class StringUtils {
 
     public static String formatRSSDate(String pubDate) {
         DateFormat formatterInput = new SimpleDateFormat(RFC_1123_DATE_TIME);
-        Date date = null;
+        Date date;
         try {
             date = formatterInput.parse(pubDate);
             DateFormat formatterOutput = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm");

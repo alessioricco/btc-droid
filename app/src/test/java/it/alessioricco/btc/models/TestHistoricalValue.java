@@ -16,7 +16,7 @@ public class TestHistoricalValue {
     public void testHistoricalValueSample() throws Exception {
         MarketHistory h = new MarketHistory();
 
-        for (int i=0; i< h.getMaxSamples(); i++) {
+        for (int i = 0; i< MarketHistory.getMaxSamples(); i++) {
             final HistoricalValue hv0 = new HistoricalValue();
             hv0.setIndex(i);
             hv0.setAmount(10d*i);

@@ -17,7 +17,7 @@ import rx.schedulers.Schedulers;
 
 public class RestAdapterFactory {
 
-    protected String getBaseUrl() {
+    String getBaseUrl() {
         return Environment.marketsUrl;
     }
 

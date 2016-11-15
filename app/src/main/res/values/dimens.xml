@@ -9,5 +9,4 @@
 
 
     <!-- custom dimensions -->
-    <dimen name="horizontal_margin">16dp</dimen>
 </resources>

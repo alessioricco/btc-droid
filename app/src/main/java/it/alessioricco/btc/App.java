@@ -11,9 +11,7 @@ import dagger.ObjectGraph;
 import it.alessioricco.btc.injection.AppModule;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import rx.functions.Action1;
-import rx.plugins.RxJavaErrorHandler;
 import rx.plugins.RxJavaHooks;
-import rx.plugins.RxJavaPlugins;
 import st.lowlevel.storo.Storo;
 import st.lowlevel.storo.StoroBuilder;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -28,11 +26,11 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 public final class App extends Application {
 
     //todo: this is a memory leak, must be fixed
-    private static Context mContext;
+    //private static Context mContext;
 
     @Override public void onCreate() {
         super.onCreate();
-        mContext = this;
+        //mContext = this;
 
         // Initialize ObjectGraph for dependency Injection
         if (ObjectGraphSingleton.getInstance() == null) {
@@ -56,18 +54,18 @@ public final class App extends Application {
 
 
         //rx hooks
-        RxJavaHooks.setOnError(new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-                Log.w("RXError",throwable);
-            }
-        });
+//        RxJavaHooks.setOnError(new Action1<Throwable>() {
+//            @Override
+//            public void call(Throwable throwable) {
+//                Log.w("RXError",throwable);
+//            }
+//        });
     }
 
     //http://stackoverflow.com/questions/4391720/how-can-i-get-a-resource-content-from-a-static-context/4391811#4391811
-    public static Context getContext(){
-        return mContext;
-    }
+//    public static Context getContext(){
+//        return mContext;
+//    }
 
     private List<Object> getModules() {
         return Collections.<Object>singletonList(new AppModule(this));

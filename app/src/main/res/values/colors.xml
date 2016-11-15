@@ -13,13 +13,8 @@
     <color name="UnselectedCurrencyItem">@color/mainLabelColor</color>
     <color name="UnselectedSymbolItem">@color/mainLabelColor</color>
     <color name="SelectedCurrencyItem">#ffffff</color>
-    <color name="SelectedSymbolItem">#ffffff</color>
 
     <!-- chart -->
-    <color name="line">#FFFFFF</color>
-    <color name="axis">#999999</color>
-    <color name="notAvail">#FFFFFF</color>
 
     <!-- splash -->
-    <color name="splash">#FFFFFF</color>
 </resources>
