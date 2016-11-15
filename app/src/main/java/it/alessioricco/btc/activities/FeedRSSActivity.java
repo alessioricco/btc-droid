@@ -1,15 +1,22 @@
 package it.alessioricco.btc.activities;
 
-
-import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.View;
 import android.widget.ProgressBar;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 
 import javax.inject.Inject;
 
@@ -18,18 +25,21 @@ import butterknife.InjectView;
 import it.alessioricco.btc.R;
 import it.alessioricco.btc.adapters.RSSListAdapter;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
+import it.alessioricco.btc.models.feed.Channel;
 import it.alessioricco.btc.models.feed.RSS;
 import it.alessioricco.btc.services.FeedService;
 import it.alessioricco.btc.utils.Environment;
+import it.alessioricco.btc.utils.StringUtils;
 import rx.Observable;
-import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
-public class NewsActivity extends AppCompatActivity {
+public class FeedRSSActivity extends AppCompatActivity {
 
     protected CompositeSubscription compositeSubscription = new CompositeSubscription();
 
@@ -46,8 +56,23 @@ public class NewsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.rss_list);
+        setContentView(R.layout.activity_feed_rss);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        initialize();
+    }
+
+    private void initialize() {
         //begin of the custom code
         ObjectGraphSingleton.getInstance().inject(this);
         ButterKnife.inject(this);
@@ -83,8 +108,8 @@ public class NewsActivity extends AppCompatActivity {
 
     private void errorMessage() {
 
-        Snackbar.make(this.recyclerView,R.string.error_retrieving_data, Snackbar.LENGTH_LONG)
-                .setAction(R.string.retry, new View.OnClickListener(){
+        Snackbar.make(this.recyclerView, R.string.error_retrieving_data, Snackbar.LENGTH_LONG)
+                .setAction(R.string.retry, new View.OnClickListener() {
 
                     @Override
                     public void onClick(View view) {
@@ -104,7 +129,7 @@ public class NewsActivity extends AppCompatActivity {
 
     /**
      * remove the progress dialog
-     *
+     * <p>
      * it dismiss the the dialog to prevent a leak
      * http://stackoverflow.com/questions/6614692/progressdialog-how-to-prevent-leaked-window
      */
@@ -118,47 +143,67 @@ public class NewsActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
     }
 
+
     private Subscription asyncUpdateFeed() {
 
-        startProgress();
+        final List<Channel.FeedItem> feedItemList = new ArrayList<>();
 
-        final Observable<RSS> observable = this.feedService.getFeed(Environment.newsFeedUrl);
-        return observable
-                .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
+        final Observable<RSS> feed1 = this.feedService.getFeed(Environment.newsFeedCoinDeskUrl);
+        final Observable<RSS> feed2 = this.feedService.getFeed(Environment.newsFeedBitcoinUrl);
+        final Observable<RSS> feeds = Observable.merge(feed1,feed2);
+
+        return feeds
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        feedItemList.clear();
+                        startProgress();
+                    }
+                })
                 .doOnError(new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
                     }
                 })
-                .subscribe(new Subscriber<RSS>() {
+                .onErrorResumeNext(new Func1<Throwable, Observable<? extends RSS>>() {
                     @Override
-                    public void onCompleted() {
-                        endProgress();
+                    public Observable<? extends RSS> call(Throwable throwable) {
+                        return null;
                     }
-
+                })
+                .doOnNext(new Action1<RSS>() {
                     @Override
-                    public void onError(Throwable e) {
-                        endProgress();
-                        errorMessage();
+                    public void call(RSS rss) {
 
-                    }
-
-                    @Override
-                    public void onNext(RSS rss) {
-
-                        if (rss == null) {
+                        if (rss == null || rss.getChannel() == null) {
                             return;
                         }
-                        final RSSListAdapter adapter = new RSSListAdapter(getBaseContext(), rss);
-                        recyclerView.setAdapter(adapter);
 
+                        for(Channel.FeedItem item: rss.getChannel().feedItemList){
+                            item.setSource(rss.getChannel().getTitle());
+                            item.setDescription(StringUtils.removeHtmlTags(item.getDescription()));
+                        }
+                        feedItemList.addAll(rss.getChannel().feedItemList);
+
+                        Collections.sort(feedItemList, new Comparator<Channel.FeedItem>() {
+                            @Override
+                            public int compare(Channel.FeedItem t1, Channel.FeedItem t2) {
+                                return t2.getDate().compareTo(t1.getDate());
+                            }
+                        });
                     }
-
-                });
-
-
+                })
+                .doOnCompleted(new Action0() {
+                    @Override
+                    public void call() {
+                        endProgress();
+                        final RSSListAdapter adapter = new RSSListAdapter(getBaseContext(), feedItemList);
+                        recyclerView.setAdapter(adapter);
+                    }
+                }).subscribe();
 
     }
 

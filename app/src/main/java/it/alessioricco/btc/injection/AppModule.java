@@ -8,7 +8,7 @@ import dagger.Module;
 import dagger.Provides;
 import it.alessioricco.btc.App;
 import it.alessioricco.btc.MainActivity;
-import it.alessioricco.btc.activities.NewsActivity;
+import it.alessioricco.btc.activities.FeedRSSActivity;
 import it.alessioricco.btc.api.RestAdapterFactory;
 import it.alessioricco.btc.api.RssAdapterFactory;
 import it.alessioricco.btc.fragments.HistorySample;
@@ -32,7 +32,7 @@ import it.alessioricco.btc.services.MarketsService;
                 RssAdapterFactory.class,
                 HistorySample.class,
                 FeedService.class,
-                NewsActivity.class,
+                FeedRSSActivity.class,
                 MainActivity.class
         },
         library = true)

@@ -2,6 +2,10 @@ package it.alessioricco.btc;
 
 import org.junit.Test;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import it.alessioricco.btc.utils.StringUtils;
 
 import static org.junit.Assert.*;
@@ -21,5 +25,16 @@ public class TestString {
         String lines[] = test1.split("\n");
 
         assertEquals(StringUtils.firstLineOf(test1), lines[0]);
+    }
+
+    @Test
+    public void testPubDate() throws Exception {
+        String pubDate = "Tue, 15 Nov 2016 22:00:06 +0000";
+
+        DateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+        Date date = formatter.parse(pubDate);
+        DateFormat formatterOutput = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm");
+        assertTrue(pubDate.startsWith(formatterOutput.format(date)));
+
     }
 }

@@ -7,6 +7,7 @@ package it.alessioricco.btc.utils;
 public interface Environment {
      String authorUrl = "http://www.alessioricco.it";
      String sourceCodeUrl = "https://github.com/alessioricco/btc-droid";
-     String newsFeedUrl = "http://feeds.feedburner.com/CoinDesk";
+     String newsFeedCoinDeskUrl = "http://feeds.feedburner.com/CoinDesk";
+     String newsFeedBitcoinUrl = "https://news.bitcoin.com/feed/";
      String marketsUrl = "http://api.bitcoincharts.com";
 }

@@ -7,15 +7,11 @@ import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowResources;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import it.alessioricco.btc.BuildConfig;
 import it.alessioricco.btc.TestEnvironment;
 import it.alessioricco.btc.injection.TestObjectGraphSingleton;
-import it.alessioricco.btc.mocks.MockAppWebServer;
-import it.alessioricco.btc.models.Market;
 import it.alessioricco.btc.models.feed.RSS;
 import it.alessioricco.btc.util.CustomRobolectricTestRunner;
 import it.alessioricco.btc.utils.Environment;
@@ -61,7 +57,7 @@ public class TestFeedService {
     @Test
     public void testGetFeed200() throws Exception {
 
-        final Observable<RSS> feed = feedService.getFeed(Environment.newsFeedUrl);
+        final Observable<RSS> feed = feedService.getFeed(Environment.newsFeedCoinDeskUrl);
 
         feed.toBlocking()
                 .subscribe(new Subscriber<RSS>() {

@@ -26,6 +26,7 @@
     <string name="data_not_available">Data not available</string>
     <string name="error_retrieving_data">Error retrieving data.</string>
     <string name="retry">Retry</string>
+    <string name="title_activity_feed_rss">News</string>
 
 
 </resources>
