@@ -24,6 +24,8 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import st.lowlevel.storo.Storo;
 
 /**
@@ -36,7 +38,8 @@ import st.lowlevel.storo.Storo;
 
 public class HistoryService {
 
-    private static final String LOG_TAG = "MarketsService";
+    private static final String TAG = HistoryService.class.getSimpleName();
+
     protected @Getter @Setter Boolean cacheEnabled = true;
     @Inject
     RestAdapterFactory restAdapterFactory;
@@ -54,7 +57,7 @@ public class HistoryService {
      */
     private HistoricalValue transformCSVToHistoricalValue(final String resultAsString, final int index) {
 
-        Log.i(LOG_TAG, String.format("received %d chars of result for index %d ", resultAsString.length(), index));
+        Log.i(TAG, String.format("received %d chars of result for index %d ", resultAsString.length(), index));
 
         if (StringUtils.isNullOrEmpty(resultAsString)) {
             return null;
@@ -70,59 +73,67 @@ public class HistoryService {
      * when all the observer completed their tasks
      * @param symbol
      * @return
-     * @throws IOException
      */
-    public Observable<MarketHistory> getHistory(final String symbol) throws IOException {
+    public Observable<MarketHistory> getHistory(final String symbol)  {
 
+        // create the list of samples to be retrieved
+        final List<HistorySample> listOfSamples = new ArrayList<>();
+        for (int i=0; i<MarketHistory.getMaxSamples(); i++) {
+            listOfSamples.add(HistorySample.buildSample(symbol, i));
+        }
+
+        // create the market history
         final MarketHistory m = new MarketHistory();
 
-        return Observable.create(new Observable.OnSubscribe<MarketHistory>(){
+        // create the observable function for retrieving and converting all the samples
+        final Observable<HistoricalValue> getMarketHistory = Observable
+                .from(listOfSamples)
+                // for each sample convert it in a HistoricalValue (Observable)
+                .flatMap(new Func1<HistorySample, Observable<HistoricalValue>>() {
+                    @Override
+                    public Observable<HistoricalValue> call(final HistorySample historySample) {
 
+                        if (historySample == null) {
+                            return  null;
+                        }
+
+                        return Observable.create(new Observable.OnSubscribe<HistoricalValue>() {
+                            @Override
+                            public void call(Subscriber<? super HistoricalValue> subscriber) {
+                                if (subscriber == null) {
+                                    return;
+                                }
+                                HistoryCall(subscriber, historySample);
+                            }
+                        });
+                    }
+                })
+                // for each historicalValue taken from the net, it fill the MarketHistoryStructure
+                .doOnNext(new Action1<HistoricalValue>() {
+                    @Override
+                    public void call(HistoricalValue historicalValue) {
+                        Log.d(TAG, String.format("received historicaValue index %d", historicalValue.getIndex()));
+                        if (historicalValue != null) {
+                            m.put(historicalValue);
+                        }
+                    }
+                });
+
+        // send the markethistory object
+        return Observable.create(new Observable.OnSubscribe<MarketHistory>(){
             @Override
             public void call(final Subscriber<? super MarketHistory> subscriber) {
-                try {
-                    // concat all the calls
-                    concatObservableHistorySamples(symbol)
-                            // send the final object at the end
-                            .doOnCompleted(new Action0() {
-                                @Override
-                                public void call() {
-                                    subscriber.onNext(m);
-                                    subscriber.onCompleted();
-                                }
-                            })
-                            .doOnError(new Action1<Throwable>() {
-                                @Override
-                                public void call(Throwable throwable) {
+                getMarketHistory.doOnCompleted(new Action0() {
+                    @Override
+                    public void call() {
+                        subscriber.onNext(m);
+                        subscriber.onCompleted();
+                    }
+                }).subscribe();
 
-                                }
-                            })
-                            // for each stream result put it in the right place
-                            .forEach(new Action1<HistoricalValue>() {
-                                @Override
-                                public void call(HistoricalValue historicalValue) {
-                                    if (historicalValue != null) {
-                                        m.put(historicalValue);
-                                    }
-                                }
-                            });
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
         });
 
-    }
-
-    private Observable<HistoricalValue> concatObservableHistorySamples(final String symbol) throws IOException {
-
-        final List<Observable<HistoricalValue>> listOfSamples = new ArrayList<>();
-        for (int i=0; i<MarketHistory.getMaxSamples(); i++) {
-            listOfSamples.add(getHistorySample(symbol,i));
-        }
-
-        return Observable.concat(listOfSamples);
 
     }
 
@@ -146,6 +157,7 @@ public class HistoryService {
                     Storo.get(cacheKey, HistoricalValue.class).async(new st.lowlevel.storo.model.Callback<HistoricalValue>() {
                         @Override
                         public void onResult(HistoricalValue history) {
+                            Log.i(TAG, String.format("received cached value for index %d ", sample.getIndex()));
                             subscriber.onNext(history);
                             subscriber.onCompleted();
                         }
@@ -184,7 +196,7 @@ public class HistoryService {
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.d("",t.getLocalizedMessage());
+                Log.d(TAG,t.getLocalizedMessage());
             }
 
         });
@@ -198,31 +210,5 @@ public class HistoryService {
         return sample.getCacheDuration();
     }
 
-    /**
-     * retrieve a single sample of market history
-     * @param symbol
-     * @param index
-     * @return
-     * @throws IOException
-     */
-    private Observable<HistoricalValue> getHistorySample(final String symbol, final int index) throws IOException {
-
-        return Observable.create(new Observable.OnSubscribe<HistoricalValue>(){
-            @Override
-            public void call(final Subscriber<? super HistoricalValue> subscriber) {
-
-                final HistorySample sample = HistorySample.buildSample(symbol, index);
-
-                if (sample == null) {
-                    subscriber.onCompleted();
-                    return;
-                }
-
-                HistoryCall(subscriber,sample);
-
-            }
-        });
-
-    }
 }
 

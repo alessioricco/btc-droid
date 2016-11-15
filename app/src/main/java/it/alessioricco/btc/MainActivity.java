@@ -331,46 +331,36 @@ final public class MainActivity extends AppCompatActivity
      */
     private Observable<MarketHistory> getHistoryData(final Market currentMarket) {
 
-        Observable<MarketHistory> observable;
-        try {
+        final String symbol = currentMarket.getSymbol();
 
-            final String symbol = currentMarket.getSymbol();
-
-            observable = this.historyService.getHistory(symbol)
-                    .doOnSubscribe(new Action0() {
-                        @Override
-                        public void call() {
-                            progressBar.setVisibility(View.VISIBLE);
-                            chartFragmentContainer.setVisibility(View.INVISIBLE);
-                        }
-                    })
-                    .doOnError(new Action1<Throwable>() {
-                        @Override
-                        public void call(Throwable throwable) {
-                            progressBar.setVisibility(View.INVISIBLE);
-                            chartFragmentContainer.setVisibility(View.VISIBLE);
-                        }
-                    })
-                    .doOnNext(new Action1<MarketHistory>() {
-                        @Override
-                        public void call(MarketHistory marketHistory) {
-                            drawChart(currentMarket, marketHistory);
-                        }
-                    })
-                    .doOnCompleted(new Action0() {
-                        @Override
-                        public void call() {
-                            progressBar.setVisibility(View.INVISIBLE);
-                            chartFragmentContainer.setVisibility(View.VISIBLE);
-                        }
-                    });
-
-        } catch (IOException e) {
-            e.printStackTrace();
-
-            observable = Observable.error(e);
-        }
-        return observable;
+        return this.historyService.getHistory(symbol)
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        progressBar.setVisibility(View.VISIBLE);
+                        chartFragmentContainer.setVisibility(View.INVISIBLE);
+                    }
+                })
+                .doOnError(new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        chartFragmentContainer.setVisibility(View.VISIBLE);
+                    }
+                })
+                .doOnNext(new Action1<MarketHistory>() {
+                    @Override
+                    public void call(MarketHistory marketHistory) {
+                        drawChart(currentMarket, marketHistory);
+                    }
+                })
+                .doOnCompleted(new Action0() {
+                    @Override
+                    public void call() {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        chartFragmentContainer.setVisibility(View.VISIBLE);
+                    }
+                });
 
     }
 
@@ -587,9 +577,9 @@ final public class MainActivity extends AppCompatActivity
         // merge
         final Subscription subscription = Observable
                 .merge(getHistoryData,
-                showCurrentMarket,
-                applyCurrencySelectionToUI,
-                applySymbolSelectionToUI)
+                        showCurrentMarket,
+                        applyCurrencySelectionToUI,
+                        applySymbolSelectionToUI)
                 .subscribe();
 
         compositeSubscription.add(subscription);
