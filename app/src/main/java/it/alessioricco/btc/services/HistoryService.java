@@ -117,7 +117,7 @@ public class HistoryService {
 
     private Observable<HistoricalValue> concatObservableHistorySamples(final String symbol) throws IOException {
 
-        final List<Observable<HistoricalValue>> listOfSamples = new ArrayList<Observable<HistoricalValue>>();
+        final List<Observable<HistoricalValue>> listOfSamples = new ArrayList<>();
         for (int i=0; i<MarketHistory.getMaxSamples(); i++) {
             listOfSamples.add(getHistorySample(symbol,i));
         }

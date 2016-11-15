@@ -245,7 +245,6 @@ final public class MainActivity extends AppCompatActivity
 
         // todo: check this snippet
         Subscription subscription = observable
-                //.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<Long>() {
                     @Override
@@ -330,7 +329,6 @@ final public class MainActivity extends AppCompatActivity
      * retieve the historica data for a given market and show them on a chart
      * @param currentMarket
      */
-
     private Observable<MarketHistory> getHistoryData(final Market currentMarket) {
 
         Observable<MarketHistory> observable;
@@ -461,7 +459,6 @@ final public class MainActivity extends AppCompatActivity
             @Override
             public Observable<Boolean> call() {
 
-
                 if (m == null) {
                     return Observable.just(false);
                 }
@@ -474,7 +471,7 @@ final public class MainActivity extends AppCompatActivity
                 lowValue.setText(StringUtils.formatValue(m.getLow()));
                 volume.setText(StringUtils.formatValue(m.getVolume()));
 
-                Double percent = m.percent();
+                final Double percent = m.percent();
                 avgValue.setText(StringUtils.formatPercentValue(percent));
                 int color = Color.RED;
                 if (percent > 0) {
@@ -484,7 +481,6 @@ final public class MainActivity extends AppCompatActivity
                 }
                 avgValue.setTextColor(color);
 
-                //TODO show a clock near the text
                 latestTrade.setText((new PrettyTime()).format(m.getDate()));
 
                 return Observable.just(true);
@@ -528,7 +524,8 @@ final public class MainActivity extends AppCompatActivity
     private void onSelectedCurrency() {
         final String currency = currentSelection.getCurrentMarketCurrency();
 
-        this.markets.getSymbolsAsObservable(currency)
+        this.markets
+                .getSymbolsAsObservable(currency)
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
@@ -564,7 +561,6 @@ final public class MainActivity extends AppCompatActivity
 
     }
 
-
     /**
      * when a symbol is selected, we fetch current data and history
      */
@@ -583,14 +579,18 @@ final public class MainActivity extends AppCompatActivity
         }
 
         //todo: verify is <Boolean> is really needed
-        Observable<Boolean> applyCurrencySelectionToUI = applySelectionToContainer(this.currenciesContainer, currency);
-        Observable<Boolean> applySymbolSelectionToUI = applySelectionToContainer(this.symbolsContainer, symbol);
-        Observable<MarketHistory> getHistoryData = getHistoryData(selectedMarket);
-        Observable<Boolean> showCurrentMarket = showCurrentMarket(selectedMarket);
+        final Observable<Boolean> applyCurrencySelectionToUI = applySelectionToContainer(this.currenciesContainer, currency);
+        final Observable<Boolean> applySymbolSelectionToUI = applySelectionToContainer(this.symbolsContainer, symbol);
+        final Observable<MarketHistory> getHistoryData = getHistoryData(selectedMarket);
+        final Observable<Boolean> showCurrentMarket = showCurrentMarket(selectedMarket);
 
-        // parallelize
-        Subscription subscription = Observable.merge(applyCurrencySelectionToUI,
-                applySymbolSelectionToUI, getHistoryData, showCurrentMarket).subscribe();
+        // merge
+        final Subscription subscription = Observable
+                .merge(getHistoryData,
+                showCurrentMarket,
+                applyCurrencySelectionToUI,
+                applySymbolSelectionToUI)
+                .subscribe();
 
         compositeSubscription.add(subscription);
 

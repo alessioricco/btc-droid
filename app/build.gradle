@@ -88,7 +88,7 @@ dependencies {
 
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
 
-    compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
+    //compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
 
     compile 'com.google.android.gms:play-services-appindexing:9.8.0'
 
