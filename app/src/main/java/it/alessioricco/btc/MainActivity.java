@@ -27,10 +27,9 @@ import android.widget.TextView;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.BooleanResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.ocpsoft.pretty.time.PrettyTime;
-
-import org.mockito.internal.matchers.And;
 
 import java.io.IOException;
 import java.util.List;
@@ -60,8 +59,10 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.functions.Func0;
 import rx.functions.Func1;
-import rx.plugins.RxJavaHooks;
+import rx.functions.Func2;
+import rx.functions.Func3;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -253,7 +254,6 @@ final public class MainActivity extends AppCompatActivity
                     }
                 });
 
-
         if (!compositeSubscription.isUnsubscribed()) {
             compositeSubscription.add(subscription);
         }
@@ -326,56 +326,56 @@ final public class MainActivity extends AppCompatActivity
 
     }
 
-    private void getHistoricalData(final Market currentMarket) {
+    /**
+     * retieve the historica data for a given market and show them on a chart
+     * @param currentMarket
+     */
 
+    private Observable<MarketHistory> getHistoryData(final Market currentMarket) {
+
+        Observable<MarketHistory> observable;
         try {
-
-            progressBar.setVisibility(View.VISIBLE);
-            chartFragmentContainer.setVisibility(View.INVISIBLE);
 
             final String symbol = currentMarket.getSymbol();
 
-            // if data are cached we don't need of a progress bar
-
-            final Observable<MarketHistory> observable = this.historyService.getHistory(symbol);
-            final Subscription history = observable
-                    .observeOn(AndroidSchedulers.mainThread())
+            observable = this.historyService.getHistory(symbol)
+                    .doOnSubscribe(new Action0() {
+                        @Override
+                        public void call() {
+                            progressBar.setVisibility(View.VISIBLE);
+                            chartFragmentContainer.setVisibility(View.INVISIBLE);
+                        }
+                    })
                     .doOnError(new Action1<Throwable>() {
                         @Override
                         public void call(Throwable throwable) {
-                            throwable.printStackTrace();
+                            progressBar.setVisibility(View.INVISIBLE);
+                            chartFragmentContainer.setVisibility(View.VISIBLE);
                         }
                     })
-                    .subscribe(new Subscriber<MarketHistory>() {
+                    .doOnNext(new Action1<MarketHistory>() {
                         @Override
-                        public void onCompleted() {
+                        public void call(MarketHistory marketHistory) {
+                            drawChart(currentMarket, marketHistory);
+                        }
+                    })
+                    .doOnCompleted(new Action0() {
+                        @Override
+                        public void call() {
                             progressBar.setVisibility(View.INVISIBLE);
-                            //endProgress();
                             chartFragmentContainer.setVisibility(View.VISIBLE);
                         }
-
-                        @Override
-                        public void onError(Throwable e) {
-
-                            progressBar.setVisibility(View.INVISIBLE);
-                            //endProgress();
-                            chartFragmentContainer.setVisibility(View.VISIBLE);
-                        }
-
-                        @Override
-                        public void onNext(MarketHistory history) {
-
-                            //TODO: double check on the currency/action to avoid wasting time on old selections
-                            drawChart(currentMarket, history);
-
-                        }
-
                     });
-            compositeSubscription.add(history);
+
         } catch (IOException e) {
-            Log.e("IOError", e.getLocalizedMessage());
+            e.printStackTrace();
+
+            observable = Observable.error(e);
         }
+        return observable;
+
     }
+
 
     private void fetchData() {
         compositeSubscription.add(asyncUpdateMarkets());
@@ -455,33 +455,42 @@ final public class MainActivity extends AppCompatActivity
      *
      * @param m
      */
-    private void showCurrentMarket(final Market m) {
-        if (m == null) return;
+    private Observable<Boolean> showCurrentMarket(final Market m) {
 
-        // given the received model, draw the UI
-        currentValue.setText(StringUtils.formatValue(m.getClose()));
-        askValue.setText(StringUtils.formatValue(m.getAsk()));
-        bidValue.setText(StringUtils.formatValue(m.getBid()));
-        highValue.setText(StringUtils.formatValue(m.getHigh()));
-        lowValue.setText(StringUtils.formatValue(m.getLow()));
-        volume.setText(StringUtils.formatValue(m.getVolume()));
+        return Observable.defer(new Func0<Observable<Boolean>>() {
+            @Override
+            public Observable<Boolean> call() {
 
-        Double percent = m.percent();
-        avgValue.setText(StringUtils.formatPercentValue(percent));
-        int color = Color.RED;
-        if (percent > 0) {
-            color = Color.GREEN;
-        } else if (percent == 0) {
-            color = Color.WHITE;
-        }
-        avgValue.setTextColor(color);
 
-        //TODO show a clock near the text
-        latestTrade.setText((new PrettyTime()).format(m.getDate()));
+                if (m == null) {
+                    return Observable.just(false);
+                }
 
-        // retrieve history and display on screen
-        getHistoricalData(m);
+                // given the received model, draw the UI
+                currentValue.setText(StringUtils.formatValue(m.getClose()));
+                askValue.setText(StringUtils.formatValue(m.getAsk()));
+                bidValue.setText(StringUtils.formatValue(m.getBid()));
+                highValue.setText(StringUtils.formatValue(m.getHigh()));
+                lowValue.setText(StringUtils.formatValue(m.getLow()));
+                volume.setText(StringUtils.formatValue(m.getVolume()));
 
+                Double percent = m.percent();
+                avgValue.setText(StringUtils.formatPercentValue(percent));
+                int color = Color.RED;
+                if (percent > 0) {
+                    color = Color.GREEN;
+                } else if (percent == 0) {
+                    color = Color.WHITE;
+                }
+                avgValue.setTextColor(color);
+
+                //TODO show a clock near the text
+                latestTrade.setText((new PrettyTime()).format(m.getDate()));
+
+                return Observable.just(true);
+            }
+
+        });
     }
 
     /**
@@ -490,19 +499,27 @@ final public class MainActivity extends AppCompatActivity
      * @param layout
      * @param value
      */
-    private void applySelectionToContainer(final LinearLayout layout, final String value) {
-        final Context context = getApplicationContext();
-        final String valueToSearch = getString(R.string.string_space, value.toUpperCase());
-        for (int i = 0; i < layout.getChildCount(); i++) {
-            final View v = layout.getChildAt(i);
-            if (v instanceof TextView) {
-                final TextView t = (TextView) v;
-                final String text = t.getText().toString();
-                final int resource = text.equals(valueToSearch) ? R.color.SelectedCurrencyItem : R.color.UnselectedCurrencyItem;
-                final int color = ContextCompat.getColor(context, resource);
-                t.setTextColor(color);
+    private Observable<Boolean> applySelectionToContainer(final LinearLayout layout, final String value) {
+        return Observable.defer(new Func0<Observable<Boolean>>() {
+            @Override
+            public Observable<Boolean> call() {
+
+                final Context context = getApplicationContext();
+                final String valueToSearch = getString(R.string.string_space, value.toUpperCase());
+                for (int i = 0; i < layout.getChildCount(); i++) {
+                    final View v = layout.getChildAt(i);
+                    if (v instanceof TextView) {
+                        final TextView t = (TextView) v;
+                        final String text = t.getText().toString();
+                        final int resource = text.equals(valueToSearch) ? R.color.SelectedCurrencyItem : R.color.UnselectedCurrencyItem;
+                        final int color = ContextCompat.getColor(context, resource);
+                        t.setTextColor(color);
+                    }
+                }
+
+                return Observable.just(true);
             }
-        }
+        });
     }
 
     /**
@@ -520,11 +537,11 @@ final public class MainActivity extends AppCompatActivity
                 })
                 .doOnNext(new Action1<String>() {
                     @Override
-                    public void call(String symbol) {
-                        final String currentSymbol = symbol;
+                    public void call(final String currentSymbol) {
+                        //final String currentSymbol = symbol;
                         final TextView systemTextView = (TextView) getLayoutInflater().inflate(R.layout.currency_template, null);
-                        systemTextView.setText(getString(R.string.string_space, symbol));
-                        systemTextView.setTag(symbol);
+                        systemTextView.setText(getString(R.string.string_space, currentSymbol));
+                        systemTextView.setTag(currentSymbol);
                         systemTextView.setOnClickListener(new View.OnClickListener() {
 
                             @Override
@@ -547,9 +564,9 @@ final public class MainActivity extends AppCompatActivity
 
     }
 
+
     /**
-     * give the current symbol and the current currency
-     * display the market on the screen
+     * when a symbol is selected, we fetch current data and history
      */
     private void onSelectedSymbol() {
 
@@ -565,9 +582,17 @@ final public class MainActivity extends AppCompatActivity
             symbol = currentSelection.getCurrentMarketSymbol();
         }
 
-        showCurrentMarket(selectedMarket);
-        applySelectionToContainer(this.currenciesContainer, currency);
-        applySelectionToContainer(this.symbolsContainer, symbol);
+        //todo: verify is <Boolean> is really needed
+        Observable<Boolean> applyCurrencySelectionToUI = applySelectionToContainer(this.currenciesContainer, currency);
+        Observable<Boolean> applySymbolSelectionToUI = applySelectionToContainer(this.symbolsContainer, symbol);
+        Observable<MarketHistory> getHistoryData = getHistoryData(selectedMarket);
+        Observable<Boolean> showCurrentMarket = showCurrentMarket(selectedMarket);
+
+        // parallelize
+        Subscription subscription = Observable.merge(applyCurrencySelectionToUI,
+                applySymbolSelectionToUI, getHistoryData, showCurrentMarket).subscribe();
+
+        compositeSubscription.add(subscription);
 
     }
 
@@ -575,13 +600,12 @@ final public class MainActivity extends AppCompatActivity
         // fill the currencies scrollView
         this.currenciesContainer.removeAllViews();
 
-        this.markets.getCurrenciesAsObservable().doOnNext(new Action1<String>() {
+        Subscription subscription = this.markets.getCurrenciesAsObservable().doOnNext(new Action1<String>() {
             @Override
-            public void call(String currency) {
-                final String currentCurrency = currency;
+            public void call(final String currentCurrency) {
                 final TextView currencyTextView = (TextView) getLayoutInflater().inflate(R.layout.currency_template, null);
-                currencyTextView.setText(getString(R.string.string_space, currency));
-                currencyTextView.setTag(currency);
+                currencyTextView.setText(getString(R.string.string_space, currentCurrency));
+                currencyTextView.setTag(currentCurrency);
                 currencyTextView.setOnClickListener(new View.OnClickListener() {
 
                     @Override
@@ -594,6 +618,7 @@ final public class MainActivity extends AppCompatActivity
             }
         }).subscribe();
 
+        compositeSubscription.add(subscription);
     }
 
     /**
