@@ -9,7 +9,6 @@
     android:layout_height="wrap_content"
     android:layout_gravity="top"
     app:layout_anchorGravity="top"
-    android:layout_alignParentBottom="true"
     android:fillViewport="true"
     android:measureAllChildren="false"
     android:scrollbars="none">

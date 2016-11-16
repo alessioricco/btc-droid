@@ -15,8 +15,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,7 +22,6 @@ import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.appindexing.Action;
@@ -41,7 +38,6 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import it.alessioricco.btc.R;
-import it.alessioricco.btc.activities.FeedRSSActivity;
 import it.alessioricco.btc.fragments.Chart;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.models.CurrentSelection;
@@ -74,7 +70,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
  * TODO: detach the content_main and make it as a fragment
  */
 final public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, Chart.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     // Container for subscriptions (RxJava). They will be unsubscribed onDestroy.
     final protected CompositeSubscription compositeSubscription = new CompositeSubscription();
@@ -505,6 +501,7 @@ final public class MainActivity extends AppCompatActivity
 
                 final Context context = getApplicationContext();
                 final String valueToSearch = getString(R.string.string_space, value.toUpperCase());
+
                 for (int i = 0; i < layout.getChildCount(); i++) {
                     final View v = layout.getChildAt(i);
                     if (v instanceof TextView) {
@@ -692,8 +689,4 @@ final public class MainActivity extends AppCompatActivity
         client.disconnect();
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
 }

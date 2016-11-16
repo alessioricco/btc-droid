@@ -16,7 +16,6 @@ import it.alessioricco.btc.models.HistoricalValue;
 import it.alessioricco.btc.models.MarketHistory;
 import it.alessioricco.btc.utils.StringUtils;
 import lombok.Getter;
-import lombok.Setter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
