@@ -1,7 +1,5 @@
 package it.alessioricco.btc.api;
 
-import android.app.Application;
-import android.app.usage.NetworkStats;
 import android.content.Context;
 import android.util.Log;
 
@@ -45,12 +43,9 @@ public class HttpClientFactory {
         }
     };
 
-    public okhttp3.OkHttpClient create() {
-        return create(false);
-    }
 
     public okhttp3.OkHttpClient create(final Boolean cache) {
-        OkHttpClient.Builder clientBuilder =new OkHttpClient()
+        final OkHttpClient.Builder clientBuilder =new OkHttpClient()
                 .newBuilder()
                 .addInterceptor(new Interceptor() {
                     @Override

@@ -96,7 +96,7 @@ public class Markets implements Serializable {
         }
 
         if (StringUtils.isNullOrEmpty(symbol)) {
-            List<String> symbols = getSymbols(currency);
+            final List<String> symbols = getSymbols(currency);
             if (symbols == null || symbols.size() == 0) return null;
             symbol = symbols.get(0);
         }

@@ -38,7 +38,7 @@ public class HistoryService {
 
     private static final String TAG = HistoryService.class.getSimpleName();
 
-    final protected @Getter @Setter Boolean cacheEnabled = true;
+    final protected @Getter Boolean cacheEnabled = true;
     @Inject
     RestAdapterFactory restAdapterFactory;
 

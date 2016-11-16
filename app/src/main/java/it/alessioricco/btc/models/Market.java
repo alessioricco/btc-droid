@@ -46,8 +46,8 @@ public class Market implements Serializable {
     }
 
     private boolean tooOld() {
-        long week = 2L*24L*60L*60L*1000L;
-        Date lastWeek = new java.util.Date((new java.util.Date()).getTime() - week);
+        final long week = 2L*24L*60L*60L*1000L;
+        final Date lastWeek = new java.util.Date((new java.util.Date()).getTime() - week);
         return getDate().before(lastWeek);
     }
 
@@ -55,7 +55,7 @@ public class Market implements Serializable {
         //TODO: add a method nearzero abs()<epsilon
         if (avg == null) return null;
         if (avg == 0d) return null;
-        Double delta = delta();
+        final Double delta = delta();
         if (delta == null) return null;
         return 100*(delta/avg);
     }
