@@ -40,8 +40,8 @@ final public class MarketHistory implements Serializable {
      */
     final public boolean hasValidData() {
         int n = 0;
-        for (int i=1; i<maxSamples; i++) {
-            if (samples[i] != null && samples[i].isValid()) {
+        for (HistoricalValue sample: samples) {
+            if (sample != null && sample.isValid()) {
                 n++;
             }
         }

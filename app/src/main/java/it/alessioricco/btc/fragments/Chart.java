@@ -30,8 +30,6 @@ import lecho.lib.hellocharts.model.Viewport;
  * Activities that contain this fragment must implement the
  * {@link Chart.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link Chart#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class Chart extends Fragment {
 
@@ -39,28 +37,12 @@ public class Chart extends Fragment {
 
     lecho.lib.hellocharts.view.LineChartView chart;
 
-
     private OnFragmentInteractionListener mListener;
 
     public Chart() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param history Parameter 1.
-     * @return A new instance of fragment Chart.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Chart newInstance(MarketHistory history, String param2) {
-        Chart fragment = new Chart();
-        Bundle args = new Bundle();
-        args.putSerializable(ARG_HISTORY, history);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +57,6 @@ public class Chart extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
 
         return inflater.inflate(R.layout.fragment_chart, container, false);
     }
@@ -152,7 +133,6 @@ public class Chart extends Fragment {
         final List<PointValue> values = new ArrayList<>();
         final List<AxisValue> axisXValues = new ArrayList<>();
 
-        int availableDataCounter = 0;
         for(int i = 0; i< MarketHistory.getMaxSamples(); i++ ){
 
             final HistoricalValue historicalValue = marketHistory.get(i);
@@ -175,7 +155,6 @@ public class Chart extends Fragment {
                 axisXValues.add(axisValue);
             }
 
-            availableDataCounter++;
         }
 
         final Line line = new Line(values)
