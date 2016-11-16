@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight=".40"
-    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+<LinearLayout android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_weight=".4"
+            android:layout_height="0dp"
+            android:clipToPadding="true">
 
             <me.grantland.widget.AutofitTextView
                 android:id="@+id/current"
@@ -21,16 +19,17 @@
 
                 style="@style/BTCMainPriceFont"
                 android:text="@string/mock_price_high"
-                android:gravity="bottom|end" />
+                android:gravity="top|end" />
 
         </LinearLayout>
 
         <!-- first row -->
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:baselineAligned="false">
+            android:layout_weight=".3"
+            android:layout_height="0dp"
+            >
 
             <!-- AVG -->
             <LinearLayout
@@ -90,7 +89,8 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_weight=".3"
+            android:layout_height="0dp"
             >
 
             <!-- VOL -->
@@ -101,7 +101,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="bottom">
 
-                <TextView
+                <me.grantland.widget.AutofitTextView
                     style="@style/BidPriceLabelBox"
                     android:text="@string/main_vol"
                     />
@@ -120,7 +120,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.33">
-                <TextView
+                <me.grantland.widget.AutofitTextView
                     style="@style/BidPriceLabelBox"
                     android:text="@string/main_lo" />
                 <me.grantland.widget.AutofitTextView
@@ -135,7 +135,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.33">
-                <TextView
+                <me.grantland.widget.AutofitTextView
                     style="@style/BidPriceLabelBox"
                     android:text="@string/main_bid"
                     />
@@ -150,5 +150,3 @@
 
 
     </LinearLayout>
-
-</LinearLayout>

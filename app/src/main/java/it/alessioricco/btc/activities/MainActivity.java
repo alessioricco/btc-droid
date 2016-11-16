@@ -15,10 +15,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -98,11 +100,11 @@ final public class MainActivity extends AppCompatActivity
     LinearLayout currenciesContainer;
     @InjectView(R.id.symbols)
     LinearLayout symbolsContainer;
-    @InjectView(R.id.chart_fragment_container)
-    LinearLayout chartFragmentContainer;
+    @InjectView(R.id.chart_fragment)
+    FrameLayout chartFragmentContainer;
 
     @InjectView(R.id.content_main)
-    RelativeLayout contentMain;
+    LinearLayout contentMain;
 
     @InjectView(R.id.latest_trade)
     TextView latestTrade;

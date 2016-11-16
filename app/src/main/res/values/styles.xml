@@ -27,13 +27,13 @@
     </style>
 
     <style name="BTCMainPriceFont" parent="@style/MainScreenFont">
-        <item name="android:textSize">54sp</item>
+        <item name="android:textSize">@dimen/font_value_big</item>
         <item name="android:numeric">decimal</item>
         <item name="android:maxLines">1</item>
     </style>
 
     <style name="BidPriceBase" parent="@style/MainScreenFont">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">@dimen/font_value</item>
         <item name="android:singleLine">true</item>
         <item name="android:maxLines">1</item>
     </style>
@@ -60,10 +60,9 @@
     </style>
 
     <style name="LatestTrade" parent="@style/BidPriceLabel">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/font_value</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <!--<item name="android:gravity">left|center_vertical</item>-->
     </style>
     <!-- Items in the horizontal scroll bar -->
 
@@ -74,8 +73,8 @@
     <style name="HorizontalScrollItem" parent="@style/HorizontalScrollItemFont">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_marginLeft">16dp</item>
-        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_marginLeft">@dimen/horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/horizontal_margin</item>
         <item name="android:layout_alignParentLeft">true</item>
         <item name="android:textStyle">bold</item>
     </style>
