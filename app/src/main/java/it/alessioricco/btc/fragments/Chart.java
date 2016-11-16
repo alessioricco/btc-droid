@@ -149,8 +149,8 @@ public class Chart extends Fragment {
             return;
         }
 
-        final List<PointValue> values = new ArrayList<PointValue>();
-        final List<AxisValue> axisXValues = new ArrayList<AxisValue>();
+        final List<PointValue> values = new ArrayList<>();
+        final List<AxisValue> axisXValues = new ArrayList<>();
 
         int availableDataCounter = 0;
         for(int i = 0; i< MarketHistory.getMaxSamples(); i++ ){
@@ -183,7 +183,7 @@ public class Chart extends Fragment {
                 .setHasPoints(true)
                 .setCubic(true);
 
-        final List<Line> lines = new ArrayList<Line>();
+        final List<Line> lines = new ArrayList<>();
         lines.add(line);
         final LineChartData lineChartData = new LineChartData();
         lineChartData.setLines(lines);

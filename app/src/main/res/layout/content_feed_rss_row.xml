@@ -35,12 +35,12 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="12sp"
+            android:layout_marginLeft="12dp"
             android:maxLines="3"
             android:padding="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:textColor="#444"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:textStyle="normal"/>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -52,13 +52,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="12sp"
+            android:layout_marginLeft="12dp"
             android:gravity="left"
             android:maxLines="1"
             android:padding="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textColor="#444"
-            android:textSize="10dp"
+            android:textSize="10sp"
             android:textStyle="normal"/>
         <TextView
             android:text="date"
@@ -66,13 +66,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="12sp"
+            android:layout_marginLeft="12dp"
             android:gravity="right"
             android:maxLines="1"
             android:padding="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textColor="#444"
-            android:textSize="10dp"
+            android:textSize="10sp"
             android:textStyle="normal"/>
         </RelativeLayout>
     </LinearLayout>

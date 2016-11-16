@@ -25,7 +25,7 @@ import rx.Observable;
 public class Markets implements Serializable {
 
     // (currency->(symbol->market))
-    final private Map<String, Map<String,Market>> currencies = new HashMap<String, Map<String,Market>>();
+    final private Map<String, Map<String,Market>> currencies = new HashMap<>();
 
     //todo: make them resources
     final private static @Getter String[] privilegedCurrencies = new String[] {"EUR", "GBP", "USD"};
@@ -65,7 +65,7 @@ public class Markets implements Serializable {
         if (symbols == null) {
             return null; //TODO it should not happen
         }
-        List<String> a = new ArrayList<String>(symbols.keySet());
+        List<String> a = new ArrayList<>(symbols.keySet());
         Collections.sort(a, new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
@@ -80,7 +80,7 @@ public class Markets implements Serializable {
         if (list == null) {
             return Observable.just(null);
         }
-        return Observable.from(getSymbols(currency));
+        return Observable.from(list);
     }
 
     /**
@@ -120,20 +120,18 @@ public class Markets implements Serializable {
         currencies.clear();
 
         // given the markets list we'll create the currencies data structure
-        for (Iterator<Market> iterator = markets.iterator(); iterator.hasNext(); ) {
-            final Market m = iterator.next();
-
+        for (final Market m : markets) {
             // apply a filter (no need for now)
-            if (! m.isValid()) {
+            if (!m.isValid()) {
                 continue;
             }
 
             final String currency = m.getCurrency();
 
             //TODO: can we optimize it?
-            Map<String,Market> availableMarketsOnGivenCurrency = currencies.get(currency);
+            Map<String, Market> availableMarketsOnGivenCurrency = currencies.get(currency);
             if (availableMarketsOnGivenCurrency == null) {
-                availableMarketsOnGivenCurrency = new HashMap<String,Market>();
+                availableMarketsOnGivenCurrency = new HashMap<>();
             }
             final String symbol = BitcoinChartsUtils.normalizeSymbolName(m.getSymbol());
             availableMarketsOnGivenCurrency.put(symbol, m);

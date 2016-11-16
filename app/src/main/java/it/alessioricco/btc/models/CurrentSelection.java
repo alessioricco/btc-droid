@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import it.alessioricco.btc.App;
-import it.alessioricco.btc.R;
 import it.alessioricco.btc.utils.StringUtils;
 
 /**
@@ -22,7 +20,7 @@ public class CurrentSelection implements Serializable {
     private String currentMarketSymbol = "";
     private String currentMarketCurrency = "";
 
-    private final Map<String,String> lastSelectedSymbol = new HashMap<String, String>();
+    private final Map<String,String> lastSelectedSymbol = new HashMap<>();
 
     public String getCurrentMarketCurrency() {
         if (StringUtils.isNullOrEmpty(currentMarketCurrency)) {
