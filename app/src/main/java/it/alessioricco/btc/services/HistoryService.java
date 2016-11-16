@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -199,7 +200,7 @@ public class HistoryService {
     }
 
     private String getCacheKey(final HistorySample sample) {
-        return String.format("%s%d", sample.getSymbol(), sample.getIndex());
+        return String.format(Locale.getDefault(),"%s%d", sample.getSymbol(), sample.getIndex());
     }
 
     private long getCacheDuration(final HistorySample sample) {

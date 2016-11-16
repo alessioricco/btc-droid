@@ -29,7 +29,7 @@ public class RSSListAdapter extends RecyclerView.Adapter<RSSListAdapter.CustomVi
 
     @Override
     public CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        final View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.content_feed_rss_row, null);
+        final View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.content_feed_rss_row, viewGroup, false);
         return new CustomViewHolder(view);
     }
 

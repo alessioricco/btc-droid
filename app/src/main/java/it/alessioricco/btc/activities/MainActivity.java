@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -102,6 +103,12 @@ final public class MainActivity extends AppCompatActivity
     LinearLayout symbolsContainer;
     @InjectView(R.id.chart_fragment)
     FrameLayout chartFragmentContainer;
+
+    @InjectView(R.id.currencies_scrollview)
+    HorizontalScrollView currenciesScrollView;
+
+    @InjectView(R.id.symbols_scrollview)
+    HorizontalScrollView symbolsScrollView;
 
     @InjectView(R.id.content_main)
     LinearLayout contentMain;
@@ -531,20 +538,20 @@ final public class MainActivity extends AppCompatActivity
                 .doOnNext(new Action1<String>() {
                     @Override
                     public void call(final String currentSymbol) {
-                        //final String currentSymbol = symbol;
-                        final TextView systemTextView = (TextView) getLayoutInflater().inflate(R.layout.currency_template, null);
+
+                        final TextView systemTextView = (TextView) getLayoutInflater().inflate(R.layout.currency_template,symbolsScrollView,false);
                         systemTextView.setText(getString(R.string.string_space, currentSymbol));
                         systemTextView.setTag(currentSymbol);
                         systemTextView.setOnClickListener(new View.OnClickListener() {
 
                             @Override
                             public void onClick(View v) {
-                                Log.e("Tag", "clicked on " + systemTextView.getText());
                                 currentSelection.setCurrentMarketSymbol(currentSymbol);
                                 onSelectedSymbol();
                             }
                         });
                         symbolsContainer.addView(systemTextView);
+
                     }
                 })
                 .doOnCompleted(new Action0() {
@@ -599,7 +606,7 @@ final public class MainActivity extends AppCompatActivity
         Subscription subscription = this.markets.getCurrenciesAsObservable().doOnNext(new Action1<String>() {
             @Override
             public void call(final String currentCurrency) {
-                final TextView currencyTextView = (TextView) getLayoutInflater().inflate(R.layout.currency_template, null);
+                final TextView currencyTextView = (TextView) getLayoutInflater().inflate(R.layout.currency_template, currenciesScrollView, false);
                 currencyTextView.setText(getString(R.string.string_space, currentCurrency));
                 currencyTextView.setTag(currentCurrency);
                 currencyTextView.setOnClickListener(new View.OnClickListener() {

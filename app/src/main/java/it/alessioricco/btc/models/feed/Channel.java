@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -116,7 +117,7 @@ public class Channel {
         String source;//	The RSS channel that the item came from. More.
 
         public Date getDate() {
-            DateFormat formatterInput = new SimpleDateFormat(RFC_1123_DATE_TIME);
+            DateFormat formatterInput = new SimpleDateFormat(RFC_1123_DATE_TIME, Locale.getDefault());
             try {
                 return formatterInput.parse(pubDate);
             } catch (ParseException e) {
