@@ -6,7 +6,7 @@ import it.alessioricco.btc.injection.TestObjectGraphSingleton;
 import it.alessioricco.btc.mocks.MockAppWebServer;
 
 
-public class ShadowRestAdapterFactory extends RestAdapterFactory{
+public class ShadowRestAdapterFactory extends RestAdapterFactory {
 
     @Inject
     MockAppWebServer mockWebServer;

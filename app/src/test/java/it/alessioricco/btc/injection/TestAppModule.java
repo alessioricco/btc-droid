@@ -5,6 +5,8 @@ import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import it.alessioricco.btc.TestMainActivity;
+import it.alessioricco.btc.api.HttpClientFactory;
+import it.alessioricco.btc.api.ShadowHttpClientFactory;
 import it.alessioricco.btc.services.HistoryService;
 import it.alessioricco.btc.services.ShadowHistoryService;
 import it.alessioricco.btc.services.TestFeedService;
@@ -32,6 +34,7 @@ import javax.inject.Singleton;
                 MockAppWebServer.class,
                 ShadowHistoryService.class,
                 TestMainActivity.class,
+                ShadowHttpClientFactory.class,
                 ShadowRestAdapterFactory.class
         },
         library = true, overrides = true)
@@ -63,6 +66,10 @@ public class TestAppModule {
      */
     @Provides @Singleton public RestAdapterFactory provideRestAdapter() {
         return new ShadowRestAdapterFactory();
+    }
+
+    @Provides @Singleton public HttpClientFactory provideHttpClientfactory() {
+        return new ShadowHttpClientFactory(context);
     }
 
     @Provides

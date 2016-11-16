@@ -9,6 +9,7 @@ import dagger.Provides;
 import it.alessioricco.btc.App;
 import it.alessioricco.btc.activities.MainActivity;
 import it.alessioricco.btc.activities.FeedRSSActivity;
+import it.alessioricco.btc.api.HttpClientFactory;
 import it.alessioricco.btc.api.RestAdapterFactory;
 import it.alessioricco.btc.api.RssAdapterFactory;
 import it.alessioricco.btc.fragments.HistorySample;
@@ -30,6 +31,7 @@ import it.alessioricco.btc.services.MarketsService;
                 HistoryService.class,
                 RestAdapterFactory.class,
                 RssAdapterFactory.class,
+                HttpClientFactory.class,
                 HistorySample.class,
                 FeedService.class,
                 FeedRSSActivity.class,
@@ -83,6 +85,10 @@ public class AppModule {
         return new HistoryService();
     }
 
+
+    @Provides @Singleton public HttpClientFactory provideHttpClientfactory() {
+        return new HttpClientFactory(app);
+    }
 
     /**
      * RestAdapter factory

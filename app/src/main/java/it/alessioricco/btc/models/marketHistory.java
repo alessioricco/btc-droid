@@ -8,12 +8,16 @@ import lombok.Getter;
 
 /**
  * collection of samples used for the chart visualization
+ * the chart is a bezier curve built on a set of sample values
+ *
+ * each of these values is the result of a query
+ *
+ * todo: implement an iterator interface
  */
 final public class MarketHistory implements Serializable {
 
     final static private @Getter int maxSamples = HistorySamplingHelper.MAX_SAMPLES;
     final private HistoricalValue[] samples = new HistoricalValue[maxSamples];
-
 
     /**
      * retrieve a sample from the market history

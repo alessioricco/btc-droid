@@ -1,5 +1,7 @@
 package it.alessioricco.btc.api;
 
+import javax.inject.Inject;
+
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.utils.Environment;
 import retrofit2.Retrofit;
@@ -8,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by alessioricco on 02/10/2016.
+ * Adapter per retrofit
  *
  * http://blog.andresteingress.com/2014/09/08/android-rest-retrofit/
  *
@@ -17,6 +19,9 @@ import rx.schedulers.Schedulers;
 
 public class RestAdapterFactory {
 
+    @Inject
+    HttpClientFactory httpClientFactory;
+
     String getBaseUrl() {
         return Environment.marketsUrl;
     }
@@ -24,7 +29,6 @@ public class RestAdapterFactory {
     public RestAdapterFactory() {
         ObjectGraphSingleton.getInstance().inject(this);
     }
-
 
     /**
      * Rest adapter for JSON feed (bitcoincharts)
@@ -37,7 +41,7 @@ public class RestAdapterFactory {
                 .baseUrl(getBaseUrl())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(rxAdapter)
-                .client(HttpClientFactory.create())
+                .client(httpClientFactory.create(false))
                 .build();
     }
 
@@ -49,20 +53,10 @@ public class RestAdapterFactory {
         return new Retrofit.Builder()
                 .baseUrl(getBaseUrl())
                 .addConverterFactory(new ToStringConverterFactory())
-                .client(HttpClientFactory.create())
+                .client(httpClientFactory.create(false))
                 .build();
 
     }
 
-    /**
-     * Rest adapter for CVS feed (generic feed rss)
-     * @return
-     */
-    public Retrofit getRssRestAdapter() {
-        return new Retrofit.Builder()
-                .baseUrl(getBaseUrl())
-                .client(HttpClientFactory.create())
-                .build();
 
-    }
 }
