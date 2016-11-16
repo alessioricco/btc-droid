@@ -16,6 +16,7 @@ import it.alessioricco.btc.api.RestAdapterFactory;
 import it.alessioricco.btc.api.ShadowRestAdapterFactory;
 import it.alessioricco.btc.mocks.MockAppWebServer;
 import it.alessioricco.btc.models.TestCurrentSelection;
+import it.alessioricco.btc.util.TestNetworkStatus;
 
 import org.robolectric.shadows.ShadowApplication;
 
@@ -34,6 +35,7 @@ import javax.inject.Singleton;
                 MockAppWebServer.class,
                 ShadowHistoryService.class,
                 TestMainActivity.class,
+                TestNetworkStatus.class,
                 ShadowHttpClientFactory.class,
                 ShadowRestAdapterFactory.class
         },
