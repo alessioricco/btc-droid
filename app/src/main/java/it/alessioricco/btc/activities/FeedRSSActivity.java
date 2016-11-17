@@ -60,6 +60,7 @@ public class FeedRSSActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //todo: the fab is not visible, maybe delete it
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,7 +144,10 @@ public class FeedRSSActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
     }
 
-
+    /**
+     * read some feeds merging the news together
+     * @return
+     */
     private Subscription asyncUpdateFeed() {
 
         final List<Channel.FeedItem> feedItemList = new ArrayList<>();
@@ -201,7 +205,7 @@ public class FeedRSSActivity extends AppCompatActivity {
                     @Override
                     public void call() {
                         endProgress();
-                        final RSSListAdapter adapter = new RSSListAdapter(feedItemList);
+                        final RSSListAdapter adapter = new RSSListAdapter(getApplicationContext(),feedItemList);
                         recyclerView.setAdapter(adapter);
                     }
                 }).subscribe();

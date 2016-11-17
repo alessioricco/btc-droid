@@ -1,5 +1,8 @@
 package it.alessioricco.btc.adapters;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,18 +16,18 @@ import butterknife.InjectView;
 import it.alessioricco.btc.R;
 import it.alessioricco.btc.models.feed.Channel;
 import it.alessioricco.btc.utils.StringUtils;
-import lombok.Getter;
-import lombok.Setter;
 
 
 public class RSSListAdapter extends RecyclerView.Adapter<RSSListAdapter.CustomViewHolder> {
     private List<Channel.FeedItem> feedItemList;
+    Context context;
 
-    public RSSListAdapter(List<Channel.FeedItem> feedItemList) {
+    public RSSListAdapter(Context context, List<Channel.FeedItem> feedItemList) {
         if (feedItemList == null) {
             return;
         }
         this.feedItemList = feedItemList;
+        this.context = context;
     }
 
     @Override
@@ -38,10 +41,18 @@ public class RSSListAdapter extends RecyclerView.Adapter<RSSListAdapter.CustomVi
         Channel.FeedItem feedItem = feedItemList.get(i);
 
         customViewHolder.title.setText(feedItem.getTitle());
+        customViewHolder.title.setTag(feedItem.getLink());
         customViewHolder.description.setText(feedItem.getDescription());
         customViewHolder.source.setText(feedItem.getSource());
         customViewHolder.date.setText(StringUtils.formatRSSDate(feedItem.getPubDate()));
-        customViewHolder.setLink(feedItem.getLink());
+        customViewHolder.title.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse((String)v.getTag()));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.getApplicationContext().startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -58,7 +69,6 @@ public class RSSListAdapter extends RecyclerView.Adapter<RSSListAdapter.CustomVi
         TextView source;
         @InjectView(R.id.date)
         TextView date;
-        @Getter @Setter String link;
 
         public CustomViewHolder(View view) {
             super(view);
