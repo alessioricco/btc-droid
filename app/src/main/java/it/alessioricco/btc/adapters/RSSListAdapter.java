@@ -17,7 +17,6 @@ import it.alessioricco.btc.R;
 import it.alessioricco.btc.models.feed.Channel;
 import it.alessioricco.btc.utils.StringUtils;
 
-
 public class RSSListAdapter extends RecyclerView.Adapter<RSSListAdapter.CustomViewHolder> {
     private List<Channel.FeedItem> feedItemList;
     Context context;

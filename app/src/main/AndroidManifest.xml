@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="it.alessioricco.btc">
+    package="it.alessioricco.btc"
+    >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -15,18 +16,16 @@
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name"
-            android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <!--
      ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
+
         -->
         <meta-data
             android:name="com.google.android.gms.version"
@@ -35,7 +34,7 @@
         <activity
             android:name=".activities.FeedRSSActivity"
             android:label="@string/title_activity_feed_rss"
-            android:configChanges="orientation|screenSize"
+
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

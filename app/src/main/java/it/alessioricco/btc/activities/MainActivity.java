@@ -81,22 +81,31 @@ final public class MainActivity extends AppCompatActivity
 
     @InjectView(R.id.current)
     @Getter TextView currentValue;
+
     @InjectView(R.id.ask)
     @Getter TextView askValue;
+
     @InjectView(R.id.bid)
     TextView bidValue;
+
     @InjectView(R.id.high)
     TextView highValue;
+
     @InjectView(R.id.low)
     TextView lowValue;
+
     @InjectView(R.id.volume)
     TextView volume;
+
     @InjectView(R.id.avg)
     TextView avgValue;
+
     @InjectView(R.id.currencies)
     LinearLayout currenciesContainer;
+
     @InjectView(R.id.symbols)
     LinearLayout symbolsContainer;
+
     @InjectView(R.id.chart_fragment)
     FrameLayout chartFragmentContainer;
 
@@ -111,6 +120,7 @@ final public class MainActivity extends AppCompatActivity
 
     @InjectView(R.id.latest_trade)
     TextView latestTrade;
+
     @InjectView(R.id.chart_progress)
     ProgressBar progressBar;
 
@@ -123,6 +133,8 @@ final public class MainActivity extends AppCompatActivity
      */
     private GoogleApiClient client;
 
+    boolean isFirstTime = true;
+    boolean isRestarting = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +161,11 @@ final public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        if (savedInstanceState != null) {
+            // the application is being reloaded
+            isRestarting = true;
+        }
+
         initialize();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -157,11 +174,17 @@ final public class MainActivity extends AppCompatActivity
     }
 
     private void initialize() {
+
         //begin of the custom code
         ObjectGraphSingleton.getInstance().inject(this);
         ButterKnife.inject(this);
-        // no values
-        showEmptyMarket();
+
+        if (!isRestarting) {
+            // no values
+            showEmptyMarket();
+        }
+
+
     }
 
     @Override
@@ -263,10 +286,10 @@ final public class MainActivity extends AppCompatActivity
         }
     }
 
-    boolean firstTimeProgress = true;
+
 
     void startProgress() {
-        if (firstTimeProgress) {
+        if (isFirstTime) {
             ProgressDialogHelper.start(this);
         } else {
             progressBar.setVisibility(View.VISIBLE);
@@ -274,9 +297,9 @@ final public class MainActivity extends AppCompatActivity
     }
 
     void endProgress() {
-        if (firstTimeProgress) {
+        if (isFirstTime) {
             ProgressDialogHelper.end(this);
-            firstTimeProgress = false;
+            isFirstTime = false;
         } else {
             progressBar.setVisibility(View.INVISIBLE);
         }

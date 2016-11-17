@@ -7,7 +7,7 @@ android {
         applicationId "it.alessioricco.btc"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 1
+        versionCode 2
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -48,7 +48,6 @@ dependencies {
         transitive = true
     }
 
-    // https://mvnrepository.com/artifact/com.ocpsoft/ocpsoft-pretty-time
     compile 'com.ocpsoft:ocpsoft-pretty-time:1.0.6'
 
     compile 'com.android.support:appcompat-v7:25.0.1'
@@ -82,20 +81,20 @@ dependencies {
 
     compile 'me.grantland:autofittextview:0.2.1'
 
-    compile 'de.greenrobot:eventbus:2.4.1'
+    //compile 'de.greenrobot:eventbus:2.4.1'
 
-    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.1'
+    //compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.1'
 
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
 
     // Glide
-    compile 'com.github.bumptech.glide:glide:3.7.0'
+    //compile 'com.github.bumptech.glide:glide:3.7.0'
 
     compile 'com.google.android.gms:play-services-appindexing:9.8.0'
 
     compile 'com.dmitrymalkovich.android:progress-fab:1.6'
 
-    compile 'com.github.nisrulz:stackedhorizontalprogressbar:1.0.2'
+    //compile 'com.github.nisrulz:stackedhorizontalprogressbar:1.0.2'
 
     compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
 
@@ -104,7 +103,7 @@ dependencies {
     testCompile 'org.robolectric:robolectric:3.1.4'
     testCompile 'org.robolectric:shadows-support-v4:3.0'
     testCompile 'org.assertj:assertj-core:2.5.0'
-    compile 'org.mockito:mockito-core:2.2.9'
+    testCompile 'org.mockito:mockito-core:2.2.9'
 
     testCompile 'com.squareup.okhttp3:mockwebserver:3.4.2'
     testCompile 'org.khronos:opengl-api:gl1.1-android-2.1_r1'
