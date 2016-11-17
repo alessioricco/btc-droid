@@ -1,4 +1,4 @@
-package it.alessioricco.btc;
+package it.alessioricco.btc.activities;
 
 import org.junit.After;
 import org.junit.Before;
@@ -13,6 +13,9 @@ import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
 
+import it.alessioricco.btc.BuildConfig;
+import it.alessioricco.btc.R;
+import it.alessioricco.btc.TestEnvironment;
 import it.alessioricco.btc.activities.MainActivity;
 import it.alessioricco.btc.injection.TestObjectGraphSingleton;
 import it.alessioricco.btc.mocks.MockAppWebServer;

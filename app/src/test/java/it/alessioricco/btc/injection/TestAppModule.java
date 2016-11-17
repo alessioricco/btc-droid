@@ -4,7 +4,8 @@ import android.content.Context;
 
 import dagger.Module;
 import dagger.Provides;
-import it.alessioricco.btc.TestMainActivity;
+import it.alessioricco.btc.activities.TestMainActivity;
+import it.alessioricco.btc.adapters.TestRSSListAdapters;
 import it.alessioricco.btc.api.HttpClientFactory;
 import it.alessioricco.btc.api.ShadowHttpClientFactory;
 import it.alessioricco.btc.services.HistoryService;
@@ -36,6 +37,7 @@ import javax.inject.Singleton;
                 ShadowHistoryService.class,
                 TestMainActivity.class,
                 TestNetworkStatus.class,
+                TestRSSListAdapters.class,
                 ShadowHttpClientFactory.class,
                 ShadowRestAdapterFactory.class
         },
