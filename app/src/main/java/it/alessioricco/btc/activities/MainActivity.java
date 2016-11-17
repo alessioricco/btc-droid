@@ -537,6 +537,7 @@ final public class MainActivity extends AppCompatActivity
                     public void call(final String currentSymbol) {
 
                         final TextView systemTextView = (TextView) getLayoutInflater().inflate(R.layout.currency_template,symbolsScrollView,false);
+
                         systemTextView.setText(getString(R.string.string_space, currentSymbol));
                         systemTextView.setTag(currentSymbol);
                         systemTextView.setOnClickListener(new View.OnClickListener() {
