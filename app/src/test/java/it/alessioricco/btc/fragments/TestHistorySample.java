@@ -57,6 +57,7 @@ public class TestHistorySample {
                 disabled++;
             }
         }
+        assertThat(disabled).isGreaterThan(0);
 
     }
 }

@@ -4,7 +4,6 @@ package it.alessioricco.btc.adapters;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.ViewGroup;
 
 import org.junit.After;
 import org.junit.Before;
@@ -17,12 +16,12 @@ import org.robolectric.shadows.ShadowResources;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.alessioricco.btc.App;
 import it.alessioricco.btc.BuildConfig;
 import it.alessioricco.btc.TestEnvironment;
 import it.alessioricco.btc.injection.TestObjectGraphSingleton;
 import it.alessioricco.btc.models.feed.Channel;
 import it.alessioricco.btc.util.CustomRobolectricTestRunner;
+
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
 @Config(shadows = { ShadowResources.class },
