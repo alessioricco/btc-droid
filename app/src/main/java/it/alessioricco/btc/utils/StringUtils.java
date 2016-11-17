@@ -31,12 +31,18 @@ public class StringUtils {
     }
 
     public static String firstLineOf(final String lines) {
+        if (isNullOrEmpty(lines)) {
+            return "";
+        }
         int eol = lines.indexOf('\n');
         if (eol == -1) return lines;
         return lines.substring(0,eol);
     }
 
     public static String removeHtmlTags(final String html) {
+        if (isNullOrEmpty(html)) {
+            return "";
+        }
         if (Build.VERSION.SDK_INT >= 24) {
             return Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY).toString(); // for 24 api and more
         } else {
@@ -46,15 +52,16 @@ public class StringUtils {
 
     public static String RFC_1123_DATE_TIME = "EEE, dd MMM yyyy HH:mm:ss zzz";
 
-    public static String formatRSSDate(String pubDate) {
-        DateFormat formatterInput = new SimpleDateFormat(RFC_1123_DATE_TIME,Locale.getDefault());
-        Date date;
+    public static String formatRSSDate(final String pubDate) {
         try {
-            date = formatterInput.parse(pubDate);
-            DateFormat formatterOutput = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm",Locale.getDefault());
+            final DateFormat formatterInput = new SimpleDateFormat(RFC_1123_DATE_TIME,Locale.getDefault());
+            final Date date = formatterInput.parse(pubDate);
+            final DateFormat formatterOutput = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm",Locale.getDefault());
             return formatterOutput.format(date);
         } catch (ParseException e) {
             return pubDate;
+        } catch (NullPointerException e) {
+            return "";
         }
 
     }
