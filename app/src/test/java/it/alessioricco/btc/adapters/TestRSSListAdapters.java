@@ -70,7 +70,7 @@ public class TestRSSListAdapters {
 
         feedItemList.add(item1);
 
-        final RSSListAdapter rssAdapter = new RSSListAdapter(feedItemList);
+        final RSSListAdapter rssAdapter = new RSSListAdapter(context, feedItemList);
         assertThat(rssAdapter.getItemCount()).isEqualTo(1);
 
         RecyclerView recyclerView = new RecyclerView(context);

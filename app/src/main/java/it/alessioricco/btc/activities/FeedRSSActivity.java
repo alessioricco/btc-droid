@@ -70,6 +70,7 @@ public class FeedRSSActivity extends AppCompatActivity {
             }
         });
 
+        // customization
         initialize();
     }
 
@@ -80,6 +81,7 @@ public class FeedRSSActivity extends AppCompatActivity {
 
         // initialization
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // pull down
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

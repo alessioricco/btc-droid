@@ -2,9 +2,11 @@ package it.alessioricco.btc.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -38,6 +40,8 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import it.alessioricco.btc.R;
+import it.alessioricco.btc.activities.preferences.AppCompatPreferenceActivity;
+import it.alessioricco.btc.activities.preferences.SettingsActivity;
 import it.alessioricco.btc.fragments.Chart;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
 import it.alessioricco.btc.models.CurrentSelection;
@@ -76,6 +80,7 @@ final public class MainActivity extends AppCompatActivity
     final protected CompositeSubscription compositeSubscription = new CompositeSubscription();
     @Inject
     MarketsService marketsService;
+
     @Inject
     HistoryService historyService;
 
@@ -217,8 +222,15 @@ final public class MainActivity extends AppCompatActivity
         final int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+
+            case R.id.action_news: {
+                onNavigateNews();
+                break;
+            }
+            case R.id.action_settings:
+                onNavigateSettings();
+            default: break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -240,6 +252,8 @@ final public class MainActivity extends AppCompatActivity
                 onNavigateNews();
                 break;
             }
+            case R.id.nav_settings:
+                onNavigateSettings();
             default: break;
         }
 
@@ -258,6 +272,17 @@ final public class MainActivity extends AppCompatActivity
 
         final Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse(Environment.sourceCodeUrl));
         startActivity(intent);
+    }
+
+    /**
+     * open settings activity
+     */
+    private void onNavigateSettings() {
+
+        final Intent intent= new Intent(this, SettingsActivity.class);
+        intent.putExtra(SettingsActivity.ARG_MARKET, markets);
+        startActivity(intent);
+
     }
 
     private void onNavigateNews() {
@@ -359,6 +384,8 @@ final public class MainActivity extends AppCompatActivity
         final String symbol = currentMarket.getSymbol();
 
         return this.historyService.getHistory(symbol)
+                // Only the original thread that created a view hierarchy can touch its views.
+                .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
@@ -620,27 +647,47 @@ final public class MainActivity extends AppCompatActivity
 
     }
 
+
+    public boolean isCurrencyInPreferences(final String currency) {
+
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if (sharedPreferences == null) {
+            return true;
+        }
+
+        return sharedPreferences.getBoolean(currency,true);
+    }
+
     public void populateCurrencyList() {
         // fill the currencies scrollView
         this.currenciesContainer.removeAllViews();
 
-        Subscription subscription = this.markets.getCurrenciesAsObservable().doOnNext(new Action1<String>() {
-            @Override
-            public void call(final String currentCurrency) {
-                final TextView currencyTextView = (TextView) getLayoutInflater().inflate(R.layout.currency_template, currenciesScrollView, false);
-                currencyTextView.setText(getString(R.string.string_space, currentCurrency));
-                currencyTextView.setTag(currentCurrency);
-                currencyTextView.setOnClickListener(new View.OnClickListener() {
-
+        Subscription subscription = this.markets
+                .getCurrenciesAsObservable()
+                .doOnNext(new Action1<String>() {
                     @Override
-                    public void onClick(View v) {
-                        currentSelection.setCurrentMarketCurrency(currentCurrency);
-                        onSelectedCurrency();
+                    public void call(final String currentCurrency) {
+
+                        // is the currency in the preference list?
+
+                        if (!isCurrencyInPreferences(currentCurrency)) {
+                            return;
+                        }
+
+                        final TextView currencyTextView = (TextView) getLayoutInflater().inflate(R.layout.currency_template, currenciesScrollView, false);
+                        currencyTextView.setText(getString(R.string.string_space, currentCurrency));
+                        currencyTextView.setTag(currentCurrency);
+                        currencyTextView.setOnClickListener(new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                currentSelection.setCurrentMarketCurrency(currentCurrency);
+                                onSelectedCurrency();
+                            }
+                        });
+                        currenciesContainer.addView(currencyTextView);
                     }
-                });
-                currenciesContainer.addView(currencyTextView);
-            }
-        }).subscribe();
+                }).subscribe();
 
         compositeSubscription.add(subscription);
     }
