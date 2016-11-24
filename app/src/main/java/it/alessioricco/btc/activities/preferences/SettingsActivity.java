@@ -14,6 +14,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.support.v7.app.ActionBar;
+import android.view.MenuItem;
 
 import java.util.List;
 
@@ -109,6 +110,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
      */
@@ -187,7 +197,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 return;
             }
 
-            category.setTitle("Currencies");
+            category.setTitle(R.string.preference_cat_currencies);
             preferenceScreen.addPreference(category);
 
             final Observable createCheckBoxSubscription = market.getCurrenciesAsObservable()

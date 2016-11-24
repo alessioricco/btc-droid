@@ -102,6 +102,7 @@
     <string name="menu_source">Source Code</string>
     <string name="menu_settings">Settings</string>
     <string name="pref_header_currencies">Currencies</string>
+    <string name="preference_cat_currencies">Select the currencies</string>
 
 
 </resources>

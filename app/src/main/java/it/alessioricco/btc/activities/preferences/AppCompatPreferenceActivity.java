@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -26,9 +27,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -110,4 +109,5 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         }
         return mDelegate;
     }
+
 }
