@@ -35,25 +35,7 @@ public class TestMainActivity {
     @Inject
     MockAppWebServer mockWebServer;
 
-    @Before
-    public void init() throws Exception {
 
-        // Init the IoC and inject us
-        TestObjectGraphSingleton.init();
-        TestObjectGraphSingleton.getInstance().inject(this);
-
-
-    }
-
-    /**
-     * Method executed after any test
-     */
-    @After
-    public void tearDown() {
-
-        TestObjectGraphSingleton.reset();
-
-    }
 
     /**
      * test what happens when the activity will access the endpoints
