@@ -40,7 +40,6 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import it.alessioricco.btc.R;
-import it.alessioricco.btc.activities.preferences.AppCompatPreferenceActivity;
 import it.alessioricco.btc.activities.preferences.SettingsActivity;
 import it.alessioricco.btc.fragments.Chart;
 import it.alessioricco.btc.injection.ObjectGraphSingleton;
@@ -651,11 +650,8 @@ final public class MainActivity extends AppCompatActivity
     public boolean isCurrencyInPreferences(final String currency) {
 
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if (sharedPreferences == null) {
-            return true;
-        }
+        return sharedPreferences == null || sharedPreferences.getBoolean(currency, true);
 
-        return sharedPreferences.getBoolean(currency,true);
     }
 
     public void populateCurrencyList() {

@@ -3,7 +3,6 @@
     <!-- fonts -->
     <dimen name="font_value_big">54sp</dimen>
     <dimen name="font_value">18sp</dimen>
-    <dimen name="font_label">16sp</dimen>
 
     <!-- custom dimensions -->
 </resources>

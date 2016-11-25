@@ -20,7 +20,6 @@
     <include layout="@layout/list_of_symbols_main" />
 
     <LinearLayout
-        android:id="@+id/btc_data_chart"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"

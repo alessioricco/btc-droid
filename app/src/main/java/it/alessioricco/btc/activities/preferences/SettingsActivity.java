@@ -26,8 +26,6 @@ import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.subscriptions.CompositeSubscription;
 
-import static rx.Observable.merge;
-
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
  * handset devices, settings are presented as a single list. On tablets,
@@ -55,7 +53,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // For all other preferences, set the summary to the value's
             // simple string representation.
             if (preference instanceof CheckBoxPreference) {
-                CheckBoxPreference checkBoxPreference = (CheckBoxPreference) preference;
                 if (value instanceof Boolean) {
                     final String summary = ((Boolean) value) ? "enabled" : "disabled";
                     preference.setSummary(summary);
@@ -193,9 +190,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             }
 
             final PreferenceCategory category = new PreferenceCategory(context);
-            if (category == null) {
-                return;
-            }
 
             category.setTitle(R.string.preference_cat_currencies);
             preferenceScreen.addPreference(category);

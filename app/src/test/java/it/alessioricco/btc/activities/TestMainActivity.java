@@ -16,7 +16,6 @@ import javax.inject.Inject;
 import it.alessioricco.btc.BuildConfig;
 import it.alessioricco.btc.R;
 import it.alessioricco.btc.TestEnvironment;
-import it.alessioricco.btc.activities.MainActivity;
 import it.alessioricco.btc.injection.TestObjectGraphSingleton;
 import it.alessioricco.btc.mocks.MockAppWebServer;
 import it.alessioricco.btc.util.CustomRobolectricTestRunner;
@@ -34,6 +33,26 @@ public class TestMainActivity {
 
     @Inject
     MockAppWebServer mockWebServer;
+
+    @Before
+    public void init() throws Exception {
+
+        // Init the IoC and inject us
+        TestObjectGraphSingleton.init();
+        TestObjectGraphSingleton.getInstance().inject(this);
+
+
+    }
+
+    /**
+     * Method executed after any test
+     */
+    @After
+    public void tearDown() {
+
+        TestObjectGraphSingleton.reset();
+
+    }
 
 
 
