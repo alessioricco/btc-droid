@@ -11,7 +11,4 @@
     <color name="UnselectedSymbolItem">@color/mainLabelColor</color>
     <color name="SelectedCurrencyItem">#ffffff</color>
 
-    <!-- chart -->
-
-    <!-- splash -->
 </resources>
