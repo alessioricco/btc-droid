@@ -31,7 +31,7 @@ public final class App extends Application {
                         .build());
         // caching
         if (!Storo.isInitialized()) {
-            StoroBuilder.configure(100 * 1024)  // maximum size to allocate in bytes
+            StoroBuilder.configure(100L * 1024L)//TODO add static variable?  // maximum size to allocate in bytes
                     .setDefaultCacheDirectory(this)
                     .initialize();
         }

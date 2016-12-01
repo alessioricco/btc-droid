@@ -70,12 +70,13 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
  * main activity of the app
- * TODO: detach the content_main and make it as a fragment
+ * TODO: detach the content_main and make it as a fragment //TODO -> Avoid Fragments!
  */
 final public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     // Container for subscriptions (RxJava). They will be unsubscribed onDestroy.
+    //TODO another alternative is to use the library RxLifecycle so to avoid the CompositeSubscription
     final protected CompositeSubscription compositeSubscription = new CompositeSubscription();
     @Inject
     MarketsService marketsService;
@@ -144,6 +145,9 @@ final public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //TODO move ButterKnife.inject here?
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -159,6 +163,8 @@ final public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
+        //TODO fix deprecation
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -198,7 +204,7 @@ final public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout); // TODO ButterKnife?
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -256,7 +262,7 @@ final public class MainActivity extends AppCompatActivity
             default: break;
         }
 
-        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout); // TODO ButterKnife?
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -356,6 +362,7 @@ final public class MainActivity extends AppCompatActivity
                     }
                 })
                 .doOnNext(new Action1<List<Market>>() {
+                    // TODO move this block to subscribe()? instead of having a doOnNext and an empty subscribe()
                     @Override
                     public void call(List<Market> markets) {
                         if (markets == null) {
@@ -661,6 +668,7 @@ final public class MainActivity extends AppCompatActivity
         Subscription subscription = this.markets
                 .getCurrenciesAsObservable()
                 .doOnNext(new Action1<String>() {
+                    // TODO move to subscribe()?
                     @Override
                     public void call(final String currentCurrency) {
 
