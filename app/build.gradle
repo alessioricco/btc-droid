@@ -32,6 +32,8 @@ configurations {
 
 def support_version = "25.0.1"
 
+//TODO consider using Retrolambda (me.tatarka.retrolambda), for improving readability
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
@@ -57,10 +59,12 @@ dependencies {
 
     compile 'com.ocpsoft:ocpsoft-pretty-time:1.0.6'
 
-    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'io.reactivex:rxandroid:1.2.1' // TODO consider RxJava 2.x
     compile 'io.reactivex:rxjava:1.2.3'
 
     compile 'com.jakewharton:butterknife:6.1.0' // TODO check new version: 8.4.0
+
+    //TODO consider using leakcanary (com.squareup.leakcanary), for detecting leaks
 
     compile 'com.squareup.dagger:dagger:1.2.2'
 
