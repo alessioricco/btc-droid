@@ -32,7 +32,7 @@ public class TestVarious {
     public void testPubDate() throws Exception {
         String pubDate = "Tue, 15 Nov 2016 22:00:06 +0000";
 
-        pubDate.length()
+        //pubDate.length()
 
         DateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.getDefault());
         Date date = formatter.parse(pubDate);
